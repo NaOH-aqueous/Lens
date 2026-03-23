@@ -11,9 +11,14 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private DialogueManager m_dialogueManager;
 
+    //Animator Componenets
+    private Animator animator;
+    Vector2 moveDirection = new Vector2(1, 0);
+
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
@@ -44,10 +49,19 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
 
+        //set the animator values according to player movement
+        if (!Mathf.Approximately(moveValue.x, 0.0f) || !Mathf.Approximately(moveValue.y, 0.0f))
+        {
+            moveDirection.Set(moveValue.x, moveValue.y);
+            moveDirection.Normalize();
+        }
+        animator.SetFloat("MoveX", moveDirection.x);
+        animator.SetFloat("MoveY", moveDirection.y);
+        animator.SetFloat("Speed", moveValue.magnitude);
+
         //move the rigidbody of the player
         Vector2 currentPos = playerRB.transform.position;
         Vector2 targetPos = currentPos += moveSpeed * moveValue * Time.deltaTime;
-
         playerRB.MovePosition(targetPos);
     }
 }
