@@ -56,6 +56,7 @@ public class DialogueManager : MonoBehaviour
         if (_inkstory.currentChoices.Count == 0 && 
             DialogueInput.Instance.IsSubmitPressed())
         {
+
             ContinueStory();
         }
     }
@@ -71,6 +72,7 @@ public class DialogueManager : MonoBehaviour
     private void EnterDialogueMode()
     {
         dialoguePanel.SetActive(true);
+        textToDisplay.enabled = true;
         isDialoguePlaying = true;
         ContinueStory();
 
@@ -83,7 +85,7 @@ public class DialogueManager : MonoBehaviour
 
         isDialoguePlaying = false;
         dialoguePanel.SetActive(false);
-        textToDisplay.text = "";
+        textToDisplay.enabled = false;
     }
 
     //continue to the next line of the story
