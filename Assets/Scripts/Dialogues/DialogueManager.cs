@@ -54,11 +54,17 @@ public class DialogueManager : MonoBehaviour
         }
 
         if (_inkstory.currentChoices.Count == 0 && 
-            DialogueInput.Instance.IsSubmitPressed())
+           ( DialogueInput.Instance.IsSubmitPressed() ||
+            DialogueInput.Instance.IsInteractPressed()))
         {
-
             ContinueStory();
+            GetTags();
         }
+    }
+
+    public void GetTags()
+    {
+        List<string> tags = _inkstory.currentTags;
     }
 
     //set the inkasset as current story to the manager

@@ -27,6 +27,7 @@ public class DialogueTrigger : MonoBehaviour
         {
             if (DialogueInput.Instance.IsInteractPressed())
             {
+                DialogueInput.Instance.RegisterSubmitPressed();
                 DialogueManager.Instance.NewStory(inkAsset);
                 Debug.Log("Current story has been set to " + inkAsset.name);
             }
