@@ -5,6 +5,8 @@ public class PlayerController : MonoBehaviour
 {
     //public variables
     public float moveSpeed = 4f;
+    public float footstepInterval = 0.5f; // Time interval between footstep sounds
+    //public AudioClip[] footstepClip; // Footstep sound clip Multiple clips for variety
 
     //private variables
     private Rigidbody2D playerRB;
@@ -15,6 +17,10 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     Vector2 moveDirection = new Vector2(1, 0);
 
+    //Sounds
+    private AudioSource footstepAudio;
+    private float stepTimer;
+
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -22,6 +28,32 @@ public class PlayerController : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
+
+        //Footsteps Audio
+        footstepAudio = GetComponent<AudioSource>();
+        if (footstepAudio == null)
+        {
+            footstepAudio = gameObject.AddComponent<AudioSource>();
+            footstepAudio.playOnAwake = false;
+        }
+
+    }
+    private void Update()
+    {
+        if (CheckIfPlayerCanMove())
+        {
+            // Update the step timer
+            stepTimer += Time.deltaTime;
+
+            // Check if the player is moving and if it's time to play the footstep sound
+            if (moveAction.ReadValue<Vector2>().magnitude > 0.1f 
+                && stepTimer >= footstepInterval)
+            {
+                PlayFootstepAudio();
+                // Reset the timer after playing the sound
+                stepTimer = 0f;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -63,5 +95,19 @@ public class PlayerController : MonoBehaviour
         Vector2 currentPos = playerRB.transform.position;
         Vector2 targetPos = currentPos += moveSpeed * moveValue * Time.deltaTime;
         playerRB.MovePosition(targetPos);
+    }
+
+    void PlayFootstepAudio()
+    {
+        if (footstepAudio == null)
+        {
+            return; // No audio source available
+        }
+
+        // Check if there's a clip assigned to the audio source
+        if (footstepAudio.clip != null) 
+        {
+            footstepAudio.PlayOneShot(footstepAudio.clip);
+        }
     }
 }

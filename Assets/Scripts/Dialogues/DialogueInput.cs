@@ -44,7 +44,7 @@ public class DialogueInput : MonoBehaviour
         SubmitAction.Disable();
 
         // To enable the mouse:
-        InputSystem.EnableDevice(Mouse.current);
+        //InputSystem.EnableDevice(Mouse.current);
     }
 
     private void OnInteract(InputAction.CallbackContext context)
