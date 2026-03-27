@@ -101,6 +101,7 @@ public class PlayerController : MonoBehaviour
     {
         if (footstepAudio == null)
         {
+            Debug.Log("No AudioSource found for footstep sounds.");
             return; // No audio source available
         }
 
