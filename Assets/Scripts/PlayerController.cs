@@ -21,6 +21,11 @@ public class PlayerController : MonoBehaviour
     private AudioSource footstepAudio;
     private float stepTimer;
 
+    //Inventory
+    // Simple inventory array with 10 slots
+    public Item[] inventory = new Item[10];
+    private Inventory _itemDatabase;
+
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -36,6 +41,10 @@ public class PlayerController : MonoBehaviour
             footstepAudio = gameObject.AddComponent<AudioSource>();
             footstepAudio.playOnAwake = false;
         }
+
+        //Inventory
+        // Check if the Inventory component was found
+        _itemDatabase = GameObject.Find("InventorySystem").GetComponent<Inventory>();
 
     }
     private void Update()
@@ -54,6 +63,22 @@ public class PlayerController : MonoBehaviour
                 stepTimer = 0f;
             }
         }
+
+        //Inventory
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            // request item by ID and add it to the inventory
+            // example item ID of 0, you can change this to test with different items
+            _itemDatabase.AddItem(0, this); 
+
+        }
+        else if (Input.GetKeyDown(KeyCode.O))
+        {
+            // request item by ID and remove it from the inventory
+            _itemDatabase.RemoveItem(0, this);
+            
+        }
+
     }
 
     private void FixedUpdate()
