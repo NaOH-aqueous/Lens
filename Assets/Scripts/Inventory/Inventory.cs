@@ -17,7 +17,7 @@ public class Inventory : MonoBehaviour
                 Debug.Log("Item added to inventory: " + item.itemName);
                 // Add the item to the player's inventory (for simplicity, we add it to the first slot)
                 //check for available slot in inventory
-                player.inventory[0] = item; 
+                player.inventory.Add(item); 
                 return;
             }
         }
@@ -36,7 +36,7 @@ public class Inventory : MonoBehaviour
             {
                 Debug.Log("Item removed from inventory: " + item.itemName);
                 // Remove the item from the player's inventory (for simplicity, we clear the first slot)
-                player.inventory[0] = null; 
+                player.inventory.Remove(item);
             }
         }
 

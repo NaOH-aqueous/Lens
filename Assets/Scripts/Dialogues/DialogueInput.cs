@@ -8,9 +8,11 @@ public class DialogueInput : MonoBehaviour
 
     private InputAction interactAction;
     private InputAction SubmitAction;
+    private InputAction CancelAction;
 
     private bool InteractPressed;
     private bool SubmitPressed;
+    private bool CancelPressed;
 
     void Awake()
     {
@@ -24,15 +26,19 @@ public class DialogueInput : MonoBehaviour
 
         interactAction = InputSystem.actions.FindAction("Interact");
         SubmitAction = InputSystem.actions.FindAction("Submit");
+        CancelAction = InputSystem.actions. FindAction("Cancel");
+
 
         interactAction.performed += OnInteract;
         SubmitAction.performed += OnConfirm;
+        CancelAction.performed += OnCancel;
     }
 
     void OnEnable()
     {
         interactAction.Enable();
         SubmitAction.Enable();
+        CancelAction.Enable();
 
         // To disable the mouse:
         InputSystem.DisableDevice(Mouse.current);
@@ -42,6 +48,7 @@ public class DialogueInput : MonoBehaviour
     {
         interactAction.Disable();
         SubmitAction.Disable();
+        CancelAction.Disable();
 
         // To enable the mouse:
         //InputSystem.EnableDevice(Mouse.current);
@@ -71,6 +78,19 @@ public class DialogueInput : MonoBehaviour
         }
     }
 
+    private void OnCancel(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            CancelPressed = true;
+        }
+        else
+        {
+            CancelPressed = false;
+        }
+    }
+ 
+
     public bool IsInteractPressed()
     {
         bool result = InteractPressed; 
@@ -85,8 +105,20 @@ public class DialogueInput : MonoBehaviour
         return result;
     }
 
+    public bool IsCancelPressed()
+    {
+        bool result = CancelPressed;
+        CancelPressed = false;
+        return result;
+    }
+
     public void RegisterSubmitPressed()
     {
         SubmitPressed = false;
+    }
+
+    public void RegisterInteractPressed()
+    {
+        InteractPressed = false;
     }
 }

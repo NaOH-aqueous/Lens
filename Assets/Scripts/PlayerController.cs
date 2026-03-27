@@ -1,3 +1,5 @@
+using Ink.Parsed;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     //Inventory
     // Simple inventory array with 10 slots
-    public Item[] inventory = new Item[10];
+    public List<Item> inventory;
     private Inventory _itemDatabase;
 
     private void Start()
@@ -64,19 +66,23 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        PickUpItem();
+    }
+
+    private void PickUpItem()
+    {
         //Inventory
-        if (Input.GetKeyDown(KeyCode.I))
+        if (DialogueInput.Instance.IsInteractPressed())
         {
             // request item by ID and add it to the inventory
             // example item ID of 0, you can change this to test with different items
-            _itemDatabase.AddItem(0, this); 
+            _itemDatabase.AddItem(0, this);
 
         }
-        else if (Input.GetKeyDown(KeyCode.O))
+        else if (DialogueInput.Instance.IsCancelPressed())
         {
             // request item by ID and remove it from the inventory
             _itemDatabase.RemoveItem(0, this);
-            
         }
 
     }
