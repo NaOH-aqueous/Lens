@@ -14,6 +14,7 @@ public class DialogueManager : MonoBehaviour
     Story _inkstory;
     private bool isDialoguePlaying = false;
     private bool isChoicesDiaplayed = false;
+    private List<string> tags = new List<string>(); 
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
@@ -54,22 +55,14 @@ public class DialogueManager : MonoBehaviour
         {
             return;
         }
-
-<<<<<<< Updated upstream
-=======
         speakerLabel.text = GetSpeakerTag();
-
->>>>>>> Stashed changes
         if (_inkstory.currentChoices.Count == 0 && 
-            DialogueInput.Instance.IsSubmitPressed())
+            (DialogueInput.Instance.IsSubmitPressed()
+            ||DialogueInput.Instance.IsInteractPressed()))
         {
-
             ContinueStory();
         }
     }
-
-<<<<<<< Updated upstream
-=======
     private void CurrentTags()
     {
         tags = _inkstory.currentTags;
@@ -87,7 +80,6 @@ public class DialogueManager : MonoBehaviour
         return "";
     } 
 
->>>>>>> Stashed changes
     //set the inkasset as current story to the manager
     public void NewStory(TextAsset story)
     {
@@ -124,6 +116,7 @@ public class DialogueManager : MonoBehaviour
         {
             indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
+            CurrentTags();
 
             DisplayChoices();
         }
