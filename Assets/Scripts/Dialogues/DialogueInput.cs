@@ -33,12 +33,18 @@ public class DialogueInput : MonoBehaviour
     {
         interactAction.Enable();
         SubmitAction.Enable();
+
+        // To disable the mouse:
+        InputSystem.DisableDevice(Mouse.current);
     }
 
     void OnDisable()
     {
         interactAction.Disable();
         SubmitAction.Disable();
+
+        // To enable the mouse:
+        //InputSystem.EnableDevice(Mouse.current);
     }
 
     private void OnInteract(InputAction.CallbackContext context)

@@ -18,6 +18,7 @@ public class DialogueManager : MonoBehaviour
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI textToDisplay;
+    [SerializeField] private TextMeshProUGUI speakerLabel;
     [SerializeField] private GameObject indication;
 
     [Header("Choices UI")]
@@ -42,6 +43,7 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
+        speakerLabel.text = string.Empty;
         indication.SetActive(false);
     }
 
@@ -53,6 +55,11 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+<<<<<<< Updated upstream
+=======
+        speakerLabel.text = GetSpeakerTag();
+
+>>>>>>> Stashed changes
         if (_inkstory.currentChoices.Count == 0 && 
             DialogueInput.Instance.IsSubmitPressed())
         {
@@ -61,6 +68,26 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    private void CurrentTags()
+    {
+        tags = _inkstory.currentTags;
+    }
+
+    public string GetSpeakerTag()
+    {
+        foreach (string tag in tags)
+        {
+            if (tag.Contains("speaker"))
+            {
+                return tag.Replace("speaker:", "");
+            }
+        }
+        return "";
+    } 
+
+>>>>>>> Stashed changes
     //set the inkasset as current story to the manager
     public void NewStory(TextAsset story)
     {
