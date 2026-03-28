@@ -475,7 +475,7 @@ PrefabInstance:
     - target: {fileID: 6053557623009186730, guid: 9cef544b71f1d8545a5da87005b2d968, type: 3}
       propertyPath: 'inventory.Array.data[0]'
       value: 
-      objectReference: {fileID: 1707488521}
+      objectReference: {fileID: 0}
     - target: {fileID: 6925972969480299161, guid: 9cef544b71f1d8545a5da87005b2d968, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -1032,8 +1032,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1707488520}
   - component: {fileID: 1707488519}
-  - component: {fileID: 1707488521}
   - component: {fileID: 1707488522}
+  - component: {fileID: 1707488523}
   m_Layer: 0
   m_Name: Coffee
   m_TagString: Untagged
@@ -1111,21 +1111,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1707488521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1707488518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12e24b24eaf51764d8976ef9a04824f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemName: Coffee
-  itemID: 0
-  itemIcon: {fileID: 0}
 --- !u!61 &1707488522
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1172,6 +1157,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.4248729, y: 1.349895}
   m_EdgeRadius: 0
+--- !u!114 &1707488523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707488518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27f1c8dad7061b44bb4833a0de0d2bdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemID: 0
 --- !u!1 &1714450513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1275,8 +1273,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1755335872}
   - component: {fileID: 1755335871}
-  - component: {fileID: 1755335870}
   - component: {fileID: 1755335869}
+  - component: {fileID: 1755335873}
+  - component: {fileID: 1755335874}
   m_Layer: 0
   m_Name: GlassOfWater
   m_TagString: Untagged
@@ -1318,7 +1317,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.01249671, y: 0.000000029802322}
+  m_Offset: {x: 0.6534972, y: 0.010035753}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1328,23 +1327,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.4248729, y: 1.349895}
+  m_Size: {x: 3.9112496, y: 2.2932358}
   m_EdgeRadius: 0
---- !u!114 &1755335870
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1755335868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12e24b24eaf51764d8976ef9a04824f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemName: GlassOfWater
-  itemID: 1
-  itemIcon: {fileID: 0}
 --- !u!212 &1755335871
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1415,6 +1399,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1755335873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755335868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e42d28cda46b34cb7f8804e6db4c25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1755335874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755335868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27f1c8dad7061b44bb4833a0de0d2bdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemID: 1
 --- !u!1 &1790248670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1684,8 +1693,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemDatabase:
-  - {fileID: 1707488521}
-  - {fileID: 1755335870}
+  - itemName: Coffee
+    itemID: 0
+    itemIcon: {fileID: 0}
+  - itemName: GlassOfWater
+    itemID: 1
+    itemIcon: {fileID: 0}
 --- !u!1001 &2029795648688027761
 PrefabInstance:
   m_ObjectHideFlags: 0

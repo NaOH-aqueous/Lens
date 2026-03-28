@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
     public List<Item> inventory;
     private Inventory _itemDatabase;
 
+    // Reference to the currently interactable item
+    private GameObject currentInteractableItem;
+
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -57,7 +60,7 @@ public class PlayerController : MonoBehaviour
             stepTimer += Time.deltaTime;
 
             // Check if the player is moving and if it's time to play the footstep sound
-            if (moveAction.ReadValue<Vector2>().magnitude > 0.1f 
+            if (moveAction.ReadValue<Vector2>().magnitude > 0.1f
                 && stepTimer >= footstepInterval)
             {
                 PlayFootstepAudio();
@@ -67,17 +70,35 @@ public class PlayerController : MonoBehaviour
         }
 
         PickUpItem();
+
+        // Temporary key to display inventory contents in the console
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            DisplayInventory(new InputAction.CallbackContext());
+        }
     }
 
     private void PickUpItem()
     {
         //Inventory
-        if (DialogueInput.Instance.IsInteractPressed())
+        if (DialogueInput.Instance.IsInteractPressed()
+            && currentInteractableItem != null)
         {
-            // request item by ID and add it to the inventory
-            // example item ID of 0, you can change this to test with different items
-            _itemDatabase.AddItem(0, this);
+            // Get the InteractableItem component from the current interactable item
+            InteractableItem pickup = currentInteractableItem.GetComponent<InteractableItem>();
 
+            if (pickup != null)
+            {
+                bool sucess = _itemDatabase.AddItem(pickup.itemID, this);
+
+                if (sucess)
+                {
+                    // If the item was successfully added to the inventory, destroy the item in the world
+                    Destroy(currentInteractableItem);
+                    ClearCurrentItem();
+                }
+            }
+            //_itemDatabase.AddItem(0, this);
         }
         else if (DialogueInput.Instance.IsCancelPressed())
         {
@@ -98,7 +119,7 @@ public class PlayerController : MonoBehaviour
     //return TRUE when the dialogue isn't playing or there's no dialogue in the scene
     private bool CheckIfPlayerCanMove()
     {
-        if (m_dialogueManager != null) 
+        if (m_dialogueManager != null)
         {
             if (m_dialogueManager.CheckDialoguePlaying())
             {
@@ -137,9 +158,52 @@ public class PlayerController : MonoBehaviour
         }
 
         // Check if there's a clip assigned to the audio source
-        if (footstepAudio.clip != null) 
+        if (footstepAudio.clip != null)
         {
             footstepAudio.PlayOneShot(footstepAudio.clip);
         }
     }
+
+    public void SetCurrentItem(GameObject item)
+    {
+        currentInteractableItem = item;
+    }
+
+    public void ClearCurrentItem()
+    {
+        currentInteractableItem = null;
+    }
+
+    public GameObject GetCurrentItem()
+    {
+        return currentInteractableItem;
+    }
+
+    private void DisplayInventory(InputAction.CallbackContext context)
+    {
+      
+        Debug.Log("=== Inventory Contents ===");
+
+        if (inventory.Count == 0)
+        {
+            Debug.Log("Inventory is empty.");
+        }
+        else
+        {
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                if (inventory[i] != null)
+                {
+                    Debug.Log($"Slot {i}: {inventory[i].itemName} (ID: {inventory[i].itemID})");
+                }
+                else
+                {
+                    Debug.Log($"Slot {i}: Empty");
+                }
+            }
+        }
+
+        Debug.Log("======================");
+    }
+
 }
