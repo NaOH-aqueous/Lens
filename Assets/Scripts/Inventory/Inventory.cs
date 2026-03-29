@@ -16,6 +16,7 @@ public class Inventory : MonoBehaviour
 
     // Reference to the currently interactable item
     private Item current_item;
+    private Item pickedUpItem;
 
     private PlayerController player;
 
@@ -49,6 +50,7 @@ public class Inventory : MonoBehaviour
             Debug.Log("Item added to inventory: " + itemData.itemName);
             // Add the item to the player's inventory
             player.inventory.Add(itemData);
+            pickedUpItem = itemData;
             return true;
         }
         else
@@ -86,6 +88,10 @@ public class Inventory : MonoBehaviour
         }
 
     }
+    public Item GetPickedUpItem()
+    {
+        return pickedUpItem;
+    }
 
     public void AddItemToDatabase(Item item)
     {
@@ -117,17 +123,17 @@ public class Inventory : MonoBehaviour
 
         Debug.Log("=== Inventory Contents ===");
 
-        if (m_itemDatabase.Count == 0)
+        if (player.inventory.Count == 0)
         {
             Debug.Log("Inventory is empty.");
         }
         else
         {
-            for (int i = 0; i < m_itemDatabase.Count; i++)
+            for (int i = 0; i < player.inventory.Count; i++)
             {
-                if (m_itemDatabase[i] != null)
+                if (player.inventory[i] != null)
                 {
-                    Debug.Log($"Slot {i}: {m_itemDatabase[i].itemName} (ID: {m_itemDatabase[i].itemID})");
+                    Debug.Log($"Slot {i}: {player.inventory[i].itemName} (ID: {player.inventory[i].itemID})");
                 }
                 else
                 {

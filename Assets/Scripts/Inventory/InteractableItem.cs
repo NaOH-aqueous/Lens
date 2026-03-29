@@ -15,8 +15,16 @@ public class InteractableItem : MonoBehaviour
         newItem.itemName = itemName;
 
         Inventory.Instance.AddItemToDatabase(newItem);
+        
     }
 
+    private void Update()
+    {
+        if (Inventory.Instance.GetPickedUpItem() == newItem)
+        {
+            Destroy(this.gameObject);
+        }
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -43,6 +51,4 @@ public class InteractableItem : MonoBehaviour
             }
         }
     }
-
-
 }
