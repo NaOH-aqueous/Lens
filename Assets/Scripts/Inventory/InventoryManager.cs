@@ -6,10 +6,9 @@ using UnityEngine.InputSystem;
 
 
 
-public class Inventory : MonoBehaviour
+public class InventoryManager : MonoBehaviour
 {
-    //Make it a singleton object
-    public static Inventory Instance{ get; private set; }
+    public static InventoryManager Instance{ get; private set; }
 
     // List to record the items in the inventory
     private List<Item> m_itemDatabase = new List<Item>();
@@ -20,10 +19,10 @@ public class Inventory : MonoBehaviour
 
     private PlayerController player;
 
-
+    //make it a singleton class
     private void Awake()
     {
-        //make it a singleton gameobject
+        //make it a singleton class
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -40,6 +39,7 @@ public class Inventory : MonoBehaviour
         player = GameObject.FindAnyObjectByType<PlayerController>();
     }
 
+    //add this item to the player's inventory
     public bool AddItem(Item item, int itemID)
     {
         // Find the item in the database using the item ID
@@ -58,32 +58,23 @@ public class Inventory : MonoBehaviour
             Debug.Log("Item does not exist");
             return false;
         }
-
-            // check if item matches something in the inventory
-            //foreach (var item in itemDatabase)
-            //{
-            //    if (item.itemID == _itemID)
-            //    {
-            //        Debug.Log("Item added to inventory: " + item.itemName);
-            //        // Add the item to the player's inventory (for simplicity, we add it to the first slot)
-            //        //check for available slot in inventory
-            //        player.inventory.Add(item); 
-            //        return true;
-            //    }
-            //}
     }
 
-    public void RemoveItem(int _itemID)
+    //remove the item from the inventory using item ID
+    public void RemoveItem(int itemID)
     {
         // Remove the item from the inventory
         //check if item matches something in the inventory
         foreach (var item in m_itemDatabase)
         {
-            if (item.itemID == _itemID)
+            if (item.itemID == itemID)
             {
                 Debug.Log("Item removed from inventory: " + item.itemName);
                 // Remove the item from the player's inventory (for simplicity, we clear the first slot)
-                player.inventory.Remove(item);
+                if (player.inventory.Contains(item))
+                {
+                    player.inventory.Remove(item);
+                }
             }
         }
 
@@ -93,6 +84,7 @@ public class Inventory : MonoBehaviour
         return pickedUpItem;
     }
 
+    //add this item to database for later retrieval
     public void AddItemToDatabase(Item item)
     {
         m_itemDatabase.Add(item);

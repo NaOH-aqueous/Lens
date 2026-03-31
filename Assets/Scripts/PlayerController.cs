@@ -24,10 +24,10 @@ public class PlayerController : MonoBehaviour
     //Inventory
     // Simple inventory array with 10 slots
     public List<Item> inventory;
-
-
     private Item current_item;
 
+    //GameManager
+    private GameManager m_gameManager;
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
+        m_gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
 
         //Footsteps Audio
         footstepAudio = GetComponent<AudioSource>();
@@ -69,6 +71,12 @@ public class PlayerController : MonoBehaviour
 
         RemoveItem();
         DisplayInventory();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // Show Pause Menu UI
+            m_gameManager.ChangeToPaused();
+        }
     }
 
     private void FixedUpdate()
@@ -94,9 +102,9 @@ public class PlayerController : MonoBehaviour
 
     private void DisplayInventory()
     {
-        if (DialogueInput.Instance.isInventoryPressed())
+        if (InputManager.Instance.isInventoryPressed())
         {
-            Inventory.Instance.GetInventoryContent();
+            InventoryManager.Instance.GetInventoryContent();
         }
     }
 
@@ -134,36 +142,12 @@ public class PlayerController : MonoBehaviour
             footstepAudio.PlayOneShot(footstepAudio.clip);
         }
     }
-
-    private void PickUpItem()
-    {
-        //Inventory
-        if (DialogueInput.Instance.IsInteractPressed())
-        {
-            Item currentItem = Inventory.Instance.GetCurrentItem();
-            //pick it up if it exists
-            if (currentItem != null)
-            {
-                Inventory.Instance.AddItem(currentItem, currentItem.itemID);
-            }
-            //_itemDatabase.AddItem(0, this);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Item"))
-        {
-            PickUpItem();
-        }
-    }
-
     private void RemoveItem()
     {
-        if (DialogueInput.Instance.IsCancelPressed())
+        if (InputManager.Instance.isUsePressed())
         {
             // request item by ID and remove it from the inventory
-            Inventory.Instance.RemoveItem(0);
+            InventoryManager.Instance.RemoveItem(0);
         }
     }
 }

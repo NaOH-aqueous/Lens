@@ -1,19 +1,21 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DialogueInput : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
     //Make it a singleton object
-    public static DialogueInput Instance { get; private set; }
+    public static InputManager Instance { get; private set; }
 
     private InputAction interactAction;
     private InputAction SubmitAction;
     private InputAction CancelAction;
+    private InputAction UseAction;
     private InputAction InventoryAction;
 
     private bool InteractPressed;
     private bool SubmitPressed;
     private bool CancelPressed;
+    private bool UsePressed;
     private bool InventoryPressed;
 
     void Awake()
@@ -29,11 +31,13 @@ public class DialogueInput : MonoBehaviour
         interactAction = InputSystem.actions.FindAction("Interact");
         SubmitAction = InputSystem.actions.FindAction("Submit");
         CancelAction = InputSystem.actions.FindAction("Cancel");
+        UseAction = InputSystem.actions.FindAction("Use");
         InventoryAction = InputSystem.actions.FindAction("Inventory");
 
         interactAction.performed += OnInteract;
         SubmitAction.performed += OnConfirm;
         CancelAction.performed += OnCancel;
+        UseAction.performed += OnUse;
         InventoryAction.performed += OnInventory;
     }
 
@@ -42,6 +46,7 @@ public class DialogueInput : MonoBehaviour
         interactAction.Enable();
         SubmitAction.Enable();
         CancelAction.Enable();
+        UseAction.Enable();
         InventoryAction.Enable();
 
         // To disable the mouse:
@@ -53,6 +58,7 @@ public class DialogueInput : MonoBehaviour
         interactAction.Disable();
         SubmitAction.Disable();
         CancelAction.Disable();
+        UseAction.Disable();
         InventoryAction.Disable();
 
         // To enable the mouse:
@@ -94,7 +100,19 @@ public class DialogueInput : MonoBehaviour
             CancelPressed = false;
         }
     }
- 
+    
+    private void OnUse(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            UsePressed = true;
+        }
+        else
+        {
+            UsePressed = false;
+        }
+    }
+
     private void OnInventory(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -124,6 +142,13 @@ public class DialogueInput : MonoBehaviour
     public bool IsCancelPressed()
     {
         bool result = CancelPressed;
+        CancelPressed = false;
+        return result;
+    }
+
+    public bool isUsePressed()
+    {
+        bool result = UsePressed;
         CancelPressed = false;
         return result;
     }

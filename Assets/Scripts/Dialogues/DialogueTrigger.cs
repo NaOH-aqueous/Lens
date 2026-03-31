@@ -25,9 +25,9 @@ public class DialogueTrigger : MonoBehaviour
         }
         if( !DialogueManager.Instance.CheckDialoguePlaying())
         {
-            if (DialogueInput.Instance.IsInteractPressed())
+            if (InputManager.Instance.IsInteractPressed())
             {
-                DialogueInput.Instance.RegisterSubmitPressed();
+                InputManager.Instance.RegisterSubmitPressed();
                 DialogueManager.Instance.NewStory(inkAsset);
                 Debug.Log("Current story has been set to " + inkAsset.name);
             }
@@ -39,7 +39,7 @@ public class DialogueTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            //Debug.Log("player is nearby");
+            Debug.Log("player is nearby");
             playerInRange = true;
             indication.SetActive(true);
         }

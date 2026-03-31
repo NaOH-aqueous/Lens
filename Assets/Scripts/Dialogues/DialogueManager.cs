@@ -53,8 +53,8 @@ public class DialogueManager : MonoBehaviour
         }
         
         if (_inkstory.currentChoices.Count == 0 && 
-           ( DialogueInput.Instance.IsSubmitPressed() ||
-            DialogueInput.Instance.IsInteractPressed()))
+           ( InputManager.Instance.IsSubmitPressed() ||
+            InputManager.Instance.IsInteractPressed()))
         {
             ContinueStory();
         }
@@ -182,7 +182,7 @@ public class DialogueManager : MonoBehaviour
             Destroy(choice);
         }
 
-        DialogueInput.Instance.RegisterSubmitPressed();
+        InputManager.Instance.RegisterSubmitPressed();
         isChoicesDiaplayed = false;
         ContinueStory();
     }
