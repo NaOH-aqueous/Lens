@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
             DisplayInventory(new InputAction.CallbackContext());
         }*/
 
-        PickUpItem();
+        RemoveItem();
         DisplayInventory();
     }
 
@@ -148,11 +148,22 @@ public class PlayerController : MonoBehaviour
             }
             //_itemDatabase.AddItem(0, this);
         }
-        else if (DialogueInput.Instance.IsCancelPressed())
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Item"))
+        {
+            PickUpItem();
+        }
+    }
+
+    private void RemoveItem()
+    {
+        if (DialogueInput.Instance.IsCancelPressed())
         {
             // request item by ID and remove it from the inventory
             Inventory.Instance.RemoveItem(0);
         }
     }
-
 }

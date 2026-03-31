@@ -1032,7 +1032,7 @@ GameObject:
   - component: {fileID: 1707488523}
   m_Layer: 0
   m_Name: Coffee
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1276,7 +1276,7 @@ GameObject:
   - component: {fileID: 1755335874}
   m_Layer: 0
   m_Name: GlassOfWater
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
