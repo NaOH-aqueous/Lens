@@ -48,6 +48,10 @@ namespace TMPro.Examples
                 hasTextChanged = true;
         }
 
+        private void Start()
+        {
+           
+        }
 
         /// <summary>
         /// Method to animate vertex colors of a TMP Text object.

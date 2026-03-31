@@ -1,14 +1,12 @@
-using Ink.Parsed;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
     //public variables
     public float moveSpeed = 4f;
-    public float footstepInterval = 0.5f; // Time interval between footstep sounds
-    //public AudioClip[] footstepClip; // Footstep sound clip Multiple clips for variety
+    public float footstepInterval;
 
     //private variables
     private Rigidbody2D playerRB;
@@ -26,14 +24,10 @@ public class PlayerController : MonoBehaviour
     //Inventory
     // Simple inventory array with 10 slots
     public List<Item> inventory;
-    private Inventory _itemDatabase;
+    private Item current_item;
 
-    // Reference to the currently interactable item
-    private GameObject currentInteractableItem;
-
-    // UI - Game State Manager
-    private GameState _gameState;
-
+    //GameManager
+    private GameManager m_gameManager;
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -41,6 +35,8 @@ public class PlayerController : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
+        m_gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
 
         //Footsteps Audio
         footstepAudio = GetComponent<AudioSource>();
@@ -49,12 +45,6 @@ public class PlayerController : MonoBehaviour
             footstepAudio = gameObject.AddComponent<AudioSource>();
             footstepAudio.playOnAwake = false;
         }
-
-        //Inventory
-        // Check if the Inventory component was found
-        _itemDatabase = GameObject.Find("InventorySystem").GetComponent<Inventory>();
-        
-        _gameState = GameObject.Find("GameStateManager").GetComponent<GameState>();
 
     }
     private void Update()
@@ -73,51 +63,20 @@ public class PlayerController : MonoBehaviour
                 stepTimer = 0f;
             }
         }
-
-        PickUpItem();
-
-        // Temporary key to display inventory contents in the console
+        /* Temporary key to display inventory contents in the console
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             DisplayInventory(new InputAction.CallbackContext());
-        }
+        }*/
 
-        if (Input.GetKeyDown(KeyCode.I))
+        RemoveItem();
+        DisplayInventory();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             // Show Pause Menu UI
-           _gameState.ChangeToPaused();
+            m_gameManager.ChangeToPaused();
         }
-
-    }
-
-    private void PickUpItem()
-    {
-        //Inventory
-        if (DialogueInput.Instance.IsInteractPressed()
-            && currentInteractableItem != null)
-        {
-            // Get the InteractableItem component from the current interactable item
-            InteractableItem pickup = currentInteractableItem.GetComponent<InteractableItem>();
-
-            if (pickup != null)
-            {
-                bool sucess = _itemDatabase.AddItem(pickup.itemID, this);
-
-                if (sucess)
-                {
-                    // If the item was successfully added to the inventory, destroy the item in the world
-                    Destroy(currentInteractableItem);
-                    ClearCurrentItem();
-                }
-            }
-            //_itemDatabase.AddItem(0, this);
-        }
-        else if (DialogueInput.Instance.IsCancelPressed())
-        {
-            // request item by ID and remove it from the inventory
-            _itemDatabase.RemoveItem(0, this);
-        }
-
     }
 
     private void FixedUpdate()
@@ -131,7 +90,7 @@ public class PlayerController : MonoBehaviour
     //return TRUE when the dialogue isn't playing or there's no dialogue in the scene
     private bool CheckIfPlayerCanMove()
     {
-        if (m_dialogueManager != null)
+        if (m_dialogueManager != null) 
         {
             if (m_dialogueManager.CheckDialoguePlaying())
             {
@@ -139,6 +98,14 @@ public class PlayerController : MonoBehaviour
             }
         }
         return true;
+    }
+
+    private void DisplayInventory()
+    {
+        if (InputManager.Instance.isInventoryPressed())
+        {
+            InventoryManager.Instance.GetInventoryContent();
+        }
     }
 
     private void MovePlayer()
@@ -175,48 +142,12 @@ public class PlayerController : MonoBehaviour
             footstepAudio.PlayOneShot(footstepAudio.clip);
         }
     }
-
-    public void SetCurrentItem(GameObject item)
+    private void RemoveItem()
     {
-        currentInteractableItem = item;
-    }
-
-    public void ClearCurrentItem()
-    {
-        currentInteractableItem = null;
-    }
-
-    public GameObject GetCurrentItem()
-    {
-        return currentInteractableItem;
-    }
-
-    private void DisplayInventory(InputAction.CallbackContext context)
-    {
-      
-        Debug.Log("=== Inventory Contents ===");
-
-        if (inventory.Count == 0)
+        if (InputManager.Instance.isUsePressed())
         {
-            Debug.Log("Inventory is empty.");
+            // request item by ID and remove it from the inventory
+            InventoryManager.Instance.RemoveItem(0);
         }
-        else
-        {
-            for (int i = 0; i < inventory.Count; i++)
-            {
-                if (inventory[i] != null)
-                {
-                    Debug.Log($"Slot {i}: {inventory[i].itemName} (ID: {inventory[i].itemID})");
-                }
-                else
-                {
-                    Debug.Log($"Slot {i}: Empty");
-                }
-            }
-        }
-
-        Debug.Log("======================");
     }
-
-
 }

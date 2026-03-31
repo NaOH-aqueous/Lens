@@ -9,9 +9,9 @@ public enum GameStateType
     Paused
 }
 
-public class GameState : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static GameState instance;
+    public static GameManager instance { get; private set; }
 
     // UI references
     public GameObject mainMenuUI;
@@ -61,7 +61,7 @@ public class GameState : MonoBehaviour
     {
         ChangeState(GameStateType.Paused);
     }
-    
+
 
     private IEnumerator TransitionToState(GameStateType newState)
     {
@@ -70,7 +70,7 @@ public class GameState : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(delay);
         }
-  
+
         currentState = newState;
         HandleStateChange();
     }
