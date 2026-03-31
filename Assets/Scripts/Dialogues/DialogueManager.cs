@@ -2,10 +2,8 @@ using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
@@ -14,6 +12,7 @@ public class DialogueManager : MonoBehaviour
     Story _inkstory;
     private bool isDialoguePlaying = false;
     private bool isChoicesDiaplayed = false;
+    private List<string>tags = new List<string>();
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
@@ -52,14 +51,33 @@ public class DialogueManager : MonoBehaviour
         {
             return;
         }
-
+        
         if (_inkstory.currentChoices.Count == 0 && 
-            DialogueInput.Instance.IsSubmitPressed())
+           ( DialogueInput.Instance.IsSubmitPressed() ||
+            DialogueInput.Instance.IsInteractPressed()))
         {
-
             ContinueStory();
         }
     }
+
+    private void CurrentTags()
+    {
+        tags = _inkstory.currentTags;
+
+    }
+
+    public string GetSpeakerTag()
+    {
+        foreach (string tag in tags)
+        {
+            if (tag.Contains("speaker"))
+            {
+                Debug.Log(tag);
+                return tag.Replace("speaker:", "");
+            }
+        }
+        return "";
+    } 
 
     //set the inkasset as current story to the manager
     public void NewStory(TextAsset story)
@@ -97,6 +115,7 @@ public class DialogueManager : MonoBehaviour
         {
             indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
+            CurrentTags();
 
             DisplayChoices();
         }
@@ -118,7 +137,7 @@ public class DialogueManager : MonoBehaviour
             {
                 //display all current choices
                 Choice choice = _inkstory.currentChoices[i];
-                Debug.Log("Choice " + (i + 1) + ". " + choice.text);
+                //Debug.Log("Choice " + (i + 1) + ". " + choice.text);
 
                 //buttons are initiated according to the num of choices available
                 GameObject newButton = Instantiate(buttonPrefab, buttonGroup.transform, false);
@@ -129,7 +148,7 @@ public class DialogueManager : MonoBehaviour
                 //add listener to the current button
                 newButton.GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    Debug.Log("Clicked: " + currentButton);
+                    //Debug.Log("Clicked: " + currentButton);
 
                     //make the choice according to the index of button
                     

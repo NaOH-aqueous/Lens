@@ -40,7 +40,6 @@ namespace TMPro.Examples
         void OnDisable()
         {
             TMPro_EventManager.TEXT_CHANGED_EVENT.Remove(ON_TEXT_CHANGED);
-            Debug.Log(hasTextChanged);
         }
 
         void ON_TEXT_CHANGED(Object obj)
