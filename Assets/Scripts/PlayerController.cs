@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
     // Reference to the currently interactable item
     private GameObject currentInteractableItem;
 
+    // UI - Game State Manager
+    private GameState _gameState;
+
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -50,6 +53,8 @@ public class PlayerController : MonoBehaviour
         //Inventory
         // Check if the Inventory component was found
         _itemDatabase = GameObject.Find("InventorySystem").GetComponent<Inventory>();
+        
+        _gameState = GameObject.Find("GameStateManager").GetComponent<GameState>();
 
     }
     private void Update()
@@ -76,6 +81,13 @@ public class PlayerController : MonoBehaviour
         {
             DisplayInventory(new InputAction.CallbackContext());
         }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            // Show Pause Menu UI
+           _gameState.ChangeToPaused();
+        }
+
     }
 
     private void PickUpItem()
@@ -205,5 +217,6 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("======================");
     }
+
 
 }

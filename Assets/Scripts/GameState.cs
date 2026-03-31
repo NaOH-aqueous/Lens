@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum GameStateType
 {
@@ -37,7 +38,7 @@ public class GameState : MonoBehaviour
 
     private void Start()
     {
-        ChangeState(GameStateType.MainMenu);
+        //ChangeState(GameStateType.Paused);
     }
 
     public void ChangeState(GameStateType newState)
@@ -95,6 +96,7 @@ public class GameState : MonoBehaviour
                 // Handle paused logic
                 Time.timeScale = 0f; // Pause the game
                 pauseMenuUI.SetActive(true);
+                InputSystem.EnableDevice(Mouse.current);
                 break;
         }
     }
