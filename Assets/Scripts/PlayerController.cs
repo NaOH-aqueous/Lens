@@ -94,10 +94,22 @@ public class PlayerController : MonoBehaviour
         {
             if (m_dialogueManager.CheckDialoguePlaying())
             {
+                StopMovementAnimation();
                 return false;
             }
         }
         return true;
+    }
+
+    // Stop the movement animation by setting the animator parameters to zero
+    private void StopMovementAnimation()
+    {
+        if (animator != null)
+        {
+            animator.SetFloat("MoveX", 0);
+            animator.SetFloat("MoveY", 0);
+            animator.SetFloat("Speed", 0);
+        }
     }
 
     private void DisplayInventory()
