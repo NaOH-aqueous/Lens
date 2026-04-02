@@ -72,12 +72,23 @@ public class DialogueManager : MonoBehaviour
         {
             if (tag.Contains("speaker"))
             {
-                Debug.Log(tag);
                 return tag.Replace("speaker:", "");
             }
         }
         return "";
     } 
+
+    public string GetExpressionTag()
+    {
+        foreach (string tag in tags)
+        {
+            if (tag.Contains("portrait"))
+            {
+                return tag.Replace("portrait:", "");
+            }
+        }
+        return "";
+    }
 
     //set the inkasset as current story to the manager
     public void NewStory(TextAsset story)

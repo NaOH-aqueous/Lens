@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum GameStateType
 {
@@ -102,8 +104,9 @@ public class GameManager : MonoBehaviour
                 // Handle paused logic
                 Time.timeScale = 0f; // Pause the game
                 pauseMenuUI.SetActive(true);
+                Button pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
+                EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
                 // Test
-                InputSystem.EnableDevice(Mouse.current);
                 break;
         }
     }
@@ -115,15 +118,12 @@ public class GameManager : MonoBehaviour
         pauseMenuUI.SetActive(false);
     }
 
-    // 退出游戏（UI 按钮或代码调用）
     public void QuitGame()
     {
 
 #if UNITY_EDITOR
-        // 在编辑器中停止播放模式
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-        // 在构建版本中退出应用
         Application.Quit();
 #endif
     }

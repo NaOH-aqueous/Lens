@@ -106,8 +106,6 @@ public class PlayerController : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetFloat("MoveX", 0);
-            animator.SetFloat("MoveY", 0);
             animator.SetFloat("Speed", 0);
         }
     }
