@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -116,12 +116,12 @@ TextureImporter:
       name: Lens_room_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 0
-        width: 2900
-        height: 1785
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 107
+        y: 127
+        width: 2886
+        height: 1821
+      alignment: 9
+      pivot: {x: 0.50197816, y: 0.48553723}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -138,13 +138,15 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 153d84ff05519ef48a1613b6c6eee37f
     internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
-    secondaryTextures: []
+    secondaryTextures:
+    - texture: {fileID: 2800000, guid: 0976d855f318dbc4082ba0da61f03bea, type: 3}
+      name: _NormalMap
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:

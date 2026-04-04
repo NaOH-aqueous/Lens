@@ -21,7 +21,7 @@ Where do you want to inspect?
  -> END
  
  = on_the_bed
- You inspect the bed. The bedsheet has been sunken with sunshine and dust. It's the smell of home.
+ You inspect the bed. The bedsheet has been soaked with sunshine and dust. It's the smell of home.
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
 
