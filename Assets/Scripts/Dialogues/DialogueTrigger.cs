@@ -12,9 +12,21 @@ public class DialogueTrigger : MonoBehaviour
 
     private bool playerInRange = false;
 
+    //Audio Sounds
+    public AudioClip triggerSound;
+    private AudioSource audioSource;
+
     private void Start()
     {
         indication.SetActive(false);    
+
+        audioSource = GetComponent<AudioSource>();
+        // If there is no AudioSource component, add one
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.playOnAwake = false;
     }
 
     private void Update()
@@ -28,6 +40,13 @@ public class DialogueTrigger : MonoBehaviour
             if (InputManager.Instance.IsInteractPressed())
             {
                 InputManager.Instance.RegisterSubmitPressed();
+
+                // Play the trigger sound
+                if (triggerSound != null && audioSource != null)
+                {
+                    audioSource.PlayOneShot(triggerSound);
+                }
+
                 DialogueManager.Instance.NewStory(inkAsset);
                 Debug.Log("Current story has been set to " + inkAsset.name);
             }
