@@ -164,4 +164,9 @@ public class InputManager : MonoBehaviour
     {
         SubmitPressed = false;
     }
+
+    public void RegisterInteractPressed()
+    {
+        InteractPressed = false;
+    }
 }

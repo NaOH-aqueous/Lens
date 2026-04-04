@@ -39,9 +39,10 @@ public class DialogueTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("player is nearby");
+            //Debug.Log("player is nearby");
             playerInRange = true;
             indication.SetActive(true);
+            InputManager.Instance.RegisterInteractPressed();
         }
     }
 

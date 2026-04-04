@@ -1,6 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum GameStateType
 {
@@ -22,6 +25,9 @@ public class GameManager : MonoBehaviour
     public int delay = 1;
 
     public GameStateType currentState { get; private set; }
+
+    //Sounds
+    //[SerializeField] private AudioClip confirmSound;
 
     private void Awake()
     {
@@ -50,6 +56,8 @@ public class GameManager : MonoBehaviour
     public void ChangeToMainMenu()
     {
         ChangeState(GameStateType.MainMenu);
+        // Load the main menu scene
+        //SceneManager.LoadScene("MainMenu");
     }
 
     public void ChangeToPlaying()
@@ -84,7 +92,7 @@ public class GameManager : MonoBehaviour
         {
             case GameStateType.MainMenu:
                 // Handle main menu logic
-                Time.timeScale = 0f; // Pause the game
+                Time.timeScale = 0f; 
                 mainMenuUI.SetActive(true);
                 break;
             case GameStateType.Playing:
@@ -96,7 +104,9 @@ public class GameManager : MonoBehaviour
                 // Handle paused logic
                 Time.timeScale = 0f; // Pause the game
                 pauseMenuUI.SetActive(true);
-                InputSystem.EnableDevice(Mouse.current);
+                Button pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
+                EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
+                // Test
                 break;
         }
     }
@@ -106,6 +116,16 @@ public class GameManager : MonoBehaviour
         mainMenuUI.SetActive(false);
         playingUI.SetActive(false);
         pauseMenuUI.SetActive(false);
+    }
+
+    public void QuitGame()
+    {
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
 }
