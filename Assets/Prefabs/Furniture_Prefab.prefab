@@ -113,8 +113,8 @@ GameObject:
   - component: {fileID: 7508011362587859901}
   - component: {fileID: 4024453478314629671}
   - component: {fileID: 5824378941789079773}
-  m_Layer: 0
-  m_Name: Bed
+  m_Layer: 6
+  m_Name: Furniture
   m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_text: <b>E</b> INTERACT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
-  m_sharedMaterial: {fileID: -6793080633931495713, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
+  m_sharedMaterial: {fileID: 1115464596409463455, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 3351757642236259090}
   - component: {fileID: 4721102501554189500}
   - component: {fileID: 127510480453435594}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -492,7 +492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7925477069097987779}
   m_Layer: 0
-  m_Name: Furnitures
+  m_Name: Furniture_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

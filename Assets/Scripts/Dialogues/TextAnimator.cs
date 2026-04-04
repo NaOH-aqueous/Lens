@@ -98,7 +98,7 @@ namespace TMPro.Examples
                 // If No Characters then just yield and wait for some text to be added
                 if (characterCount == 0)
                 {
-                    Debug.Log("has changed");
+                    
                     yield return new WaitForSeconds(0.25f);
                     continue;
                 }

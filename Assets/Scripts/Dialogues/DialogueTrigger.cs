@@ -11,10 +11,12 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private GameObject indication;
 
     private bool playerInRange = false;
+    private PlayerController player;
 
     private void Start()
     {
-        indication.SetActive(false);    
+        indication.SetActive(false);
+        player = GameObject.FindAnyObjectByType<PlayerController>();
     }
 
     private void Update()
@@ -25,7 +27,8 @@ public class DialogueTrigger : MonoBehaviour
         }
         if( !DialogueManager.Instance.CheckDialoguePlaying())
         {
-            if (InputManager.Instance.IsInteractPressed())
+            if (InputManager.Instance.IsInteractPressed() && 
+                player.CheckInteract())
             {
                 InputManager.Instance.RegisterSubmitPressed();
                 DialogueManager.Instance.NewStory(inkAsset);

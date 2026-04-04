@@ -58,6 +58,16 @@ public class DialogueManager : MonoBehaviour
         {
             ContinueStory();
         }
+
+        if (string.IsNullOrEmpty(_inkstory.currentText))
+        {
+            ContinueStory();
+        }
+
+        if (!_inkstory.canContinue)
+        {
+            indication.SetActive(false);
+        }
     }
 
     private void CurrentTags()
@@ -127,12 +137,10 @@ public class DialogueManager : MonoBehaviour
             indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
             CurrentTags();
-
             DisplayChoices();
         }
         else
         {
-            indication.SetActive(false);
             StartCoroutine(ExitDialogueMode());
         }
     }
@@ -195,7 +203,11 @@ public class DialogueManager : MonoBehaviour
 
         InputManager.Instance.RegisterSubmitPressed();
         isChoicesDiaplayed = false;
-        ContinueStory();
+        if (_inkstory.canContinue)
+        {
+            ContinueStory();
+        }
+
     }
 
     public bool CheckDialoguePlaying()
