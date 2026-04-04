@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
         RemoveItem();
         DisplayInventory();
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (InputManager.Instance.IsCancelPressed())
         {
             // Show Pause Menu UI
             m_gameManager.ChangeToPaused();
@@ -159,5 +159,20 @@ public class PlayerController : MonoBehaviour
             // request item by ID and remove it from the inventory
             InventoryManager.Instance.RemoveItem(0);
         }
+    }
+
+    public bool CheckInteract()
+    {
+        //shoot a raycast from the player to find if any furnitures in range
+        RaycastHit2D hit = Physics2D.Raycast(playerRB.position +
+            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask("Furniture"));
+        Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
+
+        if (hit.collider != null)
+        {
+            Debug.Log("Raycast has hit the object " + hit.collider.gameObject);
+            return true;
+        }
+        return false;
     }
 }

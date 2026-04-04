@@ -2,6 +2,7 @@ using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -13,6 +14,8 @@ public class DialogueManager : MonoBehaviour
     private bool isDialoguePlaying = false;
     private bool isChoicesDiaplayed = false;
     private List<string>tags = new List<string>();
+    private Animator _anim;
+    private AudioSource _audio;
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
@@ -22,6 +25,10 @@ public class DialogueManager : MonoBehaviour
     [Header("Choices UI")]
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject buttonGroup;
+
+    [Header("Sound FX")]
+    [SerializeField] private AudioClip confirmSFX;
+    [SerializeField] private AudioClip endSFX;
 
     private void Awake()
     {
@@ -39,6 +46,9 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        _anim = GameObject.Find("DialoguePanel").GetComponent<Animator>();
+        _audio = GetComponent<AudioSource>();
+
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
@@ -57,6 +67,16 @@ public class DialogueManager : MonoBehaviour
             InputManager.Instance.IsInteractPressed()))
         {
             ContinueStory();
+        }
+
+        if (string.IsNullOrEmpty(_inkstory.currentText))
+        {
+            ContinueStory();
+        }
+
+        if (!_inkstory.canContinue)
+        {
+            indication.SetActive(false);
         }
     }
 
@@ -100,19 +120,25 @@ public class DialogueManager : MonoBehaviour
     //enter dialogue
     private void EnterDialogueMode()
     {
+
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
+
+
         ContinueStory();
+        _anim.SetTrigger("dialogueStart");
 
     }
 
     //exit dialogue after 1 frame
     private IEnumerator ExitDialogueMode()
     {
-        yield return new WaitForEndOfFrame();
-
+        _anim.SetTrigger("dialogueEnd");
+        _audio.PlayOneShot(endSFX);
         isDialoguePlaying = false;
+        yield return new WaitForSecondsRealtime(0.6f);
+
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
     }
@@ -162,7 +188,7 @@ public class DialogueManager : MonoBehaviour
                     //Debug.Log("Clicked: " + currentButton);
 
                     //make the choice according to the index of button
-                    
+                    _audio.PlayOneShot(confirmSFX);
                     MakeChoices(currentButton);
                 });
 
@@ -207,4 +233,16 @@ public class DialogueManager : MonoBehaviour
     {
         return isChoicesDiaplayed;
     }
+
+    public int ReturnVarValue(string var_Name)
+    {
+        return (int)_inkstory.variablesState[var_Name];
+    }
+}
+
+[System.Serializable]
+public class DialogueVariable
+{
+    public string var_name;
+    public int var_value;
 }

@@ -7,6 +7,7 @@ public class DialogueTrigger : MonoBehaviour
 {
     //set it to compiled json file
     public TextAsset inkAsset;
+    private PlayerController player;
 
     [SerializeField] private GameObject indication;
 
@@ -16,9 +17,15 @@ public class DialogueTrigger : MonoBehaviour
     public AudioClip triggerSound;
     private AudioSource audioSource;
 
+
     private void Start()
     {
-        indication.SetActive(false);    
+        indication.SetActive(false);
+        player = GameObject.FindAnyObjectByType<PlayerController>();
+        if(player == null)
+        {
+            Debug.Log("no setted player in the scene");
+        }
 
         audioSource = GetComponent<AudioSource>();
         // If there is no AudioSource component, add one
@@ -26,7 +33,6 @@ public class DialogueTrigger : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
-        audioSource.playOnAwake = false;
     }
 
     private void Update()
@@ -37,7 +43,8 @@ public class DialogueTrigger : MonoBehaviour
         }
         if( !DialogueManager.Instance.CheckDialoguePlaying())
         {
-            if (InputManager.Instance.IsInteractPressed())
+            if (InputManager.Instance.IsInteractPressed() &&
+                player.CheckInteract())
             {
                 InputManager.Instance.RegisterSubmitPressed();
 
