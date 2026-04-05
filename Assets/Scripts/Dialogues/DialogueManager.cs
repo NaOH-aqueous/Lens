@@ -1,4 +1,6 @@
+using Ink.Parsed;
 using Ink.Runtime;
+using Ink.UnityIntegration;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,10 +11,19 @@ using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
-    Story _inkstory;
-    private bool isDialoguePlaying = false;
+
+    Ink.Runtime.Story _inkstory;
+    private bool isDialoguePlaying = false; //check if there's any dialogue played
     private bool isChoicesDiaplayed = false;
-    private List<string>tags = new List<string>();
+
+    private List<string> tags = new List<string>();
+    private Animator _anim;
+    private AudioSource _audio;
+    private DialogueVariables dialogueVariables;
+
+    // variable for the load_globals.ink JSON
+    [Header("Load Globals JSON")]
+    [SerializeField] private TextAsset loadGlobalsJSON;
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
@@ -22,6 +33,10 @@ public class DialogueManager : MonoBehaviour
     [Header("Choices UI")]
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject buttonGroup;
+
+    [Header("Sound FX")]
+    [SerializeField] private AudioClip confirmSFX;
+    [SerializeField] private AudioClip endSFX;
 
     private void Awake()
     {
@@ -35,13 +50,18 @@ public class DialogueManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         EventSystem.current.SetSelectedGameObject(null);
+        dialogueVariables = new DialogueVariables(loadGlobalsJSON);
     }
 
     private void Start()
     {
+        _anim = GameObject.Find("DialoguePanel").GetComponent<Animator>();
+        _audio = GetComponent<AudioSource>();
+
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
+
     }
 
     private void Update() //singleton class, only have one in the scene
@@ -51,9 +71,9 @@ public class DialogueManager : MonoBehaviour
         {
             return;
         }
-        
-        if (_inkstory.currentChoices.Count == 0 && 
-           ( InputManager.Instance.IsSubmitPressed() ||
+
+        if (_inkstory.currentChoices.Count == 0 &&
+           (InputManager.Instance.IsSubmitPressed() ||
             InputManager.Instance.IsInteractPressed()))
         {
             ContinueStory();
@@ -86,7 +106,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
         return "";
-    } 
+    }
 
     public string GetExpressionTag()
     {
@@ -103,7 +123,8 @@ public class DialogueManager : MonoBehaviour
     //set the inkasset as current story to the manager
     public void NewStory(TextAsset story)
     {
-        _inkstory = new Story(story.text);
+        _inkstory = new Ink.Runtime.Story(story.text);
+        dialogueVariables.StartListening(_inkstory);
         EnterDialogueMode();
     }
 
@@ -113,16 +134,20 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
-        ContinueStory();
 
+        ContinueStory();
+        _anim.SetTrigger("dialogueStart");
     }
 
     //exit dialogue after 1 frame
     private IEnumerator ExitDialogueMode()
     {
-        yield return new WaitForEndOfFrame();
-
+        _anim.SetTrigger("dialogueEnd");
+        _audio.PlayOneShot(endSFX);
         isDialoguePlaying = false;
+        yield return new WaitForSecondsRealtime(0.6f);
+
+        dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
     }
@@ -137,10 +162,12 @@ public class DialogueManager : MonoBehaviour
             indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
             CurrentTags();
+
             DisplayChoices();
         }
         else
         {
+            indication.SetActive(false);
             StartCoroutine(ExitDialogueMode());
         }
     }
@@ -155,7 +182,7 @@ public class DialogueManager : MonoBehaviour
             for (int i = 0; i < _inkstory.currentChoices.Count; ++i)
             {
                 //display all current choices
-                Choice choice = _inkstory.currentChoices[i];
+                Ink.Runtime.Choice choice = _inkstory.currentChoices[i];
                 //Debug.Log("Choice " + (i + 1) + ". " + choice.text);
 
                 //buttons are initiated according to the num of choices available
@@ -170,7 +197,7 @@ public class DialogueManager : MonoBehaviour
                     //Debug.Log("Clicked: " + currentButton);
 
                     //make the choice according to the index of button
-                    
+                    _audio.PlayOneShot(confirmSFX);
                     MakeChoices(currentButton);
                 });
 
@@ -197,17 +224,14 @@ public class DialogueManager : MonoBehaviour
         _inkstory.ChooseChoiceIndex(currentIndex);
 
         GameObject[] choicesButtons = GameObject.FindGameObjectsWithTag("ChoiceButton");
-        foreach(GameObject choice in choicesButtons) { 
+        foreach (GameObject choice in choicesButtons)
+        {
             Destroy(choice);
         }
 
         InputManager.Instance.RegisterSubmitPressed();
         isChoicesDiaplayed = false;
-        if (_inkstory.canContinue)
-        {
-            ContinueStory();
-        }
-
+        ContinueStory();
     }
 
     public bool CheckDialoguePlaying()
@@ -219,4 +243,5 @@ public class DialogueManager : MonoBehaviour
     {
         return isChoicesDiaplayed;
     }
+
 }

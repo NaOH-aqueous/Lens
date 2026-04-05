@@ -1,8 +1,4 @@
-// Box Dialogue
-
-
-//declare a VAR to save look times
-VAR look_times = 0
+INCLUDE Globals.ink
 
 This is a box. 
 Do you want to look inside?
@@ -11,7 +7,7 @@ Do you want to look inside?
 === take_a_look ===
 
  * [Yes]
- ~ look_times ++
+ ~ check_box_times ++
  -> check_box
  
  * [No]
@@ -22,7 +18,11 @@ Do you want to look inside?
 // switch blocks
 
 {
- - look_times < 7 :
+- check_box_times == 4 : 
+    You have checked 5 times. This task has already got a bit tedious.
+    -> look_again
+    
+ - check_box_times < 7 :
     There is a box inside a box. 
     ->look_again
         
@@ -32,7 +32,7 @@ Do you want to look inside?
 ===look_again===
     Look again?
         + [Yes]
-        ~ look_times ++
+        ~ check_box_times ++
         -> check_box
         * [No]
         -> leave

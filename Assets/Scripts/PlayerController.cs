@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     //Inventory
     // Simple inventory array with 10 slots
     public List<Item> inventory;
+    private Item current_item;
 
     //GameManager
     private GameManager m_gameManager;
@@ -163,9 +164,9 @@ public class PlayerController : MonoBehaviour
     public bool CheckInteract()
     {
         //shoot a raycast from the player to find if any furnitures in range
-        RaycastHit2D hit = Physics2D.Raycast(playerRB.position + 
-            Vector2.down * 0.4f, moveDirection, 3f, LayerMask.GetMask("Furniture"));
-        Debug.DrawRay(playerRB.position + Vector2.up * 0.2f, moveDirection, Color.green);
+        RaycastHit2D hit = Physics2D.Raycast(playerRB.position +
+            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask("Furniture"));
+        Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
 
         if (hit.collider != null)
         {
@@ -174,5 +175,4 @@ public class PlayerController : MonoBehaviour
         }
         return false;
     }
-
 }
