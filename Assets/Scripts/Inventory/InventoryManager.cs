@@ -19,6 +19,10 @@ public class InventoryManager : MonoBehaviour
 
     private PlayerController player;
 
+    // Reference to the inventory UI GameObject
+    public GameObject inventoryMenu;
+    private bool isInventoryOpen;
+
     //make it a singleton class
     private void Awake()
     {
@@ -37,6 +41,22 @@ public class InventoryManager : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindAnyObjectByType<PlayerController>();
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyUp(KeyCode.M) && isInventoryOpen)
+        {
+            Time.timeScale = 1f; // Resume the game
+            inventoryMenu.SetActive(false);
+            isInventoryOpen = false;
+        } 
+        else if (Input.GetKeyUp(KeyCode.M) && !isInventoryOpen)
+        {
+            Time.timeScale = 0f; // Pause the game
+            inventoryMenu.SetActive(true);
+            isInventoryOpen = true;
+        }
     }
 
     //add this item to the player's inventory

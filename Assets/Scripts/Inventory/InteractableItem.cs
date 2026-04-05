@@ -7,6 +7,8 @@ public class InteractableItem : MonoBehaviour
     [SerializeField] private string itemName;
     [SerializeField] private Texture2D icon;
 
+    private InventoryManager inventoryManager;
+
     Item newItem = new Item();
     private bool playerInRange = false;
 
@@ -16,7 +18,10 @@ public class InteractableItem : MonoBehaviour
         newItem.itemID = itemID;
         newItem.itemName = itemName;
         InventoryManager.Instance.AddItemToDatabase(newItem);
-        
+
+        //get reference to the inventory manager
+        inventoryManager = GameObject.Find("UI Canvas").GetComponent<InventoryManager>();
+
     }
 
     private void Update()
@@ -49,6 +54,13 @@ public class InteractableItem : MonoBehaviour
             }
 
         }
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            InventoryManager.Instance.SetCurrentItem(newItem);
+            Destroy(this.gameObject);
+        }
+
     }
     private void OnTriggerExit2D(Collider2D other)
     {
