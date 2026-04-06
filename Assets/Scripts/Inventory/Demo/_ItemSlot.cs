@@ -9,6 +9,7 @@ public class _ItemSlot : MonoBehaviour, IPointerClickHandler
     public string _itemName;
     public Sprite _itemSprite;
     public bool _isFull;
+    public Sprite _emptySprite;
 
     //======ITEM SLOT======//
     [SerializeField]
@@ -32,6 +33,7 @@ public class _ItemSlot : MonoBehaviour, IPointerClickHandler
         _isFull = true;
 
         _itemImage.sprite = _itemSprite;
+        _itemImage.enabled = true;
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -42,7 +44,7 @@ public class _ItemSlot : MonoBehaviour, IPointerClickHandler
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
-            OnRightClick();
+            OnRightClick(eventData);
         }
     }
 
@@ -53,10 +55,28 @@ public class _ItemSlot : MonoBehaviour, IPointerClickHandler
         _isSelected = true;
     }
 
-    public void OnRightClick()
+    public void OnRightClick(PointerEventData eventData)
     {
+        if (!_isFull) return;
 
+        if (eventData.clickCount >= 2)
+        {
+            _inventoryManager.UseItem(this);
+        }
     }
 
+    public void ClearSlot()
+    {
+        _itemName = null;
+        _itemSprite = null;
+        _isFull = false;
+        _itemImage.sprite = _emptySprite;
 
+        if (_selectedShader != null) 
+        {
+            _selectedShader.SetActive(false);
+        }
+
+        _isSelected = false;
+    }
 }

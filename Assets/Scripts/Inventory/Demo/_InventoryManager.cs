@@ -59,4 +59,17 @@ public class _InventoryManager : MonoBehaviour
         }
     }
 
+    public void UseItem(_ItemSlot slot)
+    {
+
+        if (slot == null || !slot._isFull)
+        {
+            return;
+        }
+        Debug.Log("Used item: " + slot._itemName);
+
+        slot.ClearSlot();
+
+    }
+
 }
