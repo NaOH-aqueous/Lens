@@ -1,5 +1,5 @@
 INCLUDE Globals.ink
-This is a mirror.
+This is your mirror. #audio:mirror_sound
 
 
 * [Look at the mirror]

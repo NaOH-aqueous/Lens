@@ -21,13 +21,13 @@ Where do you want to inspect?
  -> END
  
  = on_the_bed
- You inspect the bed. The bedsheet has been soaked with sunshine and dust. It's the smell of home.
+ You inspect the bed. The bedsheet has been soaked with sunshine and dust. It's the smell of home. #audio:search_bed
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
 
   
  = under_the_bed
- You inspect under the bed. Nothing is there, expect darkness.
+ You inspect under the bed. Nothing is there, expect darkness. #audio:search_bed
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
   

@@ -10,8 +10,10 @@ public class PlayerController : MonoBehaviour
 
     //private variables
     private Rigidbody2D playerRB;
+    private PlayerInput playerInput;
     private InputAction moveAction;
     private DialogueManager m_dialogueManager;
+    private bool isInDialogue = false;
 
     //Animator Componenets
     private Animator animator;
@@ -32,6 +34,7 @@ public class PlayerController : MonoBehaviour
     {
         playerRB = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerInput = GetComponent<PlayerInput>();
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
@@ -49,57 +52,71 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if (CheckIfPlayerCanMove())
-        {
-            // Update the step timer
-            stepTimer += Time.deltaTime;
+        bool dialogueNow = m_dialogueManager.CheckDialoguePlaying();
 
-            // Check if the player is moving and if it's time to play the footstep sound
-            if (moveAction.ReadValue<Vector2>().magnitude > 0.1f
-                && stepTimer >= footstepInterval)
+        if (dialogueNow != isInDialogue)
+        {
+            isInDialogue = dialogueNow;
+
+            if (isInDialogue)
             {
-                PlayFootstepAudio();
-                // Reset the timer after playing the sound
-                stepTimer = 0f;
+                playerInput.SwitchCurrentActionMap("UI");
+                StopMovementAnimation();
+            }
+            else
+            {
+                playerInput.SwitchCurrentActionMap("Player");
+                PlayFootStep();
             }
         }
-        /* Temporary key to display inventory contents in the console
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            DisplayInventory(new InputAction.CallbackContext());
-        }*/
-
-        RemoveItem();
-        DisplayInventory();
 
         if (InputManager.Instance.IsCancelPressed())
         {
+            Debug.Log("pause");
             // Show Pause Menu UI
             m_gameManager.ChangeToPaused();
         }
+
+        RemoveItem();
+        DisplayInventory();
     }
 
     private void FixedUpdate()
     {
-        if (CheckIfPlayerCanMove())
+        if (!isInDialogue)
         {
             MovePlayer();
         }
     }
 
-    //return TRUE when the dialogue isn't playing or there's no dialogue in the scene
-    private bool CheckIfPlayerCanMove()
+    private void PlayFootStep()
     {
-        if (m_dialogueManager != null) 
+        // Update the step timer
+        stepTimer += Time.deltaTime;
+
+        // Check if the player is moving and if it's time to play the footstep sound
+        if (moveAction.ReadValue<Vector2>().magnitude > 0.1f
+            && stepTimer >= footstepInterval)
         {
-            if (m_dialogueManager.CheckDialoguePlaying())
-            {
-                StopMovementAnimation();
-                return false;
-            }
+            PlayFootstepAudio();
+            // Reset the timer after playing the sound
+            stepTimer = 0f;
         }
-        return true;
     }
+
+    //return TRUE when the dialogue isn't playing or there's no dialogue in the scene
+    //private bool CheckIfPlayerCanMove()
+    //{
+    //    if (m_dialogueManager != null) 
+    //    {
+    //        if (m_dialogueManager.CheckDialoguePlaying())
+    //        {
+    //            StopMovementAnimation();
+    //            return false;
+    //        }
+    //    }
+    //    return true;
+    //}
 
     // Stop the movement animation by setting the animator parameters to zero
     private void StopMovementAnimation()
@@ -161,12 +178,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool CheckInteract()
+    public bool CheckInteract(string layerName)
     {
         //shoot a raycast from the player to find if any furnitures in range
         RaycastHit2D hit = Physics2D.Raycast(playerRB.position +
-            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask("Furniture"));
-        Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
+            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask(layerName));
+
+        //Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
 
         if (hit.collider != null)
         {

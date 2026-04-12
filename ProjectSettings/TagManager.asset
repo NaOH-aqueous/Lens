@@ -12,12 +12,12 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - NPC
   - Water
   - UI
   - Furniture
   - Player
-  - 
+  - Item
   - 
   - 
   - 
@@ -50,6 +50,9 @@ TagManager:
     locked: 0
   - name: Furnitures&Characters
     uniqueID: 2121218835
+    locked: 0
+  - name: VFX
+    uniqueID: 3043769355
     locked: 0
   - name: Indications
     uniqueID: 732560375

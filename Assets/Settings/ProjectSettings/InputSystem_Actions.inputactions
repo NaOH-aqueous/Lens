@@ -358,7 +358,7 @@
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -391,7 +391,7 @@
                     "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Use",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -771,17 +771,6 @@
                 },
                 {
                     "name": "",
-                    "id": "b9a744b4-53d4-4c7c-889a-f5b5e1fdf0a9",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Submit",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "4f59866c-0816-48df-8bf7-10362a1fdd1f",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -793,12 +782,23 @@
                 },
                 {
                     "name": "",
-                    "id": "82627dcc-3b13-4ba9-841d-e4b746d6553e",
-                    "path": "<Keyboard>/escape",
+                    "id": "888d7ec5-62eb-4cc3-90c9-ca92d051e82e",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard&Mouse;Gamepad;Touch;Joystick;XR",
-                    "action": "Cancel",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b9a744b4-53d4-4c7c-889a-f5b5e1fdf0a9",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -931,6 +931,17 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b46aa10-a13c-4420-ae4d-a27da745dc56",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad;Keyboard&Mouse;Touch;Joystick;XR",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

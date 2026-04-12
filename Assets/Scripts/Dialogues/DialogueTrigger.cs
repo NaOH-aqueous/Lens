@@ -14,9 +14,9 @@ public class DialogueTrigger : MonoBehaviour
     private bool playerInRange = false;
 
     [Header("Audios")]
-    public AudioClip triggerSound;
+    [SerializeField] private List<TriggerSounds> triggerSounds = new List<TriggerSounds>();
     private AudioSource audioSource;
-
+    
 
     private void Start()
     {
@@ -43,22 +43,42 @@ public class DialogueTrigger : MonoBehaviour
         }
         if (!DialogueManager.Instance.CheckDialoguePlaying())
         {
-            if (InputManager.Instance.IsInteractPressed() &&
-                player.CheckInteract())
+            StartDialogue();
+        }
+        else
+        {
+            PlayTriggerSound();
+        }
+    }
+
+    private void StartDialogue()
+    {
+        int layerIndex = gameObject.layer;
+        string layerName = LayerMask.LayerToName(gameObject.layer);
+        if (InputManager.Instance.IsInteractPressed() &&
+            player.CheckInteract(layerName))
+        {
+            InputManager.Instance.RegisterSubmitPressed();
+            DialogueManager.Instance.NewStory(inkAsset);
+            Debug.Log("Current story has been set to " + inkAsset.name);
+        }
+    }
+
+    private void PlayTriggerSound()
+    {
+        // Play the trigger sound
+        foreach(TriggerSounds triggerSound in triggerSounds)
+        {
+            if (triggerSound != null && 
+                !string.IsNullOrEmpty(triggerSound.triggerSoundName))
             {
-                InputManager.Instance.RegisterSubmitPressed();
-
-                // Play the trigger sound
-                if (triggerSound != null && audioSource != null)
-                {
-                    audioSource.PlayOneShot(triggerSound);
-                }
-
-                DialogueManager.Instance.NewStory(inkAsset);
-                Debug.Log("Current story has been set to " + inkAsset.name);
+                DialogueManager.Instance.PlaySound(triggerSound.triggerSound, triggerSound.triggerSoundName);
+            }
+            else
+            {
+                Debug.Log("Triggersound hasn't been defined");
             }
         }
-        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -82,5 +102,5 @@ public class DialogueTrigger : MonoBehaviour
 
     }
 
-
+ 
 }
