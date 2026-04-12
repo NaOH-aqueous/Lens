@@ -24,10 +24,10 @@ public class PlayerController : MonoBehaviour
     //Inventory
     // Simple inventory array with 10 slots
     public List<Item> inventory;
-
-
     private Item current_item;
 
+    //GameManager
+    private GameManager m_gameManager;
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
+        m_gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
 
         //Footsteps Audio
         footstepAudio = GetComponent<AudioSource>();
@@ -69,6 +71,12 @@ public class PlayerController : MonoBehaviour
 
         RemoveItem();
         DisplayInventory();
+
+        if (InputManager.Instance.IsCancelPressed())
+        {
+            // Show Pause Menu UI
+            m_gameManager.ChangeToPaused();
+        }
     }
 
     private void FixedUpdate()
@@ -86,17 +94,27 @@ public class PlayerController : MonoBehaviour
         {
             if (m_dialogueManager.CheckDialoguePlaying())
             {
+                StopMovementAnimation();
                 return false;
             }
         }
         return true;
     }
 
+    // Stop the movement animation by setting the animator parameters to zero
+    private void StopMovementAnimation()
+    {
+        if (animator != null)
+        {
+            animator.SetFloat("Speed", 0);
+        }
+    }
+
     private void DisplayInventory()
     {
-        if (DialogueInput.Instance.isInventoryPressed())
+        if (InputManager.Instance.isInventoryPressed())
         {
-            Inventory.Instance.GetInventoryContent();
+            InventoryManager.Instance.GetInventoryContent();
         }
     }
 
@@ -134,36 +152,27 @@ public class PlayerController : MonoBehaviour
             footstepAudio.PlayOneShot(footstepAudio.clip);
         }
     }
-
-    private void PickUpItem()
-    {
-        //Inventory
-        if (DialogueInput.Instance.IsInteractPressed())
-        {
-            Item currentItem = Inventory.Instance.GetCurrentItem();
-            //pick it up if it exists
-            if (currentItem != null)
-            {
-                Inventory.Instance.AddItem(currentItem, currentItem.itemID);
-            }
-            //_itemDatabase.AddItem(0, this);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Item"))
-        {
-            PickUpItem();
-        }
-    }
-
     private void RemoveItem()
     {
-        if (DialogueInput.Instance.IsCancelPressed())
+        if (InputManager.Instance.isUsePressed())
         {
             // request item by ID and remove it from the inventory
-            Inventory.Instance.RemoveItem(0);
+            InventoryManager.Instance.RemoveItem(0);
         }
+    }
+
+    public bool CheckInteract()
+    {
+        //shoot a raycast from the player to find if any furnitures in range
+        RaycastHit2D hit = Physics2D.Raycast(playerRB.position +
+            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask("Furniture"));
+        Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
+
+        if (hit.collider != null)
+        {
+            Debug.Log("Raycast has hit the object " + hit.collider.gameObject);
+            return true;
+        }
+        return false;
     }
 }
