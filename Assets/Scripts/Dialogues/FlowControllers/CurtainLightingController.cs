@@ -1,9 +1,7 @@
-using Ink.Parsed;
-using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class HomeFlowController : MonoBehaviour
+public class CurtainLightingController : MonoBehaviour
 {
     [Header("Sprites")]
     [SerializeField] private Sprite window_Closed;
@@ -12,22 +10,32 @@ public class HomeFlowController : MonoBehaviour
     [SerializeField] private Sprite bed_brighten;
 
     [Header("Material")]
-    public Material window_Default;
-    public Material window_Emission;
+    [SerializeField] private Material window_Default;
+    [SerializeField] private Material window_Emission;
     [SerializeField] private Material mirror_Default;
     [SerializeField] private Material mirror_Brighten;
 
     [Header("Sprite Renderer")]
-    public SpriteRenderer windowRenderer;
+    [SerializeField] private SpriteRenderer windowRenderer;
     [SerializeField] private SpriteRenderer bedRenderer;
     [SerializeField] private SpriteRenderer mirrorRenderer;
 
     [Header("2D Light")]
-    public Light2D curtain_light;
-    public GameObject floor_Light;
-    public ParticleSystem dust;
+    [SerializeField] private Light2D curtain_light;
+    [SerializeField] private GameObject floor_Light;
+    [SerializeField] private ParticleSystem dust;
 
     private void Start()
+    {
+        Init();
+    }
+
+    private void Update()
+    {
+        CurtainOpened();
+    }
+
+    private void Init() //initiate the sprites, lighting and materials
     {
         windowRenderer.sprite = window_Closed;
         windowRenderer.material = window_Default;
@@ -40,11 +48,11 @@ public class HomeFlowController : MonoBehaviour
         floor_Light.SetActive(false);
     }
 
-    private void Update()
+    //change the sprites, materials & lighting after opening the curtain
+    private void CurtainOpened()
     {
         bool curtain_open = ((Ink.Runtime.BoolValue)DialogueManager.Instance.
             GetVariableState("curtain_open")).value;
-        Debug.Log("Curtain" + curtain_open);
 
         if (curtain_open)
         {
@@ -56,7 +64,7 @@ public class HomeFlowController : MonoBehaviour
 
             //enable the lighting
             curtain_light.enabled = true;
-            floor_Light.SetActive (true);
+            floor_Light.SetActive(true);
         }
     }
 }

@@ -1,9 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using Ink.Runtime;
-using UnityEditor.SearchService;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class DialogueTrigger : MonoBehaviour
 {
@@ -15,9 +11,7 @@ public class DialogueTrigger : MonoBehaviour
 
     [Header("Audios")]
     [SerializeField] private List<TriggerSounds> triggerSounds = new List<TriggerSounds>();
-    private AudioSource audioSource;
     
-
     private void Start()
     {
         indication.SetActive(false);
@@ -26,19 +20,13 @@ public class DialogueTrigger : MonoBehaviour
         {
             Debug.Log("no player found in the scene");
         }
-
-        audioSource = GetComponent<AudioSource>();
-        // If there is no AudioSource component, add one
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
     }
 
     private void Update()
     {
         if (!playerInRange)
         {
+            //return directly if player is not around
             return;
         }
         if (!DialogueManager.Instance.CheckDialoguePlaying())
@@ -47,10 +35,12 @@ public class DialogueTrigger : MonoBehaviour
         }
         else
         {
+            //play trigger sound if dialogue is not playing
             PlayTriggerSound();
         }
     }
 
+    //start the dialogue attached to this trigger upon user input
     private void StartDialogue()
     {
         int layerIndex = gameObject.layer;
@@ -64,9 +54,9 @@ public class DialogueTrigger : MonoBehaviour
         }
     }
 
+    // Play the trigger sound
     private void PlayTriggerSound()
     {
-        // Play the trigger sound
         foreach(TriggerSounds triggerSound in triggerSounds)
         {
             if (triggerSound != null && 
@@ -83,6 +73,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        //set the indication and bool true if player is nearby
         if (other.CompareTag("Player"))
         {
             //Debug.Log("player is nearby");
@@ -94,6 +85,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        //set the indication and bool false if player is nearby
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
@@ -101,6 +93,4 @@ public class DialogueTrigger : MonoBehaviour
         }
 
     }
-
- 
 }

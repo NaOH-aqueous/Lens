@@ -1,9 +1,8 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MirrorReflection : MonoBehaviour
 {
-    public float fadingDistance = 2f;
+    [SerializeField] private float fadingDistance = 2f;
     private Vector3 initialPos;
 
     private Animator playerAnimator;
@@ -33,27 +32,36 @@ public class MirrorReflection : MonoBehaviour
         }
         else
         {
-            GetComponent<SpriteRenderer>().enabled = true;
-            // Mirror across the mirror (invert Y for top-down mirror)
-            transform.position = new Vector2(playerAnimator.transform.position.x,
-                initialPos.y); 
-
-            float moveX = playerAnimator.GetFloat("MoveX");
-            float moveY = playerAnimator.GetFloat("MoveY");
-
-            // Mirror the direction
-            mirrorAnimator.SetFloat("MoveX", moveX);
-            mirrorAnimator.SetFloat("MoveY", -moveY);
-
-            // Invert so closer = more visible
-            float t = Mathf.Clamp01(distance / fadingDistance);
-            float alpha = Mathf.Lerp(1f, 0, t);
-
-            // Apply alpha
-            Color c = GetComponent<SpriteRenderer>().color;
-            c.a = alpha;
-            GetComponent<SpriteRenderer>().color = c;
+            ReflectPlayerAnimator();
+            SpriteTransparency(distance);
         }
+    }
 
+    private void ReflectPlayerAnimator()
+    {
+        GetComponent<SpriteRenderer>().enabled = true;
+
+        // Move the x pos of mirror as player moves
+        transform.position = new Vector2(playerAnimator.transform.position.x,
+            initialPos.y);
+
+        // get the coordinators from player animator
+        float moveX = playerAnimator.GetFloat("MoveX");
+        float moveY = playerAnimator.GetFloat("MoveY");
+
+        // Mirror the Y direction
+        mirrorAnimator.SetFloat("MoveX", moveX);
+        mirrorAnimator.SetFloat("MoveY", -moveY);
+    }
+
+    private void SpriteTransparency(float distance)
+    {
+        // Lower transparency as player move away
+        float t = Mathf.Clamp01(distance / fadingDistance);
+        float alpha = Mathf.Lerp(1f, 0, t);
+        // Apply alpha to the sprite
+        Color c = GetComponent<SpriteRenderer>().color;
+        c.a = alpha;
+        GetComponent<SpriteRenderer>().color = c;
     }
 }
