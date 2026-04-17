@@ -13,7 +13,7 @@ public class _Item : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        inventoryManager = GameObject.Find("UI Canvas").GetComponent<_InventoryManager>();
+        inventoryManager = GameObject.Find("InventoryManager").GetComponent<_InventoryManager>();
     }
 
     // Update is called once per frame

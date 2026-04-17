@@ -57,5 +57,8 @@ TagManager:
   - name: Indications
     uniqueID: 732560375
     locked: 0
+  - name: Items
+    uniqueID: 379671537
+    locked: 0
   m_RenderingLayers:
   - Default
