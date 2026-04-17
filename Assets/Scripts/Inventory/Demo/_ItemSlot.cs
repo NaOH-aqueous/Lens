@@ -5,16 +5,16 @@ using UnityEngine.UI;
 
 public class _ItemSlot : MonoBehaviour, IPointerClickHandler
 {
-    // 物品数据（只对外提供 getter）或者
+    //item data(can only be *get* by other scripts)
     //public string ItemName { get { return _itemName; } }
     //public bool IsFull { get { return _isFull; } }
     public string ItemName => _itemName;
     public bool IsFull => _isFull;
 
     // This class represents a single slot in the inventory. It can hold an item and display its name and sprite.
-    [SerializeField] private Image _itemImage;  // 物品图标
-    [SerializeField] private GameObject _selectedShader; // 选中高亮效果
-    [SerializeField] private Sprite _emptySprite;  // 空槽位占位图
+    [SerializeField] private Image _itemImage;  // item icon
+    [SerializeField] private GameObject _selectedShader; // highlight effect
+    [SerializeField] private Sprite _emptySprite;  // null sprites for grid without items
 
     // The item name and sprite are stored as private fields, and the slot can be marked as full or empty.
     [SerializeField] private string _itemName;

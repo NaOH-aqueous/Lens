@@ -26,7 +26,7 @@ public class _InventoryManager : MonoBehaviour
     void Update()
     {
         
-        if (Input.GetKeyDown(KeyCode.M))
+        if (InputManager.Instance.isInventoryPressed())
         {
             ToggleInventory();
         }
@@ -41,13 +41,11 @@ public class _InventoryManager : MonoBehaviour
         if (isInventoryOpen)
         {
             Time.timeScale = 0f; // Pause the game
-            InputSystem.EnableDevice(Mouse.current);
             isInventoryOpen = true;
         }
         else
         {
             Time.timeScale = 1f; // Resume the game
-            InputSystem.DisableDevice(Mouse.current);
             isInventoryOpen = false;
         }
     }
