@@ -3,14 +3,10 @@ using UnityEngine;
 public class _Item : MonoBehaviour
 {
     
-    [SerializeField]
-    private string item_Name;
-
-    [SerializeField]
-    private Sprite item_Sprite;
+    [SerializeField] private string item_Name;
+    [SerializeField] private Sprite item_Sprite;
 
     private _InventoryManager inventoryManager;
-
     // This bool is used to check if the player is in range of the item, so that they can pick it up.
     private bool playerInRange;
 
@@ -29,17 +25,17 @@ public class _Item : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player")
         {
             playerInRange = true;
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        if (collision.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player")
         {
             playerInRange = false;
         }

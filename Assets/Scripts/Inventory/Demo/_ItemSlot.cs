@@ -5,21 +5,23 @@ using UnityEngine.UI;
 
 public class _ItemSlot : MonoBehaviour, IPointerClickHandler
 {
-    //======ITEM DATA======//
-    public string _itemName;
-    public Sprite _itemSprite;
-    public bool _isFull;
-    public Sprite _emptySprite;
+    // 物品数据（只对外提供 getter）或者
+    //public string ItemName { get { return _itemName; } }
+    //public bool IsFull { get { return _isFull; } }
+    public string ItemName => _itemName;
+    public bool IsFull => _isFull;
 
-    //======ITEM SLOT======//
-    [SerializeField]
-    private Image _itemImage;
+    // This class represents a single slot in the inventory. It can hold an item and display its name and sprite.
+    [SerializeField] private Image _itemImage;  // 物品图标
+    [SerializeField] private GameObject _selectedShader; // 选中高亮效果
+    [SerializeField] private Sprite _emptySprite;  // 空槽位占位图
 
-    public GameObject _selectedShader;
-    public bool _isSelected;
-
+    // The item name and sprite are stored as private fields, and the slot can be marked as full or empty.
+    [SerializeField] private string _itemName;
+    [SerializeField] private Sprite _itemSprite;
+    [SerializeField] private bool _isSelected;
+    private bool _isFull;
     private _InventoryManager _inventoryManager;
-
 
     private void Start()
     {
@@ -34,34 +36,24 @@ public class _ItemSlot : MonoBehaviour, IPointerClickHandler
 
         _itemImage.sprite = _itemSprite;
         _itemImage.enabled = true;
+
+        Debug.Log("Slot adding: " + itemName + "\nSprite: " + itemSprite);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            OnLeftClick();
+            _inventoryManager.DeselectAllSlots();
+            _selectedShader.SetActive(true);
+            _isSelected = true;
         }
-        else if (eventData.button == PointerEventData.InputButton.Right)
+        else if (eventData.button == PointerEventData.InputButton.Right && _isFull)
         {
-            OnRightClick(eventData);
-        }
-    }
-
-    public void OnLeftClick()
-    {
-        _inventoryManager.DeselectAllSlots();
-        _selectedShader.SetActive(true);
-        _isSelected = true;
-    }
-
-    public void OnRightClick(PointerEventData eventData)
-    {
-        if (!_isFull) return;
-
-        if (eventData.clickCount >= 2)
-        {
-            _inventoryManager.UseItem(this);
+            if (eventData.clickCount >= 2)
+            {
+                _inventoryManager.UseItem(this);
+            }
         }
     }
 
@@ -78,5 +70,14 @@ public class _ItemSlot : MonoBehaviour, IPointerClickHandler
         }
 
         _isSelected = false;
+    }
+
+    public void SetSelected(bool selected)
+    {
+        _isSelected = selected;
+        if (_selectedShader != null)
+        {
+            _selectedShader.SetActive(selected);
+        }
     }
 }

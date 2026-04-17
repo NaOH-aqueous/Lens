@@ -21,11 +21,6 @@ public class PlayerController : MonoBehaviour
     private AudioSource footstepAudio;
     private float stepTimer;
 
-    //Inventory
-    // Simple inventory array with 10 slots
-    public List<Item> inventory;
-    private Item current_item;
-
     //GameManager
     private GameManager m_gameManager;
     private void Start()
@@ -63,14 +58,6 @@ public class PlayerController : MonoBehaviour
                 stepTimer = 0f;
             }
         }
-        /* Temporary key to display inventory contents in the console
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            DisplayInventory(new InputAction.CallbackContext());
-        }*/
-
-        RemoveItem();
-        DisplayInventory();
 
         if (InputManager.Instance.IsCancelPressed())
         {
@@ -110,14 +97,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void DisplayInventory()
-    {
-        if (InputManager.Instance.isInventoryPressed())
-        {
-            InventoryManager.Instance.GetInventoryContent();
-        }
-    }
-
     private void MovePlayer()
     {
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
@@ -150,14 +129,6 @@ public class PlayerController : MonoBehaviour
         if (footstepAudio.clip != null)
         {
             footstepAudio.PlayOneShot(footstepAudio.clip);
-        }
-    }
-    private void RemoveItem()
-    {
-        if (InputManager.Instance.isUsePressed())
-        {
-            // request item by ID and remove it from the inventory
-            InventoryManager.Instance.RemoveItem(0);
         }
     }
 

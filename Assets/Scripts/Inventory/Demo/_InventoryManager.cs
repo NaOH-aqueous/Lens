@@ -4,72 +4,97 @@ using UnityEngine.InputSystem;
 public class _InventoryManager : MonoBehaviour
 {
 
-    public GameObject InventoryMenu;
-    private bool isInventoryOpen;
-    public _ItemSlot[] itemSlot;
+    [SerializeField] private GameObject InventoryMenu;
+    [SerializeField] private _ItemSlot[] itemSlot;
 
+    private bool isInventoryOpen;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        Debug.Log("ItemSlot array length: " + itemSlot.Length);
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            if (itemSlot[i] == null)
+            {
+                Debug.LogError("ItemSlot at index " + i + " is not assigned in the inspector.");
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         
-        if (Input.GetKeyDown(KeyCode.M) && isInventoryOpen)
+        if (Input.GetKeyDown(KeyCode.M))
         {
-            Time.timeScale = 1f; // Resume the game
-            InventoryMenu.SetActive(false);
-            isInventoryOpen = false;
-
-            InputSystem.EnableDevice(Mouse.current);
+            ToggleInventory();
         }
-        else if (Input.GetKeyDown(KeyCode.M) && !isInventoryOpen)
+
+    }
+
+    private void ToggleInventory()
+    {
+        isInventoryOpen = !isInventoryOpen;
+        InventoryMenu.SetActive(isInventoryOpen);
+        
+        if (isInventoryOpen)
         {
             Time.timeScale = 0f; // Pause the game
-            InventoryMenu.SetActive(true);
-            isInventoryOpen = true;
-
             InputSystem.EnableDevice(Mouse.current);
+            isInventoryOpen = true;
         }
-
+        else
+        {
+            Time.timeScale = 1f; // Resume the game
+            InputSystem.DisableDevice(Mouse.current);
+            isInventoryOpen = false;
+        }
     }
 
     public void _AddItem(string itemName, Sprite itemSprite)
     {
         for (int i = 0; i < itemSlot.Length; i++)
         {
-            if (!itemSlot[i]._isFull)
+            if (!itemSlot[i].IsFull)
             {
                 itemSlot[i]._AddItem(itemName, itemSprite);
                 return;
             }
         }
+
+        Debug.Log("Trying to add item: " + itemName);
+
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            if(!itemSlot[i].IsFull)
+            {
+                Debug.Log("Adding to slot: " + i);
+                itemSlot[i]._AddItem(itemName, itemSprite);
+                return;
+            }
+        }
+        Debug.LogWarning("Inventory is full! Cannot add item: " + itemName);
     }
 
     public void DeselectAllSlots()
     {
         for (int i = 0; i < itemSlot.Length; i++)
         {
-            itemSlot[i]._selectedShader.SetActive(false);
-            itemSlot[i]._isSelected = false;
+            itemSlot[i].SetSelected(false);
         }
     }
 
     public void UseItem(_ItemSlot slot)
     {
 
-        if (slot == null || !slot._isFull)
+        if (slot == null || !slot.IsFull)
         {
             return;
         }
-        Debug.Log("Used item: " + slot._itemName);
+        Debug.Log("Used item: " + slot.ItemName);
 
         slot.ClearSlot();
-
     }
 
 }
