@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Sprites/Dialogue/UI/Arrow_selected.png.meta
-guid: 9075c7182fa61974f972679cd2da9097
+guid: a2b515ad77b493e45ae106c7fcc37888
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 7978404110922006670
     second: Arrow_selected_0
-========
-guid: 29db555cf1aa5dd4ca3678628a7c03e4
-TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 3778840820307305296
-    second: games_0
->>>>>>>> AZ_Branch:Assets/Sprites/Inventory/games.png.meta
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,7 +113,6 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-<<<<<<<< HEAD:Assets/Sprites/Dialogue/UI/Arrow_selected.png.meta
       name: Arrow_selected_0
       rect:
         serializedVersion: 2
@@ -130,15 +120,6 @@ TextureImporter:
         y: 0
         width: 140
         height: 122
-========
-      name: games_0
-      rect:
-        serializedVersion: 2
-        x: 63
-        y: 127
-        width: 386
-        height: 322
->>>>>>>> AZ_Branch:Assets/Sprites/Inventory/games.png.meta
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -147,13 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-<<<<<<<< HEAD:Assets/Sprites/Dialogue/UI/Arrow_selected.png.meta
       spriteID: e80c50a744cf8be60800000000000000
       internalID: 7978404110922006670
-========
-      spriteID: 053a92574b3217430800000000000000
-      internalID: 3778840820307305296
->>>>>>>> AZ_Branch:Assets/Sprites/Inventory/games.png.meta
       vertices: []
       indices: 
       edges: []
@@ -171,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      games_0: 3778840820307305296
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
