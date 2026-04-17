@@ -1,10 +1,19 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Sprites/Room/Lamp_EmissionMap.png.meta
 guid: 920731bf13b4e734c9afe18c448af5b1
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -9055796799433026437
     second: Lamp_EmissionMap_0
+========
+guid: 5ecc4678bb55d2244b1b658f9cdce9c6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1220687713002859388
+    second: Window_Masktex_0
+>>>>>>>> AZ_Branch:Assets/Sprites/Room/Window_Masktex.png.meta
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,6 +122,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+<<<<<<<< HEAD:Assets/Sprites/Room/Lamp_EmissionMap.png.meta
       name: Lamp_EmissionMap_0
       rect:
         serializedVersion: 2
@@ -120,6 +130,15 @@ TextureImporter:
         y: 1540
         width: 459
         height: 390
+========
+      name: Window_Masktex_0
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 1163
+        width: 815
+        height: 789
+>>>>>>>> AZ_Branch:Assets/Sprites/Room/Window_Masktex.png.meta
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +147,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
+<<<<<<<< HEAD:Assets/Sprites/Room/Lamp_EmissionMap.png.meta
       spriteID: b74dca36ac8535280800000000000000
       internalID: -9055796799433026437
+========
+      spriteID: 484d7c41efe3f0fe0800000000000000
+      internalID: -1220687713002859388
+>>>>>>>> AZ_Branch:Assets/Sprites/Room/Window_Masktex.png.meta
       vertices: []
       indices: 
       edges: []
@@ -147,7 +171,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Window_Masktex_0: -1220687713002859388
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

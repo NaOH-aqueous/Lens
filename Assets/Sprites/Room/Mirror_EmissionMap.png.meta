@@ -1,10 +1,19 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Sprites/Room/Mirror_EmissionMap.png.meta
 guid: de7eef282cf27cd4a991cc5ff8433018
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 5254675536695244896
     second: Mirror_EmissionMap_0
+========
+guid: 5ac26511045015549a132bec2f10f078
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -392622733154839411
+    second: Window_EmissionMap_0
+>>>>>>>> AZ_Branch:Assets/Sprites/Room/Window_EmissionMap.png.meta
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,6 +122,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+<<<<<<<< HEAD:Assets/Sprites/Room/Mirror_EmissionMap.png.meta
       name: Mirror_EmissionMap_0
       rect:
         serializedVersion: 2
@@ -120,6 +130,15 @@ TextureImporter:
         y: 816
         width: 352
         height: 928
+========
+      name: Window_EmissionMap_0
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 1171
+        width: 812
+        height: 770
+>>>>>>>> AZ_Branch:Assets/Sprites/Room/Window_EmissionMap.png.meta
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +147,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
+<<<<<<<< HEAD:Assets/Sprites/Room/Mirror_EmissionMap.png.meta
       spriteID: 068b7a66f8b5ce840800000000000000
       internalID: 5254675536695244896
+========
+      spriteID: d84109354bf1d8af0800000000000000
+      internalID: -392622733154839411
+>>>>>>>> AZ_Branch:Assets/Sprites/Room/Window_EmissionMap.png.meta
       vertices: []
       indices: 
       edges: []
@@ -147,7 +171,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Window_EmissionMap_0: -392622733154839411
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

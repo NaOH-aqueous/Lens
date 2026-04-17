@@ -23,10 +23,6 @@ public class PlayerController : MonoBehaviour
     private AudioSource footstepAudio;
     private float stepTimer;
 
-    //Inventory
-    // Simple inventory array with 10 slots
-    public List<Item> inventory { get; private set; }
-
     //GameManager
     private GameManager m_gameManager;
     private void Start()
@@ -54,9 +50,7 @@ public class PlayerController : MonoBehaviour
                 FootStep();
             }
         }
-
         PauseGame();
-        DisplayInventory();
     }
 
     private void FixedUpdate()
@@ -111,14 +105,6 @@ public class PlayerController : MonoBehaviour
         }
     } 
 
-    private void DisplayInventory() //display inventory according to user inputs
-    {
-        if (InputManager.Instance.isInventoryPressed())
-        {
-            InventoryManager.Instance.GetInventoryContent();
-        }
-    } 
-
     private void PauseGame()  //pause the game according to user inputs
     {
         if (InputManager.Instance.IsCancelPressed())
@@ -164,15 +150,6 @@ public class PlayerController : MonoBehaviour
             footstepAudio.PlayOneShot(footstepAudio.clip);
         }
     }  //play the audioclip of footstep
-
-    public void UseItem(int index) //Use the item from the inventory
-    {
-        if(inventory != null)
-        {
-            // request item by ID and remove it from the inventory
-            InventoryManager.Instance.RemoveItem(index);
-        }
-    }
 
     //check if the current interaction raycast has touches any interactable
     //objects
