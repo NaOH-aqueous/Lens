@@ -9,7 +9,6 @@ public class MirrorReflection : MonoBehaviour
     private Animator mirrorAnimator;
 
     private Transform player_transform;
-    private Transform mirror_transform;
 
     private void Start()
     {
@@ -17,7 +16,6 @@ public class MirrorReflection : MonoBehaviour
         mirrorAnimator = GetComponent<Animator>();
 
         player_transform = GameObject.Find("Player").GetComponent<Transform>();
-        mirror_transform = GetComponentInParent<Transform>();
         initialPos = transform.position;
     }
     void LateUpdate()

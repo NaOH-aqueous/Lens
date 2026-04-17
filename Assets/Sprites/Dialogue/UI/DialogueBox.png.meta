@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 07415e0b0fc5ab44b9a06db5d964a8f5
+guid: 88a364dd3b62cbf4088e6aa04589477e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8231889635800348034
-    second: Nightstand_lighten_0
+      213: -5261992394389525642
+    second: DialogueBox_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nightstand_lighten_0
+      name: DialogueBox_0
       rect:
         serializedVersion: 2
-        x: 138
-        y: 40
-        width: 503
-        height: 624
-      alignment: 9
-      pivot: {x: 0.47718912, y: 0.29773763}
+        x: 180
+        y: 31
+        width: 2578
+        height: 760
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7a86eb9df372cd80800000000000000
-      internalID: -8231889635800348034
+      spriteID: 67bea99ebc5a9f6b0800000000000000
+      internalID: -5261992394389525642
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2cf02a8c1bd779d4bb0015c109d905de
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Nightstand_lighten_0: -8231889635800348034
+      DialogueBox_0: -5261992394389525642
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

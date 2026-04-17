@@ -15,6 +15,7 @@ public class DialogueManager : MonoBehaviour
     Ink.Runtime.Story _inkstory;
     private bool isDialoguePlaying = false; //check if there's any dialogue played
     private bool isChoicesDiaplayed = false;
+    private bool animPlaying = false;
 
     //private tag-related variables
     private List<string> tags = new List<string>();
@@ -94,6 +95,7 @@ public class DialogueManager : MonoBehaviour
 
         // contiue story upon user input if there's no choices in current line
         if (_inkstory.currentChoices.Count == 0 &&
+            !animPlaying &&
            (InputManager.Instance.IsSubmitPressed() ||
             InputManager.Instance.IsInteractPressed()))
         {
@@ -111,6 +113,10 @@ public class DialogueManager : MonoBehaviour
         {
             indication.SetActive(false);
         }
+        else
+        {
+            indication.SetActive(true);
+        }
 
         // set the speaker label. if the speaker is empty, set the label to
         //empty string
@@ -118,7 +124,7 @@ public class DialogueManager : MonoBehaviour
         {
             speakerLabel.text = GetSpeakerTag();
         }
-        else if(string.IsNullOrEmpty(GetSpeakerTag()))
+        else if (string.IsNullOrEmpty(GetSpeakerTag()))
         {
             speakerLabel.text = "";
         }
@@ -214,10 +220,14 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator ExitDialogueMode()
     {
         _anim.SetTrigger("dialogueEnd");
+        animPlaying = true;
         _audio.PlayOneShot(endSFX);
-        isDialoguePlaying = false;
-        yield return new WaitForSeconds(0.6f);
 
+        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
+            yield return null;
+
+        animPlaying = false;
+        isDialoguePlaying = false;
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
@@ -230,7 +240,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (_inkstory.canContinue)
         {
-            indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
             lastPlayedTag = "";
             GetTags();
@@ -239,7 +248,6 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            indication.SetActive(false);
             StartCoroutine(ExitDialogueMode());
         }
     }
@@ -270,7 +278,7 @@ public class DialogueManager : MonoBehaviour
 
                     //make the choice according to the index of button
 
-                    MakeChoices(currentButton);
+                    StartCoroutine(MakeChoices(currentButton));
                 });
 
                 //make the first button default
@@ -288,13 +296,14 @@ public class DialogueManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         yield return new WaitForEndOfFrame();
         EventSystem.current.SetSelectedGameObject(firstButton);
+        EventSystem.current.firstSelectedGameObject = firstButton;
     }
 
     //select the choice from the list and to continue to corresponding dialogues
-    private void MakeChoices(int currentIndex)
-    {
+    private IEnumerator MakeChoices(int currentIndex)
+    {   
+        yield return new WaitForSeconds(0.1f);
         _inkstory.ChooseChoiceIndex(currentIndex);
-
         GameObject[] choicesButtons = GameObject.FindGameObjectsWithTag("ChoiceButton");
         foreach (GameObject choice in choicesButtons)
         {
@@ -303,7 +312,12 @@ public class DialogueManager : MonoBehaviour
 
         InputManager.Instance.RegisterSubmitPressed();
         isChoicesDiaplayed = false;
-        ContinueStory();
+
+        if (_inkstory.canContinue)
+        {
+            ContinueStory();
+        }
+
     }
 
     private void GetTags() //get tags in current line

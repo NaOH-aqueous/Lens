@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 07415e0b0fc5ab44b9a06db5d964a8f5
+guid: d02caddb76e3b494aa4122c3ddfe01e6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8231889635800348034
-    second: Nightstand_lighten_0
+      213: -3016539985995728945
+    second: Line_normal_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nightstand_lighten_0
+      name: Line_normal_0
       rect:
         serializedVersion: 2
-        x: 138
-        y: 40
-        width: 503
-        height: 624
-      alignment: 9
-      pivot: {x: 0.47718912, y: 0.29773763}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 0
+        y: 0
+        width: 1269
+        height: 248
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 265, y: 40, z: 244, w: 50}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7a86eb9df372cd80800000000000000
-      internalID: -8231889635800348034
+      spriteID: fc776f37dd81326d0800000000000000
+      internalID: -3016539985995728945
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2cf02a8c1bd779d4bb0015c109d905de
+    spriteID: ae285b05461d18440b09e25fa5c1c1d7
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Nightstand_lighten_0: -8231889635800348034
+      Line_normal_0: -3016539985995728945
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

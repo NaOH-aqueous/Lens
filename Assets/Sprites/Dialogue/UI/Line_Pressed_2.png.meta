@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 07415e0b0fc5ab44b9a06db5d964a8f5
+guid: 5f95305f2ada28c44b330173af1c3e6c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8231889635800348034
-    second: Nightstand_lighten_0
+      213: 2956928589656449975
+    second: Line_Pressed_2_0
+  - first:
+      213: 3904262193303306947
+    second: Line_Pressed_2_1
+  - first:
+      213: -7100248841302291939
+    second: Line_Pressed_2_2
+  - first:
+      213: -8302426221662194584
+    second: Line_Pressed_2_3
+  - first:
+      213: -7711809961112003925
+    second: Line_Pressed_2_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +60,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -113,23 +125,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nightstand_lighten_0
+      name: Line_Pressed_2_1
       rect:
         serializedVersion: 2
-        x: 138
-        y: 40
-        width: 503
-        height: 624
-      alignment: 9
-      pivot: {x: 0.47718912, y: 0.29773763}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 8
+        y: 34
+        width: 1041
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 21, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7a86eb9df372cd80800000000000000
-      internalID: -8231889635800348034
+      spriteID: 3c2c4d577c9be2630800000000000000
+      internalID: 3904262193303306947
       vertices: []
       indices: 
       edges: []
@@ -138,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2cf02a8c1bd779d4bb0015c109d905de
+    spriteID: ba3667e8ee47b754fa1df738b9a6d05d
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +160,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Nightstand_lighten_0: -8231889635800348034
+      Line_Pressed_2_0: 2956928589656449975
+      Line_Pressed_2_1: 3904262193303306947
+      Line_Pressed_2_2: -7100248841302291939
+      Line_Pressed_2_3: -8302426221662194584
+      Line_Pressed_2_4: -7711809961112003925
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

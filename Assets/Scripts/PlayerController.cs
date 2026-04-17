@@ -180,9 +180,9 @@ public class PlayerController : MonoBehaviour
     {
         //shoot a raycast from the player to find if any furnitures in range
         RaycastHit2D hit = Physics2D.Raycast(playerRB.position +
-            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask(layerName));
+            Vector2.up * 0.4f, moveDirection, 3f, LayerMask.GetMask(layerName));
 
-        //Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
+        //Debug.DrawRay(playerRB.position + Vector2.up * 0.4f, moveDirection, Color.green);
 
         if (hit.collider != null)
         {
