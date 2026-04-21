@@ -1,16 +1,35 @@
+using System.Collections;
 using UnityEngine;
+using static UnityEditorInternal.VersionControl.ListControl;
 
-public class _InventoryManager : MonoBehaviour
+public class InventoryManager : MonoBehaviour
 {
+    public static InventoryManager Instance { get; private set; }
 
     [SerializeField] private GameObject InventoryMenu;
     [SerializeField] private _ItemSlot[] itemSlot;
 
     private bool isInventoryOpen;
+    private Animator _anim;
+    private bool isTransitioning = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Awake()
+    {
+        //make it a singleton gameobject
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     void Start()
     {
+        _anim = InventoryMenu.gameObject.GetComponent<Animator>();
+        InventoryMenu.SetActive(false);
+        isInventoryOpen = false;
+
         Debug.Log("ItemSlot array length: " + itemSlot.Length);
         for (int i = 0; i < itemSlot.Length; i++)
         {
@@ -24,29 +43,34 @@ public class _InventoryManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        if (InputManager.Instance.isInventoryPressed())
+        if (InputManager.Instance.isInventoryPressed() && !isTransitioning)
         {
-            ToggleInventory();
+            StartCoroutine(ToggleInventory());
         }
 
     }
 
-    private void ToggleInventory()
+    private IEnumerator ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
-        InventoryMenu.SetActive(isInventoryOpen);
+        isTransitioning = true;
         
         if (isInventoryOpen)
         {
-            Time.timeScale = 0f; // Pause the game
-            isInventoryOpen = true;
+            GameManager.instance.ChangeToInventory();
+            InventoryMenu.SetActive(true);
+            _anim.SetTrigger("Intro");
         }
         else
         {
-            Time.timeScale = 1f; // Resume the game
-            isInventoryOpen = false;
+            _anim.SetTrigger("Outro");
+            GameManager.instance.ChangeToPlaying();
+            while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Outro"))
+                yield return null;
+            InventoryMenu.SetActive(false);
         }
+
+        isTransitioning = false;
     }
 
     public void _AddItem(string itemName, Sprite itemSprite)
@@ -74,14 +98,6 @@ public class _InventoryManager : MonoBehaviour
         Debug.LogWarning("Inventory is full! Cannot add item: " + itemName);
     }
 
-    public void DeselectAllSlots()
-    {
-        for (int i = 0; i < itemSlot.Length; i++)
-        {
-            itemSlot[i].SetSelected(false);
-        }
-    }
-
     public void UseItem(_ItemSlot slot)
     {
 
@@ -89,9 +105,13 @@ public class _InventoryManager : MonoBehaviour
         {
             return;
         }
-        Debug.Log("Used item: " + slot.ItemName);
+        Debug.Log("Used item: " + slot.item.item_Name);
 
         slot.ClearSlot();
     }
 
+    public bool GetInventoryDisplayed()
+    {
+        return isInventoryOpen;
+    }
 }

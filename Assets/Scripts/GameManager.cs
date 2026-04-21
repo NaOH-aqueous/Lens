@@ -1,15 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum GameStateType
 {
     MainMenu,
     Playing,
-    Paused
+    Paused,
+    Inventory,
+    ItemDisplay
 }
 
 public class GameManager : MonoBehaviour
@@ -18,16 +18,10 @@ public class GameManager : MonoBehaviour
 
     // UI references
     public GameObject mainMenuUI;
-    public GameObject playingUI;
     public GameObject pauseMenuUI;
 
-    // Delay before changing states (in seconds)
-    public int delay = 1;
-
     public GameStateType currentState { get; private set; }
-
-    //Sounds
-    //[SerializeField] private AudioClip confirmSound;
+    public BlurEffect blurVFX;
 
     private void Awake()
     {
@@ -44,12 +38,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        //ChangeState(GameStateType.Paused);
+        ChangeState(GameStateType.Playing);
+        blurVFX.enabled = false;
     }
 
     public void ChangeState(GameStateType newState)
     {
-        StartCoroutine(TransitionToState(newState));
+        TransitionToState(newState);
     }
 
     // Click events for UI buttons
@@ -70,13 +65,25 @@ public class GameManager : MonoBehaviour
         ChangeState(GameStateType.Paused);
     }
 
-
-    private IEnumerator TransitionToState(GameStateType newState)
+    public void ChangeToInventory()
     {
-        // Optional: Add a delay before changing states (e.g., for transition effects)
-        if (newState != GameStateType.MainMenu)
+        ChangeState(GameStateType.Inventory);
+    }
+
+    public GameStateType GetGameStatus()
+    {
+        return currentState;
+    }
+    private void TransitionToState(GameStateType newState)
+    {
+        if (newState == GameStateType.Playing)
         {
-            yield return new WaitForSecondsRealtime(delay);
+            StartCoroutine(blurVFX.IntroTransition());
+        }
+        else if(newState == GameStateType.Inventory ||
+            newState == GameStateType.ItemDisplay)
+        {
+            blurVFX.OutroTransition();
         }
 
         currentState = newState;
@@ -90,23 +97,29 @@ public class GameManager : MonoBehaviour
 
         switch (currentState)
         {
+            case GameStateType.Playing:
+                AudioListener.pause = false;
+                Time.timeScale = 1f; // Resume the game
+                break;
             case GameStateType.MainMenu:
-                // Handle main menu logic
                 Time.timeScale = 0f; 
                 mainMenuUI.SetActive(true);
                 break;
-            case GameStateType.Playing:
-                // Handle playing logic
-                Time.timeScale = 1f; // Resume the game
-                playingUI.SetActive(true);
-                break;
             case GameStateType.Paused:
-                // Handle paused logic
                 Time.timeScale = 0f; // Pause the game
                 pauseMenuUI.SetActive(true);
+                AudioListener.pause = true;
                 Button pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
                 EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
                 // Test
+                break;
+            case GameStateType.Inventory:
+                AudioListener.pause = false;
+                Time.timeScale = 0f;
+                break;
+            case GameStateType.ItemDisplay:
+                AudioListener.pause = false;
+                Time.timeScale = 0f;
                 break;
         }
     }
@@ -114,7 +127,6 @@ public class GameManager : MonoBehaviour
     private void HideAllMenu()
     {
         mainMenuUI.SetActive(false);
-        playingUI.SetActive(false);
         pauseMenuUI.SetActive(false);
     }
 

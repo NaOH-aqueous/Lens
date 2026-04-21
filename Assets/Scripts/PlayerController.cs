@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
 
     //GameManager
     private GameManager m_gameManager;
+    private GameStateType gameState;
     private void Start()
     {
         Init();
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         bool dialogueNow = m_dialogueManager.CheckDialoguePlaying();
+        gameState = m_gameManager.GetGameStatus();
 
         if (dialogueNow != isInDialogue)
         {
@@ -50,6 +52,7 @@ public class PlayerController : MonoBehaviour
                 FootStep();
             }
         }
+
         PauseGame();
     }
 
@@ -97,7 +100,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void StopMovementAnimation() //set movement of animation to zero
+    public void StopMovementAnimation() //set movement of animation to zero
     {
         if (animator != null)
         {

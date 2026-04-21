@@ -22,6 +22,7 @@ public class DialogueManager : MonoBehaviour
     private const string SPEAKER_TAG = "speaker";
     private const string PORTRAIT_TAG = "portrait";
     private const string AUDIO_TAG = "audio";
+    private const string ITEM_TAG = "item";
 
     //private audio and animation variables
     private Animator _anim;
@@ -173,6 +174,19 @@ public class DialogueManager : MonoBehaviour
         {
             string[] splitTag = ParseTags(tag);
             if (splitTag[0] == AUDIO_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
+
+    public string GetItemTag()
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == ITEM_TAG)
             {
                 return splitTag[1];
             }
