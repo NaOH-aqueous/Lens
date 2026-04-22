@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class CGItem : MonoBehaviour
 {
@@ -9,13 +9,22 @@ public class CGItem : MonoBehaviour
     private void Start()
     {
         itemImage = GetComponent<Image>();
+        itemImage.enabled = false;
     }
-    public void DisplayItemInfo(string itemName, Sprite itemSprite)
+    public void DisplayItemInfo(Item new_Item)
     {
         itemTag = DialogueManager.Instance.GetItemTag();
-        if (!string.IsNullOrEmpty(itemTag) && itemName == itemTag)
+        if (!string.IsNullOrEmpty(itemTag) && new_Item.item_Name == itemTag)
         {
-            itemImage.sprite = itemSprite;
+            itemImage.enabled = true;
+            itemImage.sprite = new_Item.item_Sprite;
+            itemImage.SetNativeSize();
         }
+    }
+
+    public void ClearDisplay()
+    {
+        itemImage.sprite = null;
+        itemImage.enabled = false;
     }
 }

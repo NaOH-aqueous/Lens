@@ -97,7 +97,7 @@ There lies several blank copy paper. -> before
 + [Back] -> Drawer
 
 = look_closer
-You look closer and saw one unused paper towel.
+You look closer and saw one unused paper towel. #item:PaperTowel
 * [Take it away]
 ~ have_paper = true
 You took it away.

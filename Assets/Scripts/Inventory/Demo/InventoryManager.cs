@@ -1,13 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEditorInternal.VersionControl.ListControl;
 
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
 
     [SerializeField] private GameObject InventoryMenu;
-    [SerializeField] private _ItemSlot[] itemSlot;
+    [SerializeField] private ItemSlot[] itemSlot;
 
     private bool isInventoryOpen;
     private Animator _anim;
@@ -73,32 +72,21 @@ public class InventoryManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    public void _AddItem(string itemName, Sprite itemSprite)
+    public void _AddItem(Item new_Item)
     {
         for (int i = 0; i < itemSlot.Length; i++)
         {
             if (!itemSlot[i].IsFull)
             {
-                itemSlot[i]._AddItem(itemName, itemSprite);
-                return;
-            }
-        }
-
-        Debug.Log("Trying to add item: " + itemName);
-
-        for (int i = 0; i < itemSlot.Length; i++)
-        {
-            if(!itemSlot[i].IsFull)
-            {
                 Debug.Log("Adding to slot: " + i);
-                itemSlot[i]._AddItem(itemName, itemSprite);
+                itemSlot[i]._AddItemToSlot(new_Item);
                 return;
             }
         }
-        Debug.LogWarning("Inventory is full! Cannot add item: " + itemName);
+        Debug.LogWarning("Inventory is full! Cannot add item: " + new_Item.item_Name);
     }
 
-    public void UseItem(_ItemSlot slot)
+    public void UseItem(ItemSlot slot)
     {
 
         if (slot == null || !slot.IsFull)
@@ -113,5 +101,17 @@ public class InventoryManager : MonoBehaviour
     public bool GetInventoryDisplayed()
     {
         return isInventoryOpen;
+    }
+
+    public bool GetItem(Item item)
+    {
+        for (int i = 0; i < itemSlot.Length; i++) 
+        { 
+            if (itemSlot[i].item.item_Name == item.item_Name)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

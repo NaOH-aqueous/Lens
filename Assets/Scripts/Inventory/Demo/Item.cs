@@ -1,8 +1,9 @@
 using UnityEngine;
 
 [System.Serializable]
-public class Item
+public struct Item
 {
     public string item_Name;
     public Sprite item_Sprite;
+    public Sprite item_Icon;
 }
