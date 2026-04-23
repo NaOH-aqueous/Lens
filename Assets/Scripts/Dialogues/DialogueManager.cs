@@ -310,13 +310,12 @@ public class DialogueManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         yield return new WaitForEndOfFrame();
         EventSystem.current.SetSelectedGameObject(firstButton);
-        EventSystem.current.firstSelectedGameObject = firstButton;
     }
 
     //select the choice from the list and to continue to corresponding dialogues
     private IEnumerator MakeChoices(int currentIndex)
     {   
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSecondsRealtime(0.1f);
         _inkstory.ChooseChoiceIndex(currentIndex);
         GameObject[] choicesButtons = GameObject.FindGameObjectsWithTag("ChoiceButton");
         foreach (GameObject choice in choicesButtons)

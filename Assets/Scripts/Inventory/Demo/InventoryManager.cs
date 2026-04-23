@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -11,6 +13,8 @@ public class InventoryManager : MonoBehaviour
     private bool isInventoryOpen;
     private Animator _anim;
     private bool isTransitioning = false;
+    private ItemSlot selectedSlot;
+    private Queue<Item> itemQueue = new Queue<Item>();
 
     private void Awake()
     {
@@ -32,6 +36,10 @@ public class InventoryManager : MonoBehaviour
         Debug.Log("ItemSlot array length: " + itemSlot.Length);
         for (int i = 0; i < itemSlot.Length; i++)
         {
+            if (i == 0)
+            {
+                selectedSlot = itemSlot[0];
+            }
             if (itemSlot[i] == null)
             {
                 Debug.LogError("ItemSlot at index " + i + " is not assigned in the inspector.");
@@ -45,7 +53,7 @@ public class InventoryManager : MonoBehaviour
         if (InputManager.Instance.isInventoryPressed() && !isTransitioning)
         {
             StartCoroutine(ToggleInventory());
-        }
+        } 
 
     }
 
@@ -59,6 +67,8 @@ public class InventoryManager : MonoBehaviour
             GameManager.instance.ChangeToInventory();
             InventoryMenu.SetActive(true);
             _anim.SetTrigger("Intro");
+
+            StartCoroutine(SelectFirstSlotNextFrame());
         }
         else
         {
@@ -72,7 +82,15 @@ public class InventoryManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    public void _AddItem(Item new_Item)
+    private IEnumerator SelectFirstSlotNextFrame()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return null; // wait 1 frame for UI rebuild
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(selectedSlot.gameObject);
+    }
+
+    private void _AddItem(Item new_Item)
     {
         for (int i = 0; i < itemSlot.Length; i++)
         {
@@ -80,10 +98,29 @@ public class InventoryManager : MonoBehaviour
             {
                 Debug.Log("Adding to slot: " + i);
                 itemSlot[i]._AddItemToSlot(new_Item);
+                selectedSlot = itemSlot[i];
                 return;
             }
         }
         Debug.LogWarning("Inventory is full! Cannot add item: " + new_Item.item_Name);
+    }
+
+    public void QueueItem(Item item)
+    {
+        itemQueue.Enqueue(item);
+        ProcessQueue();
+    }
+
+    private IEnumerator ProcessQueue()
+    {
+        yield return null;
+        yield return new WaitForEndOfFrame();
+
+        while (itemQueue.Count > 0)
+        {
+            Item item = itemQueue.Dequeue();
+            _AddItem(item);
+        }
     }
 
     public void UseItem(ItemSlot slot)

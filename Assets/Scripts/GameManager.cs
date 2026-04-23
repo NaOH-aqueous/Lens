@@ -19,9 +19,13 @@ public class GameManager : MonoBehaviour
     // UI references
     public GameObject mainMenuUI;
     public GameObject pauseMenuUI;
+    public GameObject inventoryUI;
+    public GameObject dialogueUI;
 
     public GameStateType currentState { get; private set; }
     public BlurEffect blurVFX;
+
+    private DialogueManager m_dialogueManager;
 
     private void Awake()
     {
@@ -38,6 +42,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        m_dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
         ChangeState(GameStateType.Playing);
         blurVFX.enabled = false;
     }
@@ -70,11 +75,16 @@ public class GameManager : MonoBehaviour
         ChangeState(GameStateType.Inventory);
     }
 
+    public void ChangeToItemDisplay()
+    {
+        ChangeState(GameStateType.ItemDisplay);
+    }
+
     public GameStateType GetGameStatus()
     {
         return currentState;
     }
-    private void TransitionToState(GameStateType newState)
+    public void TransitionToState(GameStateType newState)
     {
         if (newState == GameStateType.Playing)
         {
@@ -100,6 +110,8 @@ public class GameManager : MonoBehaviour
             case GameStateType.Playing:
                 AudioListener.pause = false;
                 Time.timeScale = 1f; // Resume the game
+                inventoryUI.GetComponent<CanvasGroup>().interactable = false;
+                dialogueUI.GetComponent<CanvasGroup>().interactable = true;
                 break;
             case GameStateType.MainMenu:
                 Time.timeScale = 0f; 
@@ -116,7 +128,16 @@ public class GameManager : MonoBehaviour
             case GameStateType.Inventory:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
-                break;
+                inventoryUI.GetComponent<CanvasGroup>().interactable = true;
+                if (!m_dialogueManager.CheckDialoguePlaying())
+                {
+                    dialogueUI.GetComponent<CanvasGroup>().interactable = false;
+                }
+                else
+                {
+                    dialogueUI.GetComponent<CanvasGroup>().interactable = true;
+                }
+                    break;
             case GameStateType.ItemDisplay:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;

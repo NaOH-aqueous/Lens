@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class HomeItemController : MonoBehaviour
 {
@@ -8,12 +10,14 @@ public class HomeItemController : MonoBehaviour
 
     private const string PAPERTOWEL = "PaperTowel";
     private Item papertowel;
+    private bool paperGet;
 
     private void Start()
     {
         papertowel.item_Name = PAPERTOWEL;
         papertowel.item_Sprite = papertowelSprite;
         papertowel.item_Icon = papertowelIcon;
+
     }
     private void Update()
     {
@@ -25,10 +29,13 @@ public class HomeItemController : MonoBehaviour
         if (have_paper)
         {
             cgPlayer.ClearDisplay();
-            if (!InventoryManager.Instance.GetItem(papertowel))
+            if (!paperGet)
             {
-                InventoryManager.Instance._AddItem(papertowel);
+                Debug.Log(EventSystem.current.currentInputModule);
+                paperGet = true;
+                InventoryManager.Instance.QueueItem(papertowel);
             }
         }
+
     }
 }

@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.UI;
 
 public class CGItem : MonoBehaviour
 {
     private string itemTag;
     private Image itemImage;
+    private GameStateType lastState;
 
     private void Start()
     {
@@ -14,11 +17,16 @@ public class CGItem : MonoBehaviour
     public void DisplayItemInfo(Item new_Item)
     {
         itemTag = DialogueManager.Instance.GetItemTag();
+        if (GameManager.instance.GetGameStatus() != GameStateType.ItemDisplay)
+        {
+            lastState = GameManager.instance.GetGameStatus();
+        }
         if (!string.IsNullOrEmpty(itemTag) && new_Item.item_Name == itemTag)
         {
             itemImage.enabled = true;
             itemImage.sprite = new_Item.item_Sprite;
             itemImage.SetNativeSize();
+            GameManager.instance.ChangeToItemDisplay();
         }
     }
 
@@ -26,5 +34,6 @@ public class CGItem : MonoBehaviour
     {
         itemImage.sprite = null;
         itemImage.enabled = false;
+        GameManager.instance.TransitionToState(lastState);
     }
 }

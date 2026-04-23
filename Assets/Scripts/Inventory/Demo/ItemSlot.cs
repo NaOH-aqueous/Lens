@@ -1,3 +1,5 @@
+using Ink.UnityIntegration;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -5,7 +7,6 @@ using UnityEngine.UI;
 public class ItemSlot : MonoBehaviour
 {
     public Item item = new Item();
-    [SerializeField] private bool _isFirst;
     public Image _itemImage;
 
     //item data(can only be *get* by other scripts)
@@ -13,14 +14,12 @@ public class ItemSlot : MonoBehaviour
 
     private bool _isFull;
 
+    private Button _button;
+
     private void Start()
     {
-        if (_isFirst)
-        {
-            EventSystem.current.SetSelectedGameObject(gameObject);
-        }
+        _button = GetComponent<Button>();
     }
-
     public void _AddItemToSlot(Item new_Item)
     {
         if (!_isFull)
@@ -31,6 +30,8 @@ public class ItemSlot : MonoBehaviour
             if(item.item_Icon != null)
             {
                 _itemImage.sprite = item.item_Icon;
+                _itemImage.raycastTarget = false;
+                _itemImage.maskable = false;
             }
             Debug.Log("Slot adding: " + new_Item.item_Name + "\nSprite: " + new_Item.item_Sprite);
         }
@@ -45,8 +46,16 @@ public class ItemSlot : MonoBehaviour
         item.item_Sprite = null;
         item.item_Name = null;
         item.item_Icon = null;
+        _itemImage.sprite = null;
         _isFull = false;
     }
 
+    public void ItemDialogue(TextAsset story)
+    {
+        if (_isFull)
+        {
+            DialogueManager.Instance.NewStory(story);
+        }
 
+    }
 }

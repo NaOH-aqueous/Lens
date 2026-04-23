@@ -42,13 +42,17 @@ public class PlayerController : MonoBehaviour
             if (isInDialogue)
             {
                 //switch to UI inputs if dialogue is playing
-                playerInput.SwitchCurrentActionMap("UI");
+                playerInput.actions["Move"].Disable();
+                playerInput.actions["Interact"].Disable();
+                playerInput.actions["Inventory"].Disable();
                 StopMovementAnimation();
             }
             else
             {
                 //switch to player inputs if dialogue is playing
-                playerInput.SwitchCurrentActionMap("Player");
+                playerInput.actions["Move"].Enable();
+                playerInput.actions["Interact"].Enable();
+                playerInput.actions["Inventory"].Enable();
                 FootStep();
             }
         }
