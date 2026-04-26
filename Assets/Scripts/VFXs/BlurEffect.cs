@@ -25,9 +25,11 @@ public class BlurEffect : MonoBehaviour
         blurVFX.enabled = false;
     }
 
-    public void OutroTransition()
+    public IEnumerator OutroTransition()
     {
         blurVFX.enabled = true;
         _anim.SetTrigger("Blur");
+        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Blur"))
+            yield return null;
     }
 }

@@ -10,6 +10,7 @@ public class LampLightingController : MonoBehaviour
 
     private Light2D lamp_Light;
     private SpriteRenderer lamp_renderer;
+    private bool _isLampOn;
 
     private void Start()
     {
@@ -24,11 +25,11 @@ public class LampLightingController : MonoBehaviour
         bool lamp_On = ((Ink.Runtime.BoolValue)DialogueManager.Instance.
             GetVariableState("lamp_switch")).value;
 
-        if (lamp_On)
+        if (lamp_On && !_isLampOn)
         {
             lampOn();
         }
-        else
+        else if (!lamp_On && _isLampOn)
         {
             lampOff();
         }
@@ -39,6 +40,7 @@ public class LampLightingController : MonoBehaviour
         lamp_renderer.material = lamp_Emission;
         lamp_renderer.sprite = lamp_Lighten;
         lamp_Light.enabled = true;
+        _isLampOn = true;
     }
 
     private void lampOff()
@@ -46,5 +48,6 @@ public class LampLightingController : MonoBehaviour
         lamp_renderer.material = lamp_Normal;
         lamp_renderer.sprite = lamp_Darken;
         lamp_Light.enabled = false;
+        _isLampOn = false;
     }
 }

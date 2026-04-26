@@ -246,6 +246,11 @@ public class DialogueManager : MonoBehaviour
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
+
+        if (GameManager.instance.GetGameStatus() == GameStateType.Inventory)
+        {
+            StartCoroutine(InventoryManager.Instance.SelectFirstSlotNextFrame());
+        }
     }
 
     //continue to the next line of the story

@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player Controls")]
     public float moveSpeed = 4f;
     public float footstepInterval;
+    public AudioClip footStep;
 
     //private variables
     private Rigidbody2D playerRB;
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private DialogueManager m_dialogueManager;
     private bool isInDialogue = false;
+    private Vector2 moveValue;
 
     //Animator Componenets
     private Animator animator;
@@ -26,6 +28,7 @@ public class PlayerController : MonoBehaviour
     //GameManager
     private GameManager m_gameManager;
     private GameStateType gameState;
+
     private void Start()
     {
         Init();
@@ -45,7 +48,6 @@ public class PlayerController : MonoBehaviour
                 playerInput.actions["Move"].Disable();
                 playerInput.actions["Interact"].Disable();
                 playerInput.actions["Inventory"].Disable();
-                StopMovementAnimation();
             }
             else
             {
@@ -53,7 +55,6 @@ public class PlayerController : MonoBehaviour
                 playerInput.actions["Move"].Enable();
                 playerInput.actions["Interact"].Enable();
                 playerInput.actions["Inventory"].Enable();
-                FootStep();
             }
         }
 
@@ -64,7 +65,13 @@ public class PlayerController : MonoBehaviour
     {
         if (!isInDialogue)
         {
+            moveValue = moveAction.ReadValue<Vector2>();
             MovePlayer();
+            FootStep();
+        }
+        else
+        {
+            StopMovementAnimation();
         }
     }
 
@@ -104,7 +111,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void StopMovementAnimation() //set movement of animation to zero
+    private void StopMovementAnimation() //set movement of animation to zero
     {
         if (animator != null)
         {
@@ -116,7 +123,6 @@ public class PlayerController : MonoBehaviour
     {
         if (InputManager.Instance.IsCancelPressed())
         {
-            Debug.Log("pause");
             // Show Pause Menu UI
             m_gameManager.ChangeToPaused();
         }
@@ -124,8 +130,6 @@ public class PlayerController : MonoBehaviour
 
     private void MovePlayer() //move the player according to user inputs
     {
-        Vector2 moveValue = moveAction.ReadValue<Vector2>();
-
         //set the animator values according to player movement
         if (!Mathf.Approximately(moveValue.x, 0.0f) || !Mathf.Approximately(moveValue.y, 0.0f))
         {
@@ -137,8 +141,8 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Speed", moveValue.magnitude);
 
         //move the rigidbody of the player
-        Vector2 currentPos = playerRB.transform.position;
-        Vector2 targetPos = currentPos += moveSpeed * moveValue * Time.deltaTime;
+        Vector2 currentPos = playerRB.position;
+        Vector2 targetPos = currentPos + moveSpeed * moveValue.normalized * Time.deltaTime;
         playerRB.MovePosition(targetPos);
     }
 
@@ -154,7 +158,7 @@ public class PlayerController : MonoBehaviour
         // Check if there's a clip assigned to the audio source
         if (footstepAudio.clip != null)
         {
-            footstepAudio.PlayOneShot(footstepAudio.clip);
+            footstepAudio.PlayOneShot(footStep);
         }
     }  //play the audioclip of footstep
 

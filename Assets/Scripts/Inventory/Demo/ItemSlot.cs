@@ -14,12 +14,6 @@ public class ItemSlot : MonoBehaviour
 
     private bool _isFull;
 
-    private Button _button;
-
-    private void Start()
-    {
-        _button = GetComponent<Button>();
-    }
     public void _AddItemToSlot(Item new_Item)
     {
         if (!_isFull)
@@ -39,6 +33,11 @@ public class ItemSlot : MonoBehaviour
         {
             Debug.Log("This grid is full! cannot add new item");
         }
+    }
+
+    public Item GetItemInSlot()
+    {
+        return item;
     }
 
     public void ClearSlot()
