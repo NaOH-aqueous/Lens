@@ -1,9 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using Ink.Runtime;
-using UnityEditor.SearchService;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class DialogueTrigger : MonoBehaviour
 {
@@ -14,10 +10,8 @@ public class DialogueTrigger : MonoBehaviour
     private bool playerInRange = false;
 
     [Header("Audios")]
-    public AudioClip triggerSound;
-    private AudioSource audioSource;
-
-
+    [SerializeField] private List<TriggerSounds> triggerSounds = new List<TriggerSounds>();
+    
     private void Start()
     {
         indication.SetActive(false);
@@ -26,43 +20,60 @@ public class DialogueTrigger : MonoBehaviour
         {
             Debug.Log("no player found in the scene");
         }
-
-        audioSource = GetComponent<AudioSource>();
-        // If there is no AudioSource component, add one
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
     }
 
     private void Update()
     {
         if (!playerInRange)
         {
+            //return directly if player is not around
             return;
         }
         if (!DialogueManager.Instance.CheckDialoguePlaying())
         {
-            if (InputManager.Instance.IsInteractPressed() &&
-                player.CheckInteract())
+            StartDialogue();
+        }
+        else
+        {
+            //play trigger sound if dialogue is not playing
+            PlayTriggerSound();
+        }
+    }
+
+    //start the dialogue attached to this trigger upon user input
+    private void StartDialogue()
+    {
+        int layerIndex = gameObject.layer;
+        string layerName = LayerMask.LayerToName(gameObject.layer);
+        if (InputManager.Instance.IsInteractPressed() &&
+            player.CheckInteract(layerName))
+        {
+            InputManager.Instance.RegisterSubmitPressed();
+            DialogueManager.Instance.NewStory(inkAsset);
+            Debug.Log("Current story has been set to " + inkAsset.name);
+        }
+    }
+
+    // Play the trigger sound
+    private void PlayTriggerSound()
+    {
+        foreach(TriggerSounds triggerSound in triggerSounds)
+        {
+            if (triggerSound != null && 
+                !string.IsNullOrEmpty(triggerSound.triggerSoundName))
             {
-                InputManager.Instance.RegisterSubmitPressed();
-
-                // Play the trigger sound
-                if (triggerSound != null && audioSource != null)
-                {
-                    audioSource.PlayOneShot(triggerSound);
-                }
-
-                DialogueManager.Instance.NewStory(inkAsset);
-                Debug.Log("Current story has been set to " + inkAsset.name);
+                DialogueManager.Instance.PlaySound(triggerSound.triggerSound, triggerSound.triggerSoundName);
+            }
+            else
+            {
+                Debug.Log("Triggersound hasn't been defined");
             }
         }
-        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        //set the indication and bool true if player is nearby
         if (other.CompareTag("Player"))
         {
             //Debug.Log("player is nearby");
@@ -74,6 +85,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        //set the indication and bool false if player is nearby
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
@@ -81,6 +93,4 @@ public class DialogueTrigger : MonoBehaviour
         }
 
     }
-
-
 }

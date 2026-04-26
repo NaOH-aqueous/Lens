@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 819973b580912f8458a54e6df04f86d7
+<<<<<<<< HEAD:Assets/Scripts/Dialogues/InkScripts/SampleText.ink.meta
+guid: f76a02af6c8407f428de54ed23e9e24a
+========
+guid: 4757ad4ca8909484680113cd8e5aa4bd
+>>>>>>>> NaOH_branch:Assets/Scripts/Dialogues/InkScripts/Room_scripts/Desk.ink.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

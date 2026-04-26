@@ -4,14 +4,16 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
-    //public variables
+    [Header("Player Controls")]
     public float moveSpeed = 4f;
     public float footstepInterval;
 
     //private variables
     private Rigidbody2D playerRB;
+    private PlayerInput playerInput;
     private InputAction moveAction;
     private DialogueManager m_dialogueManager;
+    private bool isInDialogue = false;
 
     //Animator Componenets
     private Animator animator;
@@ -21,17 +23,56 @@ public class PlayerController : MonoBehaviour
     private AudioSource footstepAudio;
     private float stepTimer;
 
-    //Inventory
-    // Simple inventory array with 10 slots
-    public List<Item> inventory;
-    private Item current_item;
-
     //GameManager
     private GameManager m_gameManager;
+    private GameStateType gameState;
     private void Start()
+    {
+        Init();
+    }
+    private void Update()
+    {
+        bool dialogueNow = m_dialogueManager.CheckDialoguePlaying();
+        gameState = m_gameManager.GetGameStatus();
+
+        if (dialogueNow != isInDialogue)
+        {
+            isInDialogue = dialogueNow;
+
+            if (isInDialogue)
+            {
+                //switch to UI inputs if dialogue is playing
+                playerInput.actions["Move"].Disable();
+                playerInput.actions["Interact"].Disable();
+                playerInput.actions["Inventory"].Disable();
+                StopMovementAnimation();
+            }
+            else
+            {
+                //switch to player inputs if dialogue is playing
+                playerInput.actions["Move"].Enable();
+                playerInput.actions["Interact"].Enable();
+                playerInput.actions["Inventory"].Enable();
+                FootStep();
+            }
+        }
+
+        PauseGame();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isInDialogue)
+        {
+            MovePlayer();
+        }
+    }
+
+    private void Init()
     {
         playerRB = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerInput = GetComponent<PlayerInput>();
         moveAction = InputSystem.actions.FindAction("Move");
 
         m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
@@ -47,78 +88,41 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-    private void Update()
+
+    private void FootStep() //play footstep audio when player is walking
     {
-        if (CheckIfPlayerCanMove())
-        {
-            // Update the step timer
-            stepTimer += Time.deltaTime;
+        // Update the step timer
+        stepTimer += Time.deltaTime;
 
-            // Check if the player is moving and if it's time to play the footstep sound
-            if (moveAction.ReadValue<Vector2>().magnitude > 0.1f
-                && stepTimer >= footstepInterval)
-            {
-                PlayFootstepAudio();
-                // Reset the timer after playing the sound
-                stepTimer = 0f;
-            }
-        }
-        /* Temporary key to display inventory contents in the console
-        if (Input.GetKeyDown(KeyCode.Tab))
+        // Check if the player is moving and if it's time to play the footstep sound
+        if (moveAction.ReadValue<Vector2>().magnitude > 0.1f
+            && stepTimer >= footstepInterval)
         {
-            DisplayInventory(new InputAction.CallbackContext());
-        }*/
-
-        RemoveItem();
-        DisplayInventory();
-
-        if (InputManager.Instance.IsCancelPressed())
-        {
-            // Show Pause Menu UI
-            m_gameManager.ChangeToPaused();
+            PlayFootstepAudio();
+            // Reset the timer after playing the sound
+            stepTimer = 0f;
         }
     }
 
-    private void FixedUpdate()
-    {
-        if (CheckIfPlayerCanMove())
-        {
-            MovePlayer();
-        }
-    }
-
-    //return TRUE when the dialogue isn't playing or there's no dialogue in the scene
-    private bool CheckIfPlayerCanMove()
-    {
-        if (m_dialogueManager != null) 
-        {
-            if (m_dialogueManager.CheckDialoguePlaying())
-            {
-                StopMovementAnimation();
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Stop the movement animation by setting the animator parameters to zero
-    private void StopMovementAnimation()
+    public void StopMovementAnimation() //set movement of animation to zero
     {
         if (animator != null)
         {
             animator.SetFloat("Speed", 0);
         }
-    }
+    } 
 
-    private void DisplayInventory()
+    private void PauseGame()  //pause the game according to user inputs
     {
-        if (InputManager.Instance.isInventoryPressed())
+        if (InputManager.Instance.IsCancelPressed())
         {
-            InventoryManager.Instance.GetInventoryContent();
+            Debug.Log("pause");
+            // Show Pause Menu UI
+            m_gameManager.ChangeToPaused();
         }
     }
 
-    private void MovePlayer()
+    private void MovePlayer() //move the player according to user inputs
     {
         Vector2 moveValue = moveAction.ReadValue<Vector2>();
 
@@ -138,6 +142,7 @@ public class PlayerController : MonoBehaviour
         playerRB.MovePosition(targetPos);
     }
 
+
     void PlayFootstepAudio()
     {
         if (footstepAudio == null)
@@ -151,22 +156,17 @@ public class PlayerController : MonoBehaviour
         {
             footstepAudio.PlayOneShot(footstepAudio.clip);
         }
-    }
-    private void RemoveItem()
-    {
-        if (InputManager.Instance.isUsePressed())
-        {
-            // request item by ID and remove it from the inventory
-            InventoryManager.Instance.RemoveItem(0);
-        }
-    }
+    }  //play the audioclip of footstep
 
-    public bool CheckInteract()
+    //check if the current interaction raycast has touches any interactable
+    //objects
+    public bool CheckInteract(string layerName)
     {
         //shoot a raycast from the player to find if any furnitures in range
         RaycastHit2D hit = Physics2D.Raycast(playerRB.position +
-            Vector2.up * 0.4f, moveDirection, 3.5f, LayerMask.GetMask("Furniture"));
-        Debug.DrawRay(playerRB.position + Vector2.down * 0.4f, moveDirection, Color.green);
+            Vector2.up * 0.4f, moveDirection, 3f, LayerMask.GetMask(layerName));
+
+        //Debug.DrawRay(playerRB.position + Vector2.up * 0.4f, moveDirection, Color.green);
 
         if (hit.collider != null)
         {

@@ -4,10 +4,8 @@
 VAR read_diary = false
 VAR read_note = false
 
-
 This is your desk. 
 A diary, pencil, and a planter can be seen here. You spend most of time here when you're not in bed.
-
 -> Inspect
 === Inspect ===
 Where do you want to inspect? 
@@ -34,28 +32,22 @@ Nothing catches your interest at the moment.
 //---------------------------------
 = pencil
 Write something?
-{read_note:
-
-+ [Yes] You seems to be interested in writing something at the start of today. -> back
-+ [No] You are not in the mood right now. ->back
-
-- else:
-
-+ [Yes] Maybe not now. ->back
++ [Yes] ->write
 + [No]  You are not in the mood right now. ->back
-}
 
-/*= write
-{- read_note:
+= write
+{
+- read_note:
 -> notetrue
 - else:
- -> notefalse
+-> notefalse
 }
 = notetrue
 You seems to be interested in writing something at the start of today. -> back
 
 = notefalse
- -> back*/
+Maybe not now. -> back
+
 //---------------------------------
 = planter
 Nothing resides in this planter right now, expect some bone-dry and malnutritional soil. -> back

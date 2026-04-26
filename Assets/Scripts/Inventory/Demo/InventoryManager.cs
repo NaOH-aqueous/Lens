@@ -1,0 +1,154 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class InventoryManager : MonoBehaviour
+{
+    public static InventoryManager Instance { get; private set; }
+
+    [SerializeField] private GameObject InventoryMenu;
+    [SerializeField] private ItemSlot[] itemSlot;
+
+    private bool isInventoryOpen;
+    private Animator _anim;
+    private bool isTransitioning = false;
+    private ItemSlot selectedSlot;
+    private Queue<Item> itemQueue = new Queue<Item>();
+
+    private void Awake()
+    {
+        //make it a singleton gameobject
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    void Start()
+    {
+        _anim = InventoryMenu.gameObject.GetComponent<Animator>();
+        InventoryMenu.SetActive(false);
+        isInventoryOpen = false;
+
+        Debug.Log("ItemSlot array length: " + itemSlot.Length);
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            if (i == 0)
+            {
+                selectedSlot = itemSlot[0];
+            }
+            if (itemSlot[i] == null)
+            {
+                Debug.LogError("ItemSlot at index " + i + " is not assigned in the inspector.");
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (InputManager.Instance.isInventoryPressed() && !isTransitioning)
+        {
+            StartCoroutine(ToggleInventory());
+        } 
+
+    }
+
+    private IEnumerator ToggleInventory()
+    {
+        isInventoryOpen = !isInventoryOpen;
+        isTransitioning = true;
+        
+        if (isInventoryOpen)
+        {
+            GameManager.instance.ChangeToInventory();
+            InventoryMenu.SetActive(true);
+            _anim.SetTrigger("Intro");
+
+            StartCoroutine(SelectFirstSlotNextFrame());
+        }
+        else
+        {
+            _anim.SetTrigger("Outro");
+            GameManager.instance.ChangeToPlaying();
+            while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Outro"))
+                yield return null;
+            InventoryMenu.SetActive(false);
+        }
+
+        isTransitioning = false;
+    }
+
+    private IEnumerator SelectFirstSlotNextFrame()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return null; // wait 1 frame for UI rebuild
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(selectedSlot.gameObject);
+    }
+
+    private void _AddItem(Item new_Item)
+    {
+        for (int i = 0; i < itemSlot.Length; i++)
+        {
+            if (!itemSlot[i].IsFull)
+            {
+                Debug.Log("Adding to slot: " + i);
+                itemSlot[i]._AddItemToSlot(new_Item);
+                selectedSlot = itemSlot[i];
+                return;
+            }
+        }
+        Debug.LogWarning("Inventory is full! Cannot add item: " + new_Item.item_Name);
+    }
+
+    public void QueueItem(Item item)
+    {
+        itemQueue.Enqueue(item);
+        ProcessQueue();
+    }
+
+    private IEnumerator ProcessQueue()
+    {
+        yield return null;
+        yield return new WaitForEndOfFrame();
+
+        while (itemQueue.Count > 0)
+        {
+            Item item = itemQueue.Dequeue();
+            _AddItem(item);
+        }
+    }
+
+    public void UseItem(ItemSlot slot)
+    {
+
+        if (slot == null || !slot.IsFull)
+        {
+            return;
+        }
+        Debug.Log("Used item: " + slot.item.item_Name);
+
+        slot.ClearSlot();
+    }
+
+    public bool GetInventoryDisplayed()
+    {
+        return isInventoryOpen;
+    }
+
+    public bool GetItem(Item item)
+    {
+        for (int i = 0; i < itemSlot.Length; i++) 
+        { 
+            if (itemSlot[i].item.item_Name == item.item_Name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}

@@ -9,13 +9,11 @@ public class InputManager : MonoBehaviour
     private InputAction interactAction;
     private InputAction SubmitAction;
     private InputAction CancelAction;
-    private InputAction UseAction;
     private InputAction InventoryAction;
 
     private bool InteractPressed;
     private bool SubmitPressed;
     private bool CancelPressed;
-    private bool UsePressed;
     private bool InventoryPressed;
 
     void Awake()
@@ -31,13 +29,11 @@ public class InputManager : MonoBehaviour
         interactAction = InputSystem.actions.FindAction("Interact");
         SubmitAction = InputSystem.actions.FindAction("Submit");
         CancelAction = InputSystem.actions.FindAction("Cancel");
-        UseAction = InputSystem.actions.FindAction("Use");
         InventoryAction = InputSystem.actions.FindAction("Inventory");
 
         interactAction.performed += OnInteract;
         SubmitAction.performed += OnConfirm;
         CancelAction.performed += OnCancel;
-        UseAction.performed += OnUse;
         InventoryAction.performed += OnInventory;
     }
 
@@ -46,7 +42,6 @@ public class InputManager : MonoBehaviour
         interactAction.Enable();
         SubmitAction.Enable();
         CancelAction.Enable();
-        UseAction.Enable();
         InventoryAction.Enable();
 
         // To disable the mouse:
@@ -58,7 +53,6 @@ public class InputManager : MonoBehaviour
         interactAction.Disable();
         SubmitAction.Disable();
         CancelAction.Disable();
-        UseAction.Disable();
         InventoryAction.Disable();
 
         // To enable the mouse:
@@ -100,18 +94,6 @@ public class InputManager : MonoBehaviour
             CancelPressed = false;
         }
     }
-    
-    private void OnUse(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            UsePressed = true;
-        }
-        else
-        {
-            UsePressed = false;
-        }
-    }
 
     private void OnInventory(InputAction.CallbackContext context)
     {
@@ -142,13 +124,6 @@ public class InputManager : MonoBehaviour
     public bool IsCancelPressed()
     {
         bool result = CancelPressed;
-        CancelPressed = false;
-        return result;
-    }
-
-    public bool isUsePressed()
-    {
-        bool result = UsePressed;
         CancelPressed = false;
         return result;
     }

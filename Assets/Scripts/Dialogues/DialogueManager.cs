@@ -1,25 +1,34 @@
-using Ink.Parsed;
-using Ink.Runtime;
-using Ink.UnityIntegration;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    //public instance to be retrived from other scripts
     public static DialogueManager Instance { get; private set; }
 
+    //private ink integrating variables
     Ink.Runtime.Story _inkstory;
     private bool isDialoguePlaying = false; //check if there's any dialogue played
     private bool isChoicesDiaplayed = false;
+    private bool animPlaying = false;
 
+    //private tag-related variables
     private List<string> tags = new List<string>();
+    private const string SPEAKER_TAG = "speaker";
+    private const string PORTRAIT_TAG = "portrait";
+    private const string AUDIO_TAG = "audio";
+    private const string ITEM_TAG = "item";
+
+    //private audio and animation variables
     private Animator _anim;
     private AudioSource _audio;
     private DialogueVariables dialogueVariables;
+    private string lastPlayedTag = "";
 
     // variable for the load_global.ink JSON
 
@@ -30,13 +39,13 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI textToDisplay;
     [SerializeField] private GameObject indication;
+    [SerializeField] private TextMeshProUGUI speakerLabel;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject buttonGroup;
 
     [Header("Sound FX")]
-    [SerializeField] private AudioClip confirmSFX;
     [SerializeField] private AudioClip endSFX;
 
     private void Awake()
@@ -56,16 +65,29 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        //find animation and audio componenets in the attached object
         _anim = GameObject.Find("DialoguePanel").GetComponent<Animator>();
         _audio = GetComponent<AudioSource>();
 
+        if(_anim == null)
+        {
+            Debug.Log("Animator component cannot be found in dialogue manager");
+            return;
+        }
+        if (_audio == null)
+        {
+            Debug.Log("Audio source cannot be found in dialogue manager");
+            return;
+        }
+
+        //initialize the dialogue panel
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
 
     }
 
-    private void Update() //singleton class, only have one in the scene
+    private void Update()
     {
         // return right away if dialogue isn't playing
         if (!isDialoguePlaying)
@@ -73,52 +95,120 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+        // contiue story upon user input if there's no choices in current line
         if (_inkstory.currentChoices.Count == 0 &&
+            !animPlaying &&
            (InputManager.Instance.IsSubmitPressed() ||
             InputManager.Instance.IsInteractPressed()))
         {
             ContinueStory();
         }
 
+        // continue to next line directly if there's no content in current line
         if (string.IsNullOrEmpty(_inkstory.currentText))
         {
             ContinueStory();
         }
 
+        // set the indication active only when the story can be continue
         if (!_inkstory.canContinue)
         {
             indication.SetActive(false);
         }
+        else
+        {
+            indication.SetActive(true);
+        }
+
+        // set the speaker label. if the speaker is empty, set the label to
+        //empty string
+        if (speakerLabel != null && !string.IsNullOrEmpty(GetSpeakerTag()))
+        {
+            speakerLabel.text = GetSpeakerTag();
+        }
+        else if (string.IsNullOrEmpty(GetSpeakerTag()))
+        {
+            speakerLabel.text = "";
+        }
     }
 
-    private void CurrentTags()
+    private string[] ParseTags(string tag) //return the parsed tags
     {
-        tags = _inkstory.currentTags;
-
+        // parse the tag
+        string[] splitTag = tag.Split(':');
+        if (splitTag.Length != 2)
+        {
+            Debug.LogError("Tag could not be appropriately parsed: " + tag);
+        }
+        return splitTag;
     }
 
-    public string GetSpeakerTag()
+    public string GetSpeakerTag() //get tag of the speaker in current line
     {
         foreach (string tag in tags)
         {
-            if (tag.Contains("speaker"))
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == SPEAKER_TAG)
             {
-                return tag.Replace("speaker:", "");
+                return splitTag[1];
             }
         }
         return "";
     }
 
-    public string GetExpressionTag()
+    public string GetExpressionTag() //get tag of the expression in current line
     {
         foreach (string tag in tags)
         {
-            if (tag.Contains("portrait"))
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == PORTRAIT_TAG)
             {
-                return tag.Replace("portrait:", "");
+                return splitTag[1];
             }
         }
         return "";
+    }
+
+    public string GetAudioTag() //get tag of the audio in current line
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == AUDIO_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
+
+    public string GetItemTag()
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == ITEM_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
+
+    public void PlaySound(AudioClip sound, string audioName) //play sound 
+    {
+        string currentTag = GetAudioTag();
+
+        if (currentTag == audioName && sound != null && lastPlayedTag != audioName)
+        {
+            _audio.PlayOneShot(sound);
+            lastPlayedTag = audioName;
+            Debug.Log("sound is playing");
+        } 
+        else if(currentTag != null && (sound == null || string.IsNullOrEmpty(audioName)))
+        {
+            Debug.Log("Sound is not defined for current audio tag");
+        }
     }
 
     //set the inkasset as current story to the manager
@@ -126,6 +216,7 @@ public class DialogueManager : MonoBehaviour
     {
         _inkstory = new Ink.Runtime.Story(story.text);
         dialogueVariables.StartListening(_inkstory);
+
         EnterDialogueMode();
     }
 
@@ -140,14 +231,18 @@ public class DialogueManager : MonoBehaviour
         _anim.SetTrigger("dialogueStart");
     }
 
-    //exit dialogue after 1 frame
+    //exit dialogue mode
     private IEnumerator ExitDialogueMode()
     {
         _anim.SetTrigger("dialogueEnd");
+        animPlaying = true;
         _audio.PlayOneShot(endSFX);
-        isDialoguePlaying = false;
-        yield return new WaitForSecondsRealtime(0.6f);
 
+        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
+            yield return null;
+
+        animPlaying = false;
+        isDialoguePlaying = false;
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
@@ -160,15 +255,14 @@ public class DialogueManager : MonoBehaviour
     {
         if (_inkstory.canContinue)
         {
-            indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
-            CurrentTags();
+            lastPlayedTag = "";
+            GetTags();
 
             DisplayChoices();
         }
         else
         {
-            indication.SetActive(false);
             StartCoroutine(ExitDialogueMode());
         }
     }
@@ -198,8 +292,8 @@ public class DialogueManager : MonoBehaviour
                     //Debug.Log("Clicked: " + currentButton);
 
                     //make the choice according to the index of button
-                    _audio.PlayOneShot(confirmSFX);
-                    MakeChoices(currentButton);
+
+                    StartCoroutine(MakeChoices(currentButton));
                 });
 
                 //make the first button default
@@ -220,10 +314,10 @@ public class DialogueManager : MonoBehaviour
     }
 
     //select the choice from the list and to continue to corresponding dialogues
-    private void MakeChoices(int currentIndex)
-    {
+    private IEnumerator MakeChoices(int currentIndex)
+    {   
+        yield return new WaitForSecondsRealtime(0.1f);
         _inkstory.ChooseChoiceIndex(currentIndex);
-
         GameObject[] choicesButtons = GameObject.FindGameObjectsWithTag("ChoiceButton");
         foreach (GameObject choice in choicesButtons)
         {
@@ -232,17 +326,38 @@ public class DialogueManager : MonoBehaviour
 
         InputManager.Instance.RegisterSubmitPressed();
         isChoicesDiaplayed = false;
-        ContinueStory();
+
+        if (_inkstory.canContinue)
+        {
+            ContinueStory();
+        }
+
     }
 
-    public bool CheckDialoguePlaying()
+    private void GetTags() //get tags in current line
+    {
+        tags = _inkstory.currentTags;
+    }
+
+    public bool CheckDialoguePlaying() //Check if current dialogue is playing
     {
         return isDialoguePlaying;
     }
 
-    public bool CheckChoicesDisplay()
+    public bool CheckChoicesDisplay() //Check if any choices are displayed
     {
         return isChoicesDiaplayed;
     }
 
+    //get current variable as well as value
+    public Ink.Runtime.Object GetVariableState(string variableName)
+    {
+        Ink.Runtime.Object variableValue = null;
+        dialogueVariables.variables.TryGetValue(variableName, out variableValue);
+        if (variableValue == null)
+        {
+            Debug.LogWarning("Ink Variable was found to be null: " + variableName);
+        }
+        return variableValue;
+    }
 }
