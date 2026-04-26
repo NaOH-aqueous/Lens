@@ -21,7 +21,8 @@ public class DialogueManager : MonoBehaviour
     private AudioSource _audio;
     private DialogueVariables dialogueVariables;
 
-    // variable for the load_globals.ink JSON
+    // variable for the load_global.ink JSON
+
     [Header("Load Globals JSON")]
     [SerializeField] private TextAsset loadGlobalsJSON;
 

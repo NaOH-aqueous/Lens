@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -6.03, y: 2.41}
-  m_SizeDelta: {x: 5, y: 5}
+  m_AnchoredPosition: {x: -6.18, y: 3.17}
+  m_SizeDelta: {x: 5, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4826811174416863711
 Canvas:
@@ -113,8 +113,8 @@ GameObject:
   - component: {fileID: 7508011362587859901}
   - component: {fileID: 4024453478314629671}
   - component: {fileID: 5824378941789079773}
-  m_Layer: 6
-  m_Name: Furniture
+  m_Layer: 0
+  m_Name: Bed
   m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 6479835567384342446}
   - component: {fileID: 8369241730924648788}
   - component: {fileID: 3062341941486799611}
-  - component: {fileID: 850142418717282578}
+  - component: {fileID: 6575996949488835971}
   m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_text: <b>E</b> INTERACT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
-  m_sharedMaterial: {fileID: 1115464596409463455, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
+  m_sharedMaterial: {fileID: 3797829437900492191, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -337,8 +337,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &850142418717282578
+--- !u!114 &6575996949488835971
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -386,9 +386,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238bbdf93c8f37d44a0a88eec7bdab69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AngleMultiplier: 0.1
+  AngleMultiplier: 0.2
   SpeedMultiplier: 1
-  CurveScale: 0.25
+  CurveScale: 0.2
 --- !u!1 &6554345924270158163
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,8 +399,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3351757642236259090}
   - component: {fileID: 4721102501554189500}
-  - component: {fileID: 127510480453435594}
-  m_Layer: 6
+  - component: {fileID: 4705863523836203116}
+  m_Layer: 0
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -468,7 +468,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.5979326, y: 1.4975117}
   m_EdgeRadius: 0
---- !u!114 &127510480453435594
+--- !u!114 &4705863523836203116
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -480,8 +480,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72729e04fe01a644392b246aa546b759, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inkAsset: {fileID: 4900000, guid: a25d45bab77956044bb5b4a32c6269f5, type: 3}
-  indication: {fileID: 2045133686402937225}
+  inkAsset: {fileID: 0}
+  indication: {fileID: 0}
+  triggerSound: {fileID: 0}
 --- !u!1 &8053379941228828942
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,8 +493,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7925477069097987779}
   m_Layer: 0
-  m_Name: Furniture_Prefab
-  m_TagString: Untagged
+  m_Name: Furniture_prefab
+  m_TagString: Furniture
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
