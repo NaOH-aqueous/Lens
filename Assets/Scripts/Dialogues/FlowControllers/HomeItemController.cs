@@ -31,7 +31,6 @@ public class HomeItemController : MonoBehaviour
             cgPlayer.ClearDisplay();
             if (!paperGet)
             {
-                Debug.Log(EventSystem.current.currentInputModule);
                 paperGet = true;
                 InventoryManager.Instance.QueueItem(papertowel);
             }

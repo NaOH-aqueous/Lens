@@ -26,6 +26,13 @@ public class GameManager : MonoBehaviour
     public BlurEffect blurVFX;
 
     private DialogueManager m_dialogueManager;
+    private InventoryManager m_inventoryManager;
+
+    private CanvasGroup inventoryCanvasGroup;
+    private CanvasGroup dialogueCanvasGroup;
+    private Button pauseButton;
+
+    private bool isTransitioning = false;
 
     private void Awake()
     {
@@ -42,7 +49,13 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        m_dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
+        m_dialogueManager = DialogueManager.Instance;
+        m_inventoryManager = InventoryManager.Instance;
+
+        inventoryCanvasGroup = inventoryUI.GetComponent<CanvasGroup>();
+        dialogueCanvasGroup = dialogueUI.GetComponent<CanvasGroup>();
+        pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
+
         ChangeState(GameStateType.Playing);
         blurVFX.enabled = false;
     }
@@ -84,19 +97,26 @@ public class GameManager : MonoBehaviour
     {
         return currentState;
     }
-    public void TransitionToState(GameStateType newState)
+    private void TransitionToState(GameStateType newState)
     {
+        if(newState == currentState || isTransitioning)
+        {
+            return;
+        }
         if (newState == GameStateType.Playing)
         {
+            isTransitioning = true;
             StartCoroutine(blurVFX.IntroTransition());
         }
         else if(newState == GameStateType.Inventory ||
             newState == GameStateType.ItemDisplay)
         {
-            blurVFX.OutroTransition();
+            isTransitioning = true;
+            StartCoroutine(blurVFX.OutroTransition());
         }
 
         currentState = newState;
+        isTransitioning = false;
         HandleStateChange();
     }
 
@@ -110,8 +130,8 @@ public class GameManager : MonoBehaviour
             case GameStateType.Playing:
                 AudioListener.pause = false;
                 Time.timeScale = 1f; // Resume the game
-                inventoryUI.GetComponent<CanvasGroup>().interactable = false;
-                dialogueUI.GetComponent<CanvasGroup>().interactable = true;
+                inventoryCanvasGroup.interactable = false;
+                dialogueCanvasGroup.interactable = true;
                 break;
             case GameStateType.MainMenu:
                 Time.timeScale = 0f; 
@@ -121,21 +141,20 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f; // Pause the game
                 pauseMenuUI.SetActive(true);
                 AudioListener.pause = true;
-                Button pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
                 EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
                 // Test
                 break;
             case GameStateType.Inventory:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
-                inventoryUI.GetComponent<CanvasGroup>().interactable = true;
+                inventoryCanvasGroup.interactable = true;
                 if (!m_dialogueManager.CheckDialoguePlaying())
                 {
-                    dialogueUI.GetComponent<CanvasGroup>().interactable = false;
+                    dialogueCanvasGroup.interactable = false;
                 }
                 else
                 {
-                    dialogueUI.GetComponent<CanvasGroup>().interactable = true;
+                    dialogueCanvasGroup.interactable = true;
                 }
                     break;
             case GameStateType.ItemDisplay:

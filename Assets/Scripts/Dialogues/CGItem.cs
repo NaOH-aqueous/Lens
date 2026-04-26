@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.UI;
 
 public class CGItem : MonoBehaviour
@@ -34,6 +32,18 @@ public class CGItem : MonoBehaviour
     {
         itemImage.sprite = null;
         itemImage.enabled = false;
-        GameManager.instance.TransitionToState(lastState);
+
+        if (lastState == GameStateType.Playing)
+        {
+            GameManager.instance.ChangeToPlaying();
+        }
+        else if (lastState == GameStateType.Paused)
+        {
+            GameManager.instance.ChangeToPaused();
+        }
+        else if (lastState == GameStateType.Inventory)
+        {
+            GameManager.instance.ChangeToInventory();
+        }
     }
 }
