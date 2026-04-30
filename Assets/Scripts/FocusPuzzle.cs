@@ -9,6 +9,8 @@ public class FocusPuzzle : MonoBehaviour
     private float minAlpha = 0f; //set the alpha to 0
     private float maxAlpha = 1f; //set the alpha to 1
     private Color _color;
+    public float duration = 0.5f;
+    private bool isFadingIn = false;
 
     void Start()
     {
@@ -25,6 +27,7 @@ public class FocusPuzzle : MonoBehaviour
 
     void Update()
     {
+
         if (Input.GetKey(KeyCode.E))
         {
 
@@ -32,13 +35,17 @@ public class FocusPuzzle : MonoBehaviour
             //maxAlpha = maxAlpha - 1f * Time.deltaTime;
 
             //change speed
-            float t = Mathf.PingPong(Time.time, 1f);
+            float d = Mathf.Max(0.0001f, duration);
+            float time = Time.time;
+            float t = Mathf.PingPong(time / d, 1);
             //Ping-pong between minAlpha and maxAlpha;
-            _color.a = Mathf.Lerp(minAlpha,maxAlpha,t);
+            _color.a = Mathf.Lerp(minAlpha, maxAlpha, t);
             //apply new color back
             image1.color = _color;
+            isFadingIn = true;
 
         }
+
     }
 
 }
