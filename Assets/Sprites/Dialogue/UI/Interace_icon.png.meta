@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f8eaa125a154a894c85b2c2da213b196
+guid: 5acc751011279ee48ac3308847a7976f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3460598817795432408
-    second: sunglasses_0
+      213: 643892045220825992
+    second: Interace_icon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sunglasses_0
+      name: Interace_icon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 284
+        y: 442
+        width: 367
+        height: 367
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 820aa23d5bb79ffc0800000000000000
-      internalID: -3460598817795432408
+      spriteID: 88b461557609fe800800000000000000
+      internalID: 643892045220825992
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sunglasses_0: -3460598817795432408
+      Interace_icon_0: 643892045220825992
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

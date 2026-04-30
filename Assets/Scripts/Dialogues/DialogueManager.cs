@@ -11,9 +11,17 @@ public class DialogueManager : MonoBehaviour
     //public instance to be retrived from other scripts
     public static DialogueManager Instance { get; private set; }
 
+    public event System.Action<bool> OnDialogueStatusChanged;
+    public event System.Action<string> OnItemTagChanged;
+    public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
+    public event System.Action<string> OnPortraitTagChanged;
+
+
     //private ink integrating variables
     Ink.Runtime.Story _inkstory;
     private bool isDialoguePlaying = false; //check if there's any dialogue played
+    private bool lastDialogueStatus = false;
+
     private bool isChoicesDiaplayed = false;
     private bool animPlaying = false;
 
@@ -28,6 +36,8 @@ public class DialogueManager : MonoBehaviour
     private Animator _anim;
     private AudioSource _audio;
     private DialogueVariables dialogueVariables;
+    private string lastItemTag = "";
+    private string lastPortraitTag = "";
     private string lastPlayedTag = "";
 
     // variable for the load_globals.ink JSON
@@ -225,6 +235,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
+        OnDialogueStatusChanged?.Invoke(true);
 
         ContinueStory();
         _anim.SetTrigger("dialogueStart");
@@ -242,6 +253,8 @@ public class DialogueManager : MonoBehaviour
 
         animPlaying = false;
         isDialoguePlaying = false;
+        OnDialogueStatusChanged?.Invoke(false); 
+
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
@@ -341,6 +354,37 @@ public class DialogueManager : MonoBehaviour
     private void GetTags() //get tags in current line
     {
         tags = _inkstory.currentTags;
+
+        string currentItemTag = string.Empty;
+        string currentSpeakerTag = string.Empty;
+        string currentPortraitTag = string.Empty;
+
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            switch (splitTag[0])
+            {
+                case ITEM_TAG:
+                    currentItemTag = splitTag[1];
+                    break;
+                case SPEAKER_TAG:
+                    currentSpeakerTag = splitTag[1];
+                    break;
+                case PORTRAIT_TAG:
+                    currentPortraitTag = splitTag[1];
+                    break;
+            }
+        }
+        //only notify when the tag changed
+        if(currentItemTag != lastItemTag)
+        {
+            lastItemTag = currentItemTag;
+            OnItemTagChanged?.Invoke(currentItemTag);
+        } else if(currentPortraitTag != lastPortraitTag)
+        {
+            lastPortraitTag = currentPortraitTag;
+            OnPortraitTagChanged?.Invoke(currentPortraitTag);
+        }
     }
 
     public bool CheckDialoguePlaying() //Check if current dialogue is playing
@@ -363,5 +407,10 @@ public class DialogueManager : MonoBehaviour
             Debug.LogWarning("Ink Variable was found to be null: " + variableName);
         }
         return variableValue;
+    }
+
+    public void RaiseVariableChaned(string name, Ink.Runtime.Object value)
+    {
+        OnVariableChanged?.Invoke(name, value);
     }
 }

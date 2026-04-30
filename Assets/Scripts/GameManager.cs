@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
 public enum GameStateType
@@ -15,6 +16,7 @@ public enum GameStateType
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; private set; }
+    public System.Action<GameStateType> OnGameStateChanged;
 
     // UI references
     public GameObject mainMenuUI;
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
     private Button pauseButton;
 
     private bool isTransitioning = false;
+    private PlayerController m_playerController;
 
     private void Awake()
     {
@@ -55,12 +58,33 @@ public class GameManager : MonoBehaviour
         inventoryCanvasGroup = inventoryUI.GetComponent<CanvasGroup>();
         dialogueCanvasGroup = dialogueUI.GetComponent<CanvasGroup>();
         pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
+        m_playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
 
         ChangeState(GameStateType.Playing);
         blurVFX.enabled = false;
     }
 
-    public void ChangeState(GameStateType newState)
+    private void OnEnable()
+    {
+        OnGameStateChanged += HandleStateChange;
+        OnGameStateChanged += HandleModeTransition;
+        if (m_dialogueManager != null)
+        {
+            m_dialogueManager.OnDialogueStatusChanged += HandleDialogueStateChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        OnGameStateChanged -= HandleStateChange;
+        OnGameStateChanged -= HandleModeTransition;
+        if (m_dialogueManager != null)
+        {
+            m_dialogueManager.OnDialogueStatusChanged -= HandleDialogueStateChanged;
+        }
+    }
+
+    private void ChangeState(GameStateType newState)
     {
         TransitionToState(newState);
     }
@@ -99,28 +123,39 @@ public class GameManager : MonoBehaviour
     }
     private void TransitionToState(GameStateType newState)
     {
-        if(newState == currentState || isTransitioning)
+        //return directly if the state is the same or currently transitioning
+        if (isTransitioning)
         {
             return;
         }
-        if (newState == GameStateType.Playing)
+
+        bool stateChanged = currentState != newState;
+
+        if (stateChanged)
+        {
+            OnGameStateChanged?.Invoke(newState);
+        }
+        currentState = newState;
+    }
+
+    private void HandleModeTransition(GameStateType currentState)
+    {
+        if (currentState == GameStateType.Playing)
         {
             isTransitioning = true;
             StartCoroutine(blurVFX.IntroTransition());
+            isTransitioning = false;
         }
-        else if(newState == GameStateType.Inventory ||
-            newState == GameStateType.ItemDisplay)
+        else if (currentState == GameStateType.Inventory ||
+            currentState == GameStateType.ItemDisplay)
         {
             isTransitioning = true;
             StartCoroutine(blurVFX.OutroTransition());
+            isTransitioning = false;
         }
-
-        currentState = newState;
-        isTransitioning = false;
-        HandleStateChange();
     }
 
-    private void HandleStateChange()
+    private void HandleStateChange(GameStateType currentState)
     {
 
         HideAllMenu();
@@ -128,35 +163,20 @@ public class GameManager : MonoBehaviour
         switch (currentState)
         {
             case GameStateType.Playing:
-                AudioListener.pause = false;
-                Time.timeScale = 1f; // Resume the game
-                inventoryCanvasGroup.interactable = false;
-                dialogueCanvasGroup.interactable = true;
+                PlayingMode();
                 break;
             case GameStateType.MainMenu:
                 Time.timeScale = 0f; 
                 mainMenuUI.SetActive(true);
                 break;
             case GameStateType.Paused:
-                Time.timeScale = 0f; // Pause the game
-                pauseMenuUI.SetActive(true);
-                AudioListener.pause = true;
-                EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
-                // Test
+                PausedMode();
                 break;
             case GameStateType.Inventory:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
                 inventoryCanvasGroup.interactable = true;
-                if (!m_dialogueManager.CheckDialoguePlaying())
-                {
-                    dialogueCanvasGroup.interactable = false;
-                }
-                else
-                {
-                    dialogueCanvasGroup.interactable = true;
-                }
-                    break;
+                break;
             case GameStateType.ItemDisplay:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
@@ -164,10 +184,44 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void HandleDialogueStateChanged(bool isDialoguePlaying)
+    {
+        // if the current state is inventory
+        // set the interactivity of inventory UI to be the opposite of dialogue status
+        if (currentState == GameStateType.Inventory)
+        {
+            inventoryCanvasGroup.interactable = !isDialoguePlaying;
+        }
+        else
+        {
+            // if the inventory mode is on, set interactable
+            inventoryCanvasGroup.interactable = false;
+        }
+
+        //set the dialogue UI interactivity to be the opposite of dialogue status
+        dialogueCanvasGroup.interactable = !isDialoguePlaying;
+    }
+
     private void HideAllMenu()
     {
         mainMenuUI.SetActive(false);
         pauseMenuUI.SetActive(false);
+    }
+
+    private void PlayingMode()
+    {
+        AudioListener.pause = false;
+        Time.timeScale = 1f; // Resume the game
+        inventoryCanvasGroup.interactable = false;
+        dialogueCanvasGroup.interactable = true;
+    }
+
+    private void PausedMode()
+    {
+        Time.timeScale = 0f; // Pause the game
+        pauseMenuUI.SetActive(true);
+        AudioListener.pause = true;
+        EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
     }
 
     public void QuitGame()

@@ -42,6 +42,11 @@ public class DialogueVariables
             variables.Remove(name);
             variables.Add(name, value);
         }
+
+        if(DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.RaiseVariableChaned(name,value);
+        }
     }
 
     private void VariablesToStory(Story story)

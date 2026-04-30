@@ -7,10 +7,16 @@ public class HomeItemController : MonoBehaviour
     public Sprite papertowelSprite;
     public CGItem cgPlayer;
     public Sprite papertowelIcon;
+    public Sprite notesSprite;
 
     private const string PAPERTOWEL = "PaperTowel";
     private Item papertowel;
     private bool paperGet;
+
+    private const string NOTES = "Notes";
+    private Item notes;
+
+    private bool papertowelDisplayed = false;
 
     private void Start()
     {
@@ -18,23 +24,64 @@ public class HomeItemController : MonoBehaviour
         papertowel.item_Sprite = papertowelSprite;
         papertowel.item_Icon = papertowelIcon;
 
+        notes.item_Name = NOTES;
+        notes.item_Sprite = notesSprite;
+
     }
-    private void Update()
+
+    private void OnEnable()
     {
-        cgPlayer.DisplayItemInfo(papertowel);
+        if(DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnItemTagChanged += HandleItemTagChanged;
+            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+        }
+    }
 
-        bool have_paper = ((Ink.Runtime.BoolValue)DialogueManager.Instance.
-    GetVariableState("have_paper")).value;
+    private void OnDisable()
+    {
+        if(DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnItemTagChanged -= HandleItemTagChanged;
+            DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
+        }
+    }
 
-        if (have_paper)
+    private void HandleItemTagChanged(string newTag)
+    {
+        Debug.Log("Item tag changed to: " + newTag);
+        // newTag is empty string when no item tag present
+        if (string.IsNullOrEmpty(newTag))
         {
             cgPlayer.ClearDisplay();
-            if (!paperGet)
-            {
-                paperGet = true;
-                InventoryManager.Instance.QueueItem(papertowel);
-            }
+            return;
         }
 
+        // decide what to do based on tag name
+        if (newTag == PAPERTOWEL)
+        {
+            cgPlayer.DisplayItemInfo(papertowel);
+            InventoryManager.Instance.QueueItem(papertowel);
+        }
+        else
+        {
+            // unknown tag: clear or ignore
+            cgPlayer.ClearDisplay();
+        }
+    }
+
+    private void HandleVariableChanged(string name, Ink.Runtime.Object value)
+    {
+        if (name != "read_notes")
+            return;
+
+        if (value is Ink.Runtime.BoolValue b && b.value)
+        {
+            cgPlayer.InspectItem(notes);
+        }
+        else
+        {
+            cgPlayer.ClearInspect();
+        }
     }
 }

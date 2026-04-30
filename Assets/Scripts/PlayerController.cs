@@ -35,30 +35,17 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        bool dialogueNow = m_dialogueManager.CheckDialoguePlaying();
-        gameState = m_gameManager.GetGameStatus();
-
-        if (dialogueNow != isInDialogue)
-        {
-            isInDialogue = dialogueNow;
-
-            if (isInDialogue)
-            {
-                //switch to UI inputs if dialogue is playing
-                playerInput.actions["Move"].Disable();
-                playerInput.actions["Interact"].Disable();
-                playerInput.actions["Inventory"].Disable();
-            }
-            else
-            {
-                //switch to player inputs if dialogue is playing
-                playerInput.actions["Move"].Enable();
-                playerInput.actions["Interact"].Enable();
-                playerInput.actions["Inventory"].Enable();
-            }
-        }
-
         PauseGame();
+    }
+
+    private void OnEnable()
+    {
+        DialogueManager.Instance.OnDialogueStatusChanged += SetPlayerControl;
+    }
+
+    private void OnDisable()
+    {
+        DialogueManager.Instance.OnDialogueStatusChanged -= SetPlayerControl;
     }
 
     private void FixedUpdate()
@@ -94,6 +81,22 @@ public class PlayerController : MonoBehaviour
             footstepAudio.playOnAwake = false;
         }
 
+    }
+
+    public void SetPlayerControl(bool DisableControl)
+    {
+        if (DisableControl)
+        {
+            playerInput.actions["Move"].Disable();
+            playerInput.actions["Interact"].Disable();
+            playerInput.actions["Inventory"].Disable();
+        }
+        else
+        {
+            playerInput.actions["Move"].Enable();
+            playerInput.actions["Interact"].Enable();
+            playerInput.actions["Inventory"].Enable();
+        }
     }
 
     private void FootStep() //play footstep audio when player is walking
