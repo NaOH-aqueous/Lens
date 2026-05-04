@@ -11,12 +11,9 @@ public class HomeItemController : MonoBehaviour
 
     private const string PAPERTOWEL = "PaperTowel";
     private Item papertowel;
-    private bool paperGet;
 
     private const string NOTES = "Notes";
     private Item notes;
-
-    private bool papertowelDisplayed = false;
 
     private void Start()
     {
@@ -50,14 +47,15 @@ public class HomeItemController : MonoBehaviour
     private void HandleItemTagChanged(string newTag)
     {
         Debug.Log("Item tag changed to: " + newTag);
-        // newTag is empty string when no item tag present
+
+        //return directly when the string is empty or null
         if (string.IsNullOrEmpty(newTag))
         {
             cgPlayer.ClearDisplay();
             return;
         }
 
-        // decide what to do based on tag name
+        //display and add the papertowel if it's shown in the tag
         if (newTag == PAPERTOWEL)
         {
             cgPlayer.DisplayItemInfo(papertowel);
@@ -65,7 +63,6 @@ public class HomeItemController : MonoBehaviour
         }
         else
         {
-            // unknown tag: clear or ignore
             cgPlayer.ClearDisplay();
         }
     }
