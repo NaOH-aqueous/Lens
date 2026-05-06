@@ -1,5 +1,5 @@
 // Inventory dialogu
-VAR can_use = false
+INCLUDE Globals.ink
 
 ->invent
 

@@ -40,7 +40,7 @@ public class FocusPuzzle : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKey(KeyCode.F))
         {
             //change speed
             float d = Mathf.Max(0.0001f, duration);
@@ -76,7 +76,7 @@ public class FocusPuzzle : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.E))
+        if (Input.GetKeyUp(KeyCode.F))
         {
             //check if the puzzel has been solved upon key released
             FocusSucceed();

@@ -8,6 +8,8 @@ public class DialogueTrigger : MonoBehaviour
     private PlayerController player;
     [SerializeField] private GameObject indication;
     private bool playerInRange = false;
+    private float lastDialogueTime = -1f;
+    [SerializeField] private float interactionCooldown = 0.2f;
 
     [Header("Audios")]
     [SerializeField] private List<TriggerSounds> triggerSounds = new List<TriggerSounds>();
@@ -24,14 +26,24 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
+
+        if (GameManager.instance.CurrentState != GameStateType.Playing)
+        {
+            return;
+        }
+
         if (!playerInRange)
         {
             //return directly if player is not around
             return;
         }
+
         if (!DialogueManager.Instance.CheckDialoguePlaying())
         {
-            StartDialogue();
+            if (InputManager.Instance.IsInteractPressed())
+            {
+                StartDialogue();
+            }
         }
         else
         {
@@ -43,12 +55,22 @@ public class DialogueTrigger : MonoBehaviour
     //start the dialogue attached to this trigger upon user input
     private void StartDialogue()
     {
+        if (Time.time < lastDialogueTime + interactionCooldown)
+            return;
+
+        if (GameManager.instance.CurrentState != GameStateType.Playing)
+        {
+            return;
+        }
+
         int layerIndex = gameObject.layer;
         string layerName = LayerMask.LayerToName(gameObject.layer);
-        if (InputManager.Instance.IsInteractPressed() &&
-            player.CheckInteract(layerName))
+
+        if (player.CheckInteract(layerName))
         {
+            Debug.Log("dialogue has been started");
             InputManager.Instance.RegisterSubmitPressed();
+            lastDialogueTime = Time.time;
             DialogueManager.Instance.NewStory(inkAsset);
             Debug.Log("Current story has been set to " + inkAsset.name);
         }

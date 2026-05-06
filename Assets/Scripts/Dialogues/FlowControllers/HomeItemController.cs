@@ -8,12 +8,17 @@ public class HomeItemController : MonoBehaviour
     public CGItem cgPlayer;
     public Sprite papertowelIcon;
     public Sprite notesSprite;
+    public Sprite windowDust;
 
     private const string PAPERTOWEL = "PaperTowel";
     private Item papertowel;
 
     private const string NOTES = "Notes";
     private Item notes;
+
+    private const string WINDOW_DUST = "window_dust";
+    private const string USE_TAG = "can_use";
+
 
     private void Start()
     {
@@ -51,7 +56,6 @@ public class HomeItemController : MonoBehaviour
         //return directly when the string is empty or null
         if (string.IsNullOrEmpty(newTag))
         {
-            cgPlayer.ClearDisplay();
             return;
         }
 
@@ -61,7 +65,17 @@ public class HomeItemController : MonoBehaviour
             cgPlayer.DisplayItemInfo(papertowel);
             InventoryManager.Instance.QueueItem(papertowel);
         }
-        else
+        else if (newTag == WINDOW_DUST)
+        {
+            cgPlayer.CGDisplay(windowDust);
+            if (InventoryManager.Instance.GetCurrentItem().item_Name 
+                == papertowel.item_Name)
+            {
+                Debug.Log("can use papertowel now");
+                DialogueManager.Instance.SetBoolVariable(USE_TAG, true);
+            }
+        }
+        else if (newTag == "clearDisplay")
         {
             cgPlayer.ClearDisplay();
         }

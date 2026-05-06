@@ -100,7 +100,7 @@ There lies several blank copy paper. -> before
 You look closer and saw one unused paper towel. #item:PaperTowel
 * [Take it away]
 ~ have_paper = true
-You took it away.
+You took it away. #item:clearDisplay
 -> take_the_paper_but_never_inspect_top_drawer
 
 = take_the_paper_but_never_inspect_top_drawer

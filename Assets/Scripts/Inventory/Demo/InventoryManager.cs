@@ -20,6 +20,9 @@ public class InventoryManager : MonoBehaviour
     private Queue<Item> itemQueue = new Queue<Item>();
     private bool isProcessingQueue = false;
 
+    private Item currentItem;
+    private GameStateType previousState;
+
     private void Awake()
     {
         //make it a singleton gameobject
@@ -74,7 +77,7 @@ public class InventoryManager : MonoBehaviour
         
         if (isInventoryOpen)
         {
-            GameManager.instance.ChangeToInventory();
+            GameManager.instance.PushState(GameStateType.Inventory);
             InventoryMenu.SetActive(true);
             _anim.SetTrigger("Intro");
 
@@ -83,7 +86,7 @@ public class InventoryManager : MonoBehaviour
         else
         {
             _anim.SetTrigger("Outro");
-            GameManager.instance.ChangeToPlaying();
+            GameManager.instance.PopState(GameStateType.Inventory);
             while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Outro"))
                 yield return null;
             InventoryMenu.SetActive(false);
@@ -138,6 +141,20 @@ public class InventoryManager : MonoBehaviour
         }
 
         isProcessingQueue = false;
+    }
+
+    public void SetCurrentItem(Item item) 
+    { 
+        if(item.item_Name == null)
+        {
+            return;
+        }
+        currentItem = item;
+    }
+
+    public Item GetCurrentItem()
+    {
+        return currentItem;
     }
 
     public void UseItem(Item item)

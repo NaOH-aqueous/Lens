@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,8 +12,10 @@ public class DialogueManager : MonoBehaviour
     //public instance to be retrived from other scripts
     public static DialogueManager Instance { get; private set; }
 
-    public event System.Action<bool> OnDialogueStatusChanged;
     public event System.Action<string> OnItemTagChanged;
+
+    public System.Action<bool> OnDialogueStatusChanged;
+
     public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
     public event System.Action<string> OnPortraitTagChanged;
 
@@ -20,7 +23,6 @@ public class DialogueManager : MonoBehaviour
     //private ink integrating variables
     Ink.Runtime.Story _inkstory;
     private bool isDialoguePlaying = false; //check if there's any dialogue played
-    private bool lastDialogueStatus = false;
 
     private bool isChoicesDiaplayed = false;
     private bool animPlaying = false;
@@ -107,8 +109,7 @@ public class DialogueManager : MonoBehaviour
         // contiue story upon user input if there's no choices in current line
         if (_inkstory.currentChoices.Count == 0 &&
             !animPlaying &&
-           (InputManager.Instance.IsSubmitPressed() ||
-            InputManager.Instance.IsInteractPressed()))
+           (InputManager.Instance.IsSubmitPressed()))
         {
             ContinueStory();
         }
@@ -253,13 +254,13 @@ public class DialogueManager : MonoBehaviour
 
         animPlaying = false;
         isDialoguePlaying = false;
-        OnDialogueStatusChanged?.Invoke(false); 
+        OnDialogueStatusChanged?.Invoke(false);
 
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
 
-        if (GameManager.instance.GetGameStatus() == GameStateType.Inventory)
+        if (GameManager.instance.CurrentState == GameStateType.Inventory)
         {
             StartCoroutine(InventoryManager.Instance.SelectFirstSlotNextFrame());
         }
@@ -412,5 +413,17 @@ public class DialogueManager : MonoBehaviour
     public void RaiseVariableChaned(string name, Ink.Runtime.Object value)
     {
         OnVariableChanged?.Invoke(name, value);
+    }
+
+    public void SetBoolVariable(string variable, bool value)
+    {
+        if(variable == null && string.IsNullOrEmpty(variable))
+        {
+            return;
+        }
+
+        dialogueVariables.SetVariable(variable, value);
+
+        Debug.Log("the variable" + variable + "has been set to" + value);
     }
 }

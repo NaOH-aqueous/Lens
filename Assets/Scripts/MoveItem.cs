@@ -5,8 +5,6 @@ public class MoveItem : MonoBehaviour
     // Speed at which the notes move
     [SerializeField] private float moveSpeed = 200f;
     [SerializeField] private float scaleSpeed = 0.1f;
-    private float minScale = 1f;
-    private float maxScale = 1.5f;
     public float transformLimitX = 100f;
     public float transformLimitY = 100f;
 
@@ -33,8 +31,6 @@ public class MoveItem : MonoBehaviour
     void Update()
     {
         if (rectTransform == null) return;
-
-        ScaleTransform();
 
         Vector2 move = Vector2.zero;
 
@@ -79,32 +75,32 @@ public class MoveItem : MonoBehaviour
         rectTransform.localScale = originalScale;
     }
 
-    void ScaleTransform()
-    {
-        if (Input.GetKeyDown(KeyCode.Equals))
-        {
-            if (rectTransform.localScale.x == maxScale)
-            {
-                return;
-            }
-            float newScale = rectTransform.localScale.x + scaleSpeed;
-            newScale = Mathf.Clamp(newScale, minScale, maxScale);
-            rectTransform.localScale = new Vector3(newScale, newScale, 1f);
-            transformLimitX += 200f;
-            transformLimitY += 200f;
-        }
-        if (Input.GetKeyDown(KeyCode.Minus))
-        {
-            if (rectTransform.localScale.x == minScale)
-            {
-                return;
-            }
-            float newScale = rectTransform.localScale.x - scaleSpeed;
-            newScale = Mathf.Clamp(newScale, minScale, maxScale);
-            rectTransform.localScale = new Vector3(newScale, newScale, 1f);
-            transformLimitX -= 200f;
-            transformLimitY -= 200f;
-        }
-    }
+    //void ScaleTransform()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Equals))
+    //    {
+    //        if (rectTransform.localScale.x == maxScale)
+    //        {
+    //            return;
+    //        }
+    //        float newScale = rectTransform.localScale.x + scaleSpeed;
+    //        newScale = Mathf.Clamp(newScale, minScale, maxScale);
+    //        rectTransform.localScale = new Vector3(newScale, newScale, 1f);
+    //        transformLimitX += 200f;
+    //        transformLimitY += 200f;
+    //    }
+    //    if (Input.GetKeyDown(KeyCode.Minus))
+    //    {
+    //        if (rectTransform.localScale.x == minScale)
+    //        {
+    //            return;
+    //        }
+    //        float newScale = rectTransform.localScale.x - scaleSpeed;
+    //        newScale = Mathf.Clamp(newScale, minScale, maxScale);
+    //        rectTransform.localScale = new Vector3(newScale, newScale, 1f);
+    //        transformLimitX -= 200f;
+    //        transformLimitY -= 200f;
+    //    }
+    //}
 
 }

@@ -35,11 +35,6 @@ public class ItemSlot : MonoBehaviour
         }
     }
 
-    public Item GetItemInSlot()
-    {
-        return item;
-    }
-
     public void ClearSlot()
     {
         item.item_Sprite = null;
@@ -53,8 +48,8 @@ public class ItemSlot : MonoBehaviour
     {
         if (_isFull)
         {
+            InventoryManager.Instance.SetCurrentItem(item);
             DialogueManager.Instance.NewStory(story);
         }
-
     }
 }

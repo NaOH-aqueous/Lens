@@ -1,4 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.LowLevel;
@@ -23,18 +25,23 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject inventoryUI;
     public GameObject dialogueUI;
+    public GameObject cgUI;
 
-    public GameStateType currentState { get; private set; }
+
+    private Stack<GameStateType> stateStack = new Stack<GameStateType>();
+    public GameStateType CurrentState =>
+        stateStack.Count > 0 ? stateStack.Peek() : GameStateType.Playing;
+
     public BlurEffect blurVFX;
 
     private DialogueManager m_dialogueManager;
-    private InventoryManager m_inventoryManager;
 
     private CanvasGroup inventoryCanvasGroup;
     private CanvasGroup dialogueCanvasGroup;
+    private CanvasGroup cgCanvasGroup;
     private Button pauseButton;
 
-    private bool isTransitioning = false;
+    private bool isTransitioning;
     private PlayerController m_playerController;
 
     private void Awake()
@@ -53,112 +60,90 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         m_dialogueManager = DialogueManager.Instance;
-        m_inventoryManager = InventoryManager.Instance;
 
         inventoryCanvasGroup = inventoryUI.GetComponent<CanvasGroup>();
         dialogueCanvasGroup = dialogueUI.GetComponent<CanvasGroup>();
+        cgCanvasGroup = cgUI.GetComponent<CanvasGroup>();
+
         pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
         m_playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
 
-        ChangeState(GameStateType.Playing);
+        PushState(GameStateType.Playing);
         blurVFX.enabled = false;
-    }
 
-    private void OnEnable()
-    {
-        OnGameStateChanged += HandleStateChange;
-        OnGameStateChanged += HandleModeTransition;
         if (m_dialogueManager != null)
         {
             m_dialogueManager.OnDialogueStatusChanged += HandleDialogueStateChanged;
         }
     }
 
+
+    private void OnEnable()
+    {
+        OnGameStateChanged += ApplyState;
+
+    }
+
     private void OnDisable()
     {
-        OnGameStateChanged -= HandleStateChange;
-        OnGameStateChanged -= HandleModeTransition;
+        OnGameStateChanged -= ApplyState;
         if (m_dialogueManager != null)
         {
             m_dialogueManager.OnDialogueStatusChanged -= HandleDialogueStateChanged;
         }
     }
 
-    private void ChangeState(GameStateType newState)
+    public void PushState(GameStateType newState)
     {
-        TransitionToState(newState);
+        stateStack.Push(newState);
+        OnGameStateChanged?.Invoke(newState);
+
+        Debug.Log("Pushed: " + newState);
     }
 
-    // Click events for UI buttons
-    public void ChangeToMainMenu()
+    public void PopState(GameStateType expectedState)
     {
-        ChangeState(GameStateType.MainMenu);
-        // Load the main menu scene
-        //SceneManager.LoadScene("MainMenu");
-    }
+        if (stateStack.Count == 0)
+            return;
 
-    public void ChangeToPlaying()
-    {
-        ChangeState(GameStateType.Playing);
-    }
-
-    public void ChangeToPaused()
-    {
-        ChangeState(GameStateType.Paused);
-    }
-
-    public void ChangeToInventory()
-    {
-        ChangeState(GameStateType.Inventory);
-    }
-
-    public void ChangeToItemDisplay()
-    {
-        ChangeState(GameStateType.ItemDisplay);
-    }
-
-    public GameStateType GetGameStatus()
-    {
-        return currentState;
-    }
-    private void TransitionToState(GameStateType newState)
-    {
-        //return directly if the state is the same or currently transitioning
-        if (isTransitioning)
+        if (stateStack.Peek() != expectedState)
         {
+            Debug.LogWarning($"Tried to pop {expectedState} but top is {stateStack.Peek()}");
             return;
         }
 
-        bool stateChanged = currentState != newState;
-
-        if (stateChanged)
-        {
-            OnGameStateChanged?.Invoke(newState);
-        }
-        currentState = newState;
+        stateStack.Pop();
+        Debug.Log("Popped -> Now: " + CurrentState);
+        OnGameStateChanged?.Invoke(CurrentState);
     }
 
-    private void HandleModeTransition(GameStateType currentState)
+    private IEnumerator HandleModeTransition(GameStateType state)
     {
-        if (currentState == GameStateType.Playing)
+        if (isTransitioning)
+        {
+            yield break;
+        }
+
+        if (state == GameStateType.Playing)
         {
             isTransitioning = true;
-            StartCoroutine(blurVFX.IntroTransition());
+            Debug.Log("changed back to playing");
+            yield return StartCoroutine(blurVFX.IntroTransition());
             isTransitioning = false;
         }
-        else if (currentState == GameStateType.Inventory ||
-            currentState == GameStateType.ItemDisplay)
+        else if (state == GameStateType.Inventory ||
+                 state == GameStateType.ItemDisplay)
         {
             isTransitioning = true;
-            StartCoroutine(blurVFX.OutroTransition());
+            yield return StartCoroutine(blurVFX.OutroTransition());
             isTransitioning = false;
         }
     }
 
-    private void HandleStateChange(GameStateType currentState)
+    private void ApplyState(GameStateType currentState)
     {
-
         HideAllMenu();
+        StartCoroutine(HandleModeTransition(currentState));
 
         switch (currentState)
         {
@@ -186,20 +171,23 @@ public class GameManager : MonoBehaviour
 
     private void HandleDialogueStateChanged(bool isDialoguePlaying)
     {
-        // if the current state is inventory
-        // set the interactivity of inventory UI to be the opposite of dialogue status
-        if (currentState == GameStateType.Inventory)
+        Debug.Log(isDialoguePlaying);
+        // if the current state is inventory or itemdisplay
+        // set the interactivity of UI to be the opposite of dialogue status
+        if (CurrentState == GameStateType.Inventory)
         {
             inventoryCanvasGroup.interactable = !isDialoguePlaying;
+        }else if(CurrentState == GameStateType.ItemDisplay)
+        {
+            cgCanvasGroup.interactable = !isDialoguePlaying;
         }
         else
         {
-            // if the inventory mode is on, set interactable
             inventoryCanvasGroup.interactable = false;
+            cgCanvasGroup.interactable = false;
         }
 
-        //set the dialogue UI interactivity to be the opposite of dialogue status
-        dialogueCanvasGroup.interactable = !isDialoguePlaying;
+        dialogueCanvasGroup.interactable = isDialoguePlaying;
     }
 
     private void HideAllMenu()

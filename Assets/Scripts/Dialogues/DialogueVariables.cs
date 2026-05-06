@@ -6,10 +6,12 @@ public class DialogueVariables
 {
     public Dictionary<string, Ink.Runtime.Object> variables { get; private set; }
 
-        public DialogueVariables(TextAsset loadGlobalsJSON) 
+    private Story globalVariablesStory;
+
+    public DialogueVariables(TextAsset loadGlobalsJSON) 
     {
         // create the story
-        Story globalVariablesStory = new Story(loadGlobalsJSON.text);
+        globalVariablesStory = new Story(loadGlobalsJSON.text);
 
         // initialize the dictionary
         variables = new Dictionary<string, Ink.Runtime.Object>();
@@ -55,5 +57,10 @@ public class DialogueVariables
         {
             story.variablesState.SetGlobal(variable.Key, variable.Value);
         }
+    }
+
+    public void SetVariable(string variableName, object variableObj)
+    {
+        globalVariablesStory.variablesState[variableName] = variableObj;
     }
 }

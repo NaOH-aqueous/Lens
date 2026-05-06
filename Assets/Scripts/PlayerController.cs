@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,9 +14,9 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D playerRB;
     private PlayerInput playerInput;
     private InputAction moveAction;
-    private DialogueManager m_dialogueManager;
     private bool isInDialogue = false;
     private Vector2 moveValue;
+    private bool canMove;
 
     //Animator Componenets
     private Animator animator;
@@ -27,20 +28,15 @@ public class PlayerController : MonoBehaviour
 
     //GameManager
     private GameManager m_gameManager;
-    private GameStateType gameState;
 
     private void Start()
     {
         Init();
+        DialogueManager.Instance.OnDialogueStatusChanged += SetPlayerControl;
     }
     private void Update()
     {
         PauseGame();
-    }
-
-    private void OnEnable()
-    {
-        DialogueManager.Instance.OnDialogueStatusChanged += SetPlayerControl;
     }
 
     private void OnDisable()
@@ -67,9 +63,7 @@ public class PlayerController : MonoBehaviour
         playerRB = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
-        moveAction = InputSystem.actions.FindAction("Move");
-
-        m_dialogueManager = GameObject.FindAnyObjectByType<DialogueManager>();
+        moveAction = playerInput.actions["Move"];
         m_gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
 
@@ -80,12 +74,13 @@ public class PlayerController : MonoBehaviour
             footstepAudio = gameObject.AddComponent<AudioSource>();
             footstepAudio.playOnAwake = false;
         }
-
     }
 
     public void SetPlayerControl(bool DisableControl)
     {
-        if (DisableControl)
+        isInDialogue = DisableControl;
+
+        if (DisableControl && GameManager.instance.CurrentState == GameStateType.Playing)
         {
             playerInput.actions["Move"].Disable();
             playerInput.actions["Interact"].Disable();
@@ -127,7 +122,7 @@ public class PlayerController : MonoBehaviour
         if (InputManager.Instance.IsCancelPressed())
         {
             // Show Pause Menu UI
-            m_gameManager.ChangeToPaused();
+            m_gameManager.PushState(GameStateType.Paused);
         }
     }
 
@@ -182,4 +177,5 @@ public class PlayerController : MonoBehaviour
         }
         return false;
     }
+
 }
