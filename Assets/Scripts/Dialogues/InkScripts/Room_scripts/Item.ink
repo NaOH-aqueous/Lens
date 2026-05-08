@@ -1,15 +1,19 @@
 // Inventory dialogu
 INCLUDE Globals.ink
+EXTERNAL UseItem()
+EXTERNAL CanUseItem()
 
 ->invent
 
 === invent ===
 What are you going to do with it?
 
- {can_use:
- + [Use] You used the item. ->back
- - else:
- + [Use] You can't use it now. ->back
+ + [Use]
+ {CanUseItem():
+    ~ UseItem()
+    You used the item. ->END
+ - else: 
+ You can't use it now. ->back
  }
  + [Inspect]->END
  + [Back] -> END

@@ -170,6 +170,7 @@ MonoBehaviour:
     item_Sprite: {fileID: 0}
     item_Icon: {fileID: 0}
   _itemImage: {fileID: 4759628632970565712}
+  _default: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!114 &6993011750825265210
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -58,9 +58,4 @@ public class DialogueVariables
             story.variablesState.SetGlobal(variable.Key, variable.Value);
         }
     }
-
-    public void SetVariable(string variableName, object variableObj)
-    {
-        globalVariablesStory.variablesState[variableName] = variableObj;
-    }
 }

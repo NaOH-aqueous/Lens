@@ -127,7 +127,6 @@ public class GameManager : MonoBehaviour
         if (state == GameStateType.Playing)
         {
             isTransitioning = true;
-            Debug.Log("changed back to playing");
             yield return StartCoroutine(blurVFX.IntroTransition());
             isTransitioning = false;
         }
@@ -171,7 +170,6 @@ public class GameManager : MonoBehaviour
 
     private void HandleDialogueStateChanged(bool isDialoguePlaying)
     {
-        Debug.Log(isDialoguePlaying);
         // if the current state is inventory or itemdisplay
         // set the interactivity of UI to be the opposite of dialogue status
         if (CurrentState == GameStateType.Inventory)

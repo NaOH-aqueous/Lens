@@ -6,8 +6,10 @@ using UnityEngine.UI;
 
 public class ItemSlot : MonoBehaviour
 {
-    public Item item = new Item();
+    public Item item;
     public Image _itemImage;
+
+    public Sprite _default;
 
     //item data(can only be *get* by other scripts)
     public bool IsFull => _isFull;
@@ -37,10 +39,8 @@ public class ItemSlot : MonoBehaviour
 
     public void ClearSlot()
     {
-        item.item_Sprite = null;
-        item.item_Name = null;
-        item.item_Icon = null;
-        _itemImage.sprite = null;
+        item = null;
+        _itemImage.sprite = _default;
         _isFull = false;
     }
 
@@ -48,6 +48,8 @@ public class ItemSlot : MonoBehaviour
     {
         if (_isFull)
         {
+            InputManager.Instance.RegisterInteractPressed();
+            Debug.Log("current item is"+ item.item_Name);
             InventoryManager.Instance.SetCurrentItem(item);
             DialogueManager.Instance.NewStory(story);
         }

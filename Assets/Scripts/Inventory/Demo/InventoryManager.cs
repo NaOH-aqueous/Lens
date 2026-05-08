@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -86,6 +87,7 @@ public class InventoryManager : MonoBehaviour
         else
         {
             _anim.SetTrigger("Outro");
+            InputManager.Instance.RegisterInteractPressed();
             GameManager.instance.PopState(GameStateType.Inventory);
             while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Outro"))
                 yield return null;
@@ -145,7 +147,7 @@ public class InventoryManager : MonoBehaviour
 
     public void SetCurrentItem(Item item) 
     { 
-        if(item.item_Name == null)
+        if(item == null)
         {
             return;
         }
@@ -159,7 +161,7 @@ public class InventoryManager : MonoBehaviour
 
     public void UseItem(Item item)
     {
-        if (item.item_Name == null)
+        if (item == null)
         {
             return;
         }
@@ -167,22 +169,39 @@ public class InventoryManager : MonoBehaviour
         {
             for(int i = 0; i < itemSlot.Length; i++)
             {
-                if (itemSlot[0].item.item_Name == item.item_Name)
+                if (itemSlot[0].item == item)
                 {
                     Debug.Log("used item: " + item.item_Name);
                     itemSlot[i].ClearSlot();
                     itemNames.Remove(item.item_Name);
+                    currentItem = null;
                 }
             }
         }
     }
 
-    public bool GetItem(Item item)
+    private bool GetItem(Item item)
     {
         if (itemNames.Contains(item.item_Name))
         {
             return true;
         }
         return false;
+    }
+
+    public Item GetItemByName(string itemName)
+    {
+        if (itemNames.Contains(itemName))
+        {
+            for (int i = 0; i < itemSlot.Length; i++)
+            {
+                if (itemSlot[0].item.item_Name == itemName)
+                {
+                    return itemSlot[0].item;
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -68,7 +68,6 @@ public class DialogueTrigger : MonoBehaviour
 
         if (player.CheckInteract(layerName))
         {
-            Debug.Log("dialogue has been started");
             InputManager.Instance.RegisterSubmitPressed();
             lastDialogueTime = Time.time;
             DialogueManager.Instance.NewStory(inkAsset);

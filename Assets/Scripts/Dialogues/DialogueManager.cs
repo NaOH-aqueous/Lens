@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using Ink.Runtime;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -21,7 +22,7 @@ public class DialogueManager : MonoBehaviour
 
 
     //private ink integrating variables
-    Ink.Runtime.Story _inkstory;
+    Story _inkstory;
     private bool isDialoguePlaying = false; //check if there's any dialogue played
 
     private bool isChoicesDiaplayed = false;
@@ -225,6 +226,7 @@ public class DialogueManager : MonoBehaviour
     public void NewStory(TextAsset story)
     {
         _inkstory = new Ink.Runtime.Story(story.text);
+        BindItemUseFunction();
         dialogueVariables.StartListening(_inkstory);
 
         EnterDialogueMode();
@@ -377,11 +379,13 @@ public class DialogueManager : MonoBehaviour
             }
         }
         //only notify when the tag changed
-        if(currentItemTag != lastItemTag)
+        if (currentItemTag != lastItemTag)
         {
             lastItemTag = currentItemTag;
             OnItemTagChanged?.Invoke(currentItemTag);
-        } else if(currentPortraitTag != lastPortraitTag)
+        }
+
+        if (currentPortraitTag != lastPortraitTag)
         {
             lastPortraitTag = currentPortraitTag;
             OnPortraitTagChanged?.Invoke(currentPortraitTag);
@@ -417,13 +421,38 @@ public class DialogueManager : MonoBehaviour
 
     public void SetBoolVariable(string variable, bool value)
     {
-        if(variable == null && string.IsNullOrEmpty(variable))
+        if(variable == null || string.IsNullOrEmpty(variable))
         {
             return;
         }
 
-        dialogueVariables.SetVariable(variable, value);
+        _inkstory.variablesState[variable] = value;
 
         Debug.Log("the variable" + variable + "has been set to" + value);
+    }
+    
+    public void BindItemUseFunction()
+    {
+        HomeItemController homeController = GameObject.FindFirstObjectByType<HomeItemController>();
+        _inkstory.BindExternalFunction("CanUseItem", () =>
+        {
+           bool result = homeController != null && homeController.CanUseItem();
+            if (homeController == null)
+            {
+                Debug.Log("homecontroller not found!");
+                return false;
+            }
+
+           Debug.Log("CanUseItem called: " + result);
+           return result;
+
+        });
+        _inkstory.BindExternalFunction("UseItem", () =>
+        {
+            homeController.TryUseItem();
+            InventoryManager.Instance.UseItem(
+                InventoryManager.Instance.GetCurrentItem()
+            );
+        });
     }
 }

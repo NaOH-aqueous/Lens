@@ -1,7 +1,9 @@
 using UnityEngine;
 
 [System.Serializable]
-public struct Item
+
+[CreateAssetMenu]
+public class Item: ScriptableObject
 {
     public string item_Name;
     public Sprite item_Sprite;

@@ -21,7 +21,7 @@ The window is covered by the curtain, isolating the room from the outside world.
 {~  Pale, and cold sunshine are spilling from the window. | No matter how you open them wide, the sunlight won't be able to fill the entire room, leaving half of your living space in darkness.} 
 
  {window_clean:
- * [Inspect] You cleaned up the window, now you can have a better view of the outdoor scene. #item: window_clean
+ * [Inspect] You cleaned up the window, now you can have a better view of the outdoor scene. #item:window_clean
 -> END
  - else:
  * [Inspect] The window is covered by a thick layer of dust. #item:window_dust

@@ -15,6 +15,8 @@ public class CGItem : MonoBehaviour
     private Coroutine clearDisplayCoroutine;
     private Coroutine clearInspectCoroutine;
     private Button returnButton;
+    private Item displayItem;
+    private Item nullItem;
 
     private void Start()
     {
@@ -32,6 +34,7 @@ public class CGItem : MonoBehaviour
             itemDisplayer.gameObject.SetActive(true);
             itemDisplayer.sprite = new_Item.item_Sprite;
             itemDisplayer.SetNativeSize();
+            displayItem = new_Item;
             GameManager.instance.PushState(GameStateType.ItemDisplay);
         }
     }
@@ -40,6 +43,9 @@ public class CGItem : MonoBehaviour
     {
         itemDisplayer.sprite = null;
         CGDisplayer.sprite = null;
+
+        displayItem = null;
+
         itemDisplayer.gameObject.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
 
@@ -93,14 +99,19 @@ public class CGItem : MonoBehaviour
         clearInspectCoroutine = null;
     }
 
-    public void CGDisplay(Sprite CGSprite)
+    public void CGDisplay(Item DisplayItem)
     {
-        if (CGSprite != null)
+        if (DisplayItem.item_Sprite != null)
         {
-            CGDisplayer.gameObject.SetActive(true);
-            CGDisplayer.sprite = CGSprite;
+            if (!CGDisplayer.gameObject.activeSelf)
+            {
+                CGDisplayer.gameObject.SetActive(true);
+                GameManager.instance.PushState(GameStateType.ItemDisplay);
+            }
+            CGDisplayer.sprite = DisplayItem.item_Sprite;
+            displayItem = DisplayItem;
             returnButton = CGDisplayer.gameObject.GetComponentInChildren<Button>();
-            GameManager.instance.PushState(GameStateType.ItemDisplay);
+
         }
     }
 
@@ -115,4 +126,15 @@ public class CGItem : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(returnButton.gameObject);
         }
     }
+
+    public Item GetCurrentDisplay()
+    {
+        if (CGDisplayer.isActiveAndEnabled)
+        {
+            return displayItem;
+        }
+        return null;
+    }
+
+
 }

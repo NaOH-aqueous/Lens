@@ -8329,11 +8329,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cdd945099cb33347bc9b7822f711ebf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  papertowelSprite: {fileID: -7257243884398364093, guid: 51a8dd9eb1724364498bcb1608ac6ed4, type: 3}
   cgPlayer: {fileID: 1092669329}
-  papertowelIcon: {fileID: -7391254067920757069, guid: 3152156a127c9534eb6636a05f8ec7fc, type: 3}
-  notesSprite: {fileID: -3598916374439202735, guid: 423083bb47cbbeb49a32dd6396f5bb7d, type: 3}
   windowDust: {fileID: -1595736872862477925, guid: 6ed5e0d852aca4c4abb47cb6885523be, type: 3}
+  windowClean: {fileID: -2443480893488984618, guid: d20b081b00c09d446b67d8b425efdb59, type: 3}
+  papertowel: {fileID: 11400000, guid: 9e37a99c603de9e449d1af1f49dae078, type: 2}
+  notes: {fileID: 11400000, guid: 9ae2ad0b7b1814845b2f41bfa938d21e, type: 2}
+  window: {fileID: 11400000, guid: 6e66ff06fa1dba2419e0bc22853d12c1, type: 2}
 --- !u!1 &864312246
 GameObject:
   m_ObjectHideFlags: 0
@@ -9694,6 +9695,10 @@ PrefabInstance:
     - target: {fileID: 8002495584072302514, guid: b7b08febc30f11b47b8b8862498ff0fe, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -377.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8602320629591195909, guid: b7b08febc30f11b47b8b8862498ff0fe, type: 3}
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13634,6 +13639,10 @@ PrefabInstance:
     - target: {fileID: 4159283620360321151, guid: 593ddd49a1add534dac7b9ecab5d420e, type: 3}
       propertyPath: m_ChildForceExpandHeight
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5134841403028872541, guid: 593ddd49a1add534dac7b9ecab5d420e, type: 3}
+      propertyPath: m_text
+      value: SPEAKER
       objectReference: {fileID: 0}
     - target: {fileID: 5134841403028872541, guid: 593ddd49a1add534dac7b9ecab5d420e, type: 3}
       propertyPath: m_fontSize
