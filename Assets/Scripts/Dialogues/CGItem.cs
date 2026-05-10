@@ -103,6 +103,7 @@ public class CGItem : MonoBehaviour
     {
         if (DisplayItem.item_Sprite != null)
         {
+            returnButton = CGDisplayer.gameObject.GetComponentInChildren<Button>();
             if (!CGDisplayer.gameObject.activeSelf)
             {
                 CGDisplayer.gameObject.SetActive(true);
@@ -110,8 +111,6 @@ public class CGItem : MonoBehaviour
             }
             CGDisplayer.sprite = DisplayItem.item_Sprite;
             displayItem = DisplayItem;
-            returnButton = CGDisplayer.gameObject.GetComponentInChildren<Button>();
-
         }
     }
 

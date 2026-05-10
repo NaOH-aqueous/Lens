@@ -10,15 +10,21 @@ public class FocusPuzzle : MonoBehaviour
         Chain //when the change happens following image1
     }
 
-    [Header("Images")] 
+    public System.Action OnPuzzleCompleted;
+
+    [Header("Images")]
     [SerializeField] private Image image1;
     [SerializeField] private Image image2;
+    [SerializeField] private Image marker;
 
     [Header("Puzzle Settings")]
     [SerializeField] private float duration = 3f;
     [SerializeField] private float chainThreshold = 0.3f;
     [SerializeField] private float puzzleThreshold = 0.3f;
     [SerializeField] private float requiredHold = 0.7f; // seconds required for success
+    [SerializeField] private TextAsset puzzleDialogue;
+    [SerializeField] private AudioClip shinySFX;
+    private AudioSource _aud;
 
     private float minAlpha = 0f;
     private float maxAlpha = 1f; 
@@ -35,16 +41,24 @@ public class FocusPuzzle : MonoBehaviour
     {
         _color1 = image1.color;
         _color2 = image2.color;
+        marker.gameObject.SetActive(false);
+        _aud = GetComponent<AudioSource>();
     }
 
 
     void Update()
     {
+        if (success)
+        {
+            return;
+        }
+
+
         if (Input.GetKey(KeyCode.F))
         {
             //change speed
             float d = Mathf.Max(0.0001f, duration);
-            float time = Time.time;
+            float time = Time.unscaledTime;
             float t = Mathf.PingPong(time / d, 1);
 
             //Ping-pong between minAlpha and maxAlpha;
@@ -100,7 +114,7 @@ public class FocusPuzzle : MonoBehaviour
        //check elapsed time and apply it as a fraction to the alpha of image2
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             //check the progress of elapsed time and compares it to duration
             //of one transition
             float k = Mathf.Clamp01(elapsed / duration);
@@ -144,8 +158,8 @@ public class FocusPuzzle : MonoBehaviour
                 yield break;
             }
 
-            successTime += Time.deltaTime;
-            waited += Time.deltaTime;
+            successTime += Time.unscaledDeltaTime;
+            waited += Time.unscaledDeltaTime;
             Debug.Log(successTime);
 
             //if the success time has been achieved, break out from the loop
@@ -153,6 +167,7 @@ public class FocusPuzzle : MonoBehaviour
             {
                 success = true;
                 Debug.Log("succeed!");
+                StartCoroutine(HandlePuzzleSucceed());
                 successCoroutine = null;
                 yield break;
             }
@@ -160,5 +175,14 @@ public class FocusPuzzle : MonoBehaviour
             yield return null;
         }
         successCoroutine = null;
+    }
+
+    private IEnumerator HandlePuzzleSucceed()
+    {
+        yield return new WaitForSecondsRealtime(0.2f);
+        _aud.PlayOneShot(shinySFX);
+        marker.gameObject.SetActive(true);
+        yield return null;
+        OnPuzzleCompleted?.Invoke();
     }
 }

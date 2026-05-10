@@ -200,6 +200,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f; // Resume the game
         inventoryCanvasGroup.interactable = false;
         dialogueCanvasGroup.interactable = true;
+        cgCanvasGroup.interactable = false;
     }
 
     private void PausedMode()

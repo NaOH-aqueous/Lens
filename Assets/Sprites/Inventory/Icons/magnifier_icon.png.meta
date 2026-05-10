@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3152156a127c9534eb6636a05f8ec7fc
+guid: 703f244138fd371468110e2307dfd2b6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7391254067920757069
-    second: paperTowel_icon_0
+      213: 3380512575762138355
+    second: magnifier_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: paperTowel_icon_0
+      name: magnifier_icon_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 300
-        height: 300
+        y: 10
+        width: 500
+        height: 490
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3be1ce4f59dfc6990800000000000000
-      internalID: -7391254067920757069
+      spriteID: 3f40b05e64ef9ee20800000000000000
+      internalID: 3380512575762138355
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: de4c86e67efd5ff43b35d2fdb7eb7e03
+    spriteID: b944a26ccc7a3434c9c2017373e20f67
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      paperTowel_icon_0: -7391254067920757069
+      magnifier_icon_0: 3380512575762138355
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -8,17 +8,23 @@ public class HomeItemController : MonoBehaviour
     public CGItem cgPlayer;
     [SerializeField] private Sprite windowDust;
     [SerializeField] private Sprite windowClean;
+    [SerializeField] private GameObject windowPuzzle;
+    [SerializeField] private TextAsset magnifierDialogue;
+
+
+    public Item papertowel;
+    public Item notes;
+    public Item window;
+    public Item magnifier;
 
     private const string PAPERTOWEL = "PaperTowel";
-    public Item papertowel;
-
     private const string NOTES = "Notes";
-    public Item notes;
 
     private const string WINDOW = "window";
     private const string WINDOW_DUST = "window_dust";
     private const string WINDOW_CLEAN = "window_clean";
-    public Item window;
+    private const string MAGNIFIER = "Magnifier";
+
     private const string USE_TAG = "can_use";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
@@ -31,6 +37,11 @@ public class HomeItemController : MonoBehaviour
             DialogueManager.Instance.OnItemTagChanged += HandleItemTagChanged;
             DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
         }
+        if (windowPuzzle != null)
+        {
+            FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
+            focusPuzzle.OnPuzzleCompleted += HandlePuzzleCompleted;
+        }
     }
 
     private void OnDisable()
@@ -39,6 +50,11 @@ public class HomeItemController : MonoBehaviour
         {
             DialogueManager.Instance.OnItemTagChanged -= HandleItemTagChanged;
             DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
+        }
+        if (windowPuzzle != null)
+        {
+            FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
+            focusPuzzle.OnPuzzleCompleted -= HandlePuzzleCompleted;
         }
     }
 
@@ -112,6 +128,9 @@ public class HomeItemController : MonoBehaviour
                 window.item_Sprite = windowClean;
                 cgPlayer.CGDisplay(window);
                 break;
+            case (MAGNIFIER):
+                InventoryManager.Instance.QueueItem(magnifier);
+                break;
             case ("clearDisplay"):
                 cgPlayer.ClearDisplay();
                 break;
@@ -127,7 +146,7 @@ public class HomeItemController : MonoBehaviour
         {
             cgPlayer.InspectItem(notes);
         }
-        else if (name == USE_TAG)
+        else if (name == USE_TAG && value)
         {
             Debug.Log("can use is" + value);
         }
@@ -150,6 +169,24 @@ public class HomeItemController : MonoBehaviour
         window.item_Sprite = windowClean;
         cgPlayer.CGDisplay(window);
         DialogueManager.Instance.SetBoolVariable("window_clean", true);
+
+        windowPuzzle.SetActive(true);
     }
 
+    private void HandlePuzzleCompleted()
+    {
+        DialogueManager.Instance.NewStory(magnifierDialogue);
+
+        DialogueManager.Instance.OnDialogueStatusChanged += HandlePuzzleDialogueFinished;
+    }
+
+    private void HandlePuzzleDialogueFinished(bool isPlaying)
+    {
+        if (isPlaying)
+            return;
+
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandlePuzzleDialogueFinished;
+
+        windowPuzzle.SetActive(false);
+    }
 }

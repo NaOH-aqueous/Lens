@@ -13,3 +13,5 @@ VAR lamp_switch = true //if the switch has been turned on
 VAR read_notes = false
 
 VAR window_clean = false
+
+VAR magnifier_get = false
