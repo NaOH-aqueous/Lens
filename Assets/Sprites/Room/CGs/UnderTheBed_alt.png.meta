@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 88a364dd3b62cbf4088e6aa04589477e
+guid: 1528c405bff949c4fb5e25f6c169016a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5261992394389525642
-    second: DialogueBox_0
+      213: 4963224877729174457
+    second: UnderTheBed_alt_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: DialogueBox_0
+      name: UnderTheBed_alt_0
       rect:
         serializedVersion: 2
-        x: 180
-        y: 31
-        width: 2578
-        height: 760
+        x: 0
+        y: 0
+        width: 3037
+        height: 1993
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 219, y: 173, z: 213, w: 117}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 67bea99ebc5a9f6b0800000000000000
-      internalID: -5261992394389525642
+      spriteID: 9b3dd61eabae0e440800000000000000
+      internalID: 4963224877729174457
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e8fb60411131fdc4094a3455e011fdb8
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      DialogueBox_0: -5261992394389525642
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

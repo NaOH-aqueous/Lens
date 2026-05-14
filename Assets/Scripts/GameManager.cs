@@ -12,7 +12,9 @@ public enum GameStateType
     Playing,
     Paused,
     Inventory,
-    ItemDisplay
+    ItemDisplay,
+    Puzzle,
+    Cutscene
 }
 
 public class GameManager : MonoBehaviour
@@ -26,6 +28,7 @@ public class GameManager : MonoBehaviour
     public GameObject inventoryUI;
     public GameObject dialogueUI;
     public GameObject cgUI;
+    public GameObject puzzleUI;
 
 
     private Stack<GameStateType> stateStack = new Stack<GameStateType>();
@@ -39,6 +42,7 @@ public class GameManager : MonoBehaviour
     private CanvasGroup inventoryCanvasGroup;
     private CanvasGroup dialogueCanvasGroup;
     private CanvasGroup cgCanvasGroup;
+    private CanvasGroup puzzleCanvasGroup;
     private Button pauseButton;
 
     private bool isTransitioning;
@@ -64,6 +68,7 @@ public class GameManager : MonoBehaviour
         inventoryCanvasGroup = inventoryUI.GetComponent<CanvasGroup>();
         dialogueCanvasGroup = dialogueUI.GetComponent<CanvasGroup>();
         cgCanvasGroup = cgUI.GetComponent<CanvasGroup>();
+        puzzleCanvasGroup = puzzleUI.GetComponent<CanvasGroup>();
 
         pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
         m_playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
@@ -159,34 +164,45 @@ public class GameManager : MonoBehaviour
             case GameStateType.Inventory:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
-                inventoryCanvasGroup.interactable = true;
                 break;
             case GameStateType.ItemDisplay:
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
                 break;
+            case GameStateType.Puzzle:
+                AudioListener.pause = false;
+                Time.timeScale = 0f;
+                break;
+            case GameStateType.Cutscene:
+                AudioListener.pause = true;
+                Time.timeScale = 0f;
+                break;
         }
+
+        RefreshUIInteractivity();
     }
 
     private void HandleDialogueStateChanged(bool isDialoguePlaying)
     {
-        // if the current state is inventory or itemdisplay
-        // set the interactivity of UI to be the opposite of dialogue status
-        if (CurrentState == GameStateType.Inventory)
-        {
-            inventoryCanvasGroup.interactable = !isDialoguePlaying;
-        }else if(CurrentState == GameStateType.ItemDisplay)
-        {
-            cgCanvasGroup.interactable = !isDialoguePlaying;
-        }
-        else
-        {
-            inventoryCanvasGroup.interactable = false;
-            cgCanvasGroup.interactable = false;
-        }
-
-        dialogueCanvasGroup.interactable = isDialoguePlaying;
+        RefreshUIInteractivity();
     }
+
+    private void RefreshUIInteractivity()
+{
+    bool dialoguePlaying = m_dialogueManager != null &&
+                           m_dialogueManager.CheckDialoguePlaying();
+
+    inventoryCanvasGroup.interactable =
+        CurrentState == GameStateType.Inventory && !dialoguePlaying;
+
+    cgCanvasGroup.interactable =
+        CurrentState == GameStateType.ItemDisplay && !dialoguePlaying;
+
+    puzzleCanvasGroup.interactable =
+        CurrentState == GameStateType.Puzzle && !dialoguePlaying;
+
+    dialogueCanvasGroup.interactable = dialoguePlaying;
+}
 
     private void HideAllMenu()
     {
@@ -201,6 +217,7 @@ public class GameManager : MonoBehaviour
         inventoryCanvasGroup.interactable = false;
         dialogueCanvasGroup.interactable = true;
         cgCanvasGroup.interactable = false;
+        puzzleCanvasGroup.interactable = false;
     }
 
     private void PausedMode()

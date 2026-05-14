@@ -22,7 +22,6 @@ public class InventoryManager : MonoBehaviour
     private bool isProcessingQueue = false;
 
     private Item currentItem;
-    private GameStateType previousState;
 
     private void Awake()
     {
@@ -95,6 +94,14 @@ public class InventoryManager : MonoBehaviour
         }
 
         isTransitioning = false;
+    }
+
+    public void CloseInventory()
+    {
+        if (isInventoryOpen)
+        {
+            StartCoroutine(ToggleInventory());
+        }
     }
 
     public IEnumerator SelectFirstSlotNextFrame()

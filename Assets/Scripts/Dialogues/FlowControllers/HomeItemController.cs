@@ -8,27 +8,31 @@ public class HomeItemController : MonoBehaviour
     public CGItem cgPlayer;
     [SerializeField] private Sprite windowDust;
     [SerializeField] private Sprite windowClean;
+    [SerializeField] private Sprite windowPuzzleClear;
+    [SerializeField] private Sprite underTheBedAlt;
     [SerializeField] private GameObject windowPuzzle;
     [SerializeField] private TextAsset magnifierDialogue;
+    [SerializeField] private AudioClip specialTime;
 
 
     public Item papertowel;
     public Item notes;
     public Item window;
     public Item magnifier;
+    public Item under_the_bed;
 
     private const string PAPERTOWEL = "PaperTowel";
     private const string NOTES = "Notes";
-
     private const string WINDOW = "window";
     private const string WINDOW_DUST = "window_dust";
     private const string WINDOW_CLEAN = "window_clean";
     private const string MAGNIFIER = "Magnifier";
+    private const string UNDERTHEBED = "Under_the_bed";
 
     private const string USE_TAG = "can_use";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
-
+    private AudioSource _aud;
 
     private void OnEnable()
     {
@@ -63,6 +67,11 @@ public class HomeItemController : MonoBehaviour
         rules.Add(new PaperTowelOnWindowRule());
         window.item_Sprite = windowDust;
     }
+
+    private void Start()
+    {
+        _aud = GetComponent<AudioSource>();
+;    }
 
     public bool CanUseItem()
     {
@@ -129,7 +138,15 @@ public class HomeItemController : MonoBehaviour
                 cgPlayer.CGDisplay(window);
                 break;
             case (MAGNIFIER):
+                window.item_Sprite = windowPuzzleClear;
                 InventoryManager.Instance.QueueItem(magnifier);
+                break;
+            case (UNDERTHEBED):
+                _aud.Pause();
+                _aud.clip = specialTime;
+                under_the_bed.item_Sprite = underTheBedAlt;
+                cgPlayer.CGDisplayInDialogue(under_the_bed);
+                _aud.Play();
                 break;
             case ("clearDisplay"):
                 cgPlayer.ClearDisplay();
@@ -170,7 +187,9 @@ public class HomeItemController : MonoBehaviour
         cgPlayer.CGDisplay(window);
         DialogueManager.Instance.SetBoolVariable("window_clean", true);
 
+        InventoryManager.Instance.CloseInventory();
         windowPuzzle.SetActive(true);
+        GameManager.instance.PushState(GameStateType.Puzzle);
     }
 
     private void HandlePuzzleCompleted()
@@ -188,5 +207,13 @@ public class HomeItemController : MonoBehaviour
         DialogueManager.Instance.OnDialogueStatusChanged -= HandlePuzzleDialogueFinished;
 
         windowPuzzle.SetActive(false);
+        GameManager.instance.PopState(GameStateType.Puzzle);
+    }
+
+    public void ExitPuzzle()
+    {
+        windowPuzzle.SetActive(false);
+        GameManager.instance.PopState(GameStateType.Puzzle);
+        cgPlayer.ClearDisplay();
     }
 }

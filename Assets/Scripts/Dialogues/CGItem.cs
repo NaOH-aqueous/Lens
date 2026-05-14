@@ -114,6 +114,21 @@ public class CGItem : MonoBehaviour
         }
     }
 
+    public void CGDisplayInDialogue(Item DisplayItem)
+    {
+        if (DisplayItem.item_Sprite != null)
+        {
+            returnButton = null;
+            if (!CGDisplayer.gameObject.activeSelf)
+            {
+                CGDisplayer.gameObject.SetActive(true);
+                GameManager.instance.PushState(GameStateType.ItemDisplay);
+            }
+            CGDisplayer.sprite = DisplayItem.item_Sprite;
+            displayItem = DisplayItem;
+        }
+    }
+
     public void HandleCGStateChange(GameStateType gameState)
     {
         if(returnButton == null)
@@ -122,7 +137,10 @@ public class CGItem : MonoBehaviour
         }
         if(gameState == GameStateType.ItemDisplay)
         {
-            EventSystem.current.SetSelectedGameObject(returnButton.gameObject);
+            if (itemDisplayer.isActiveAndEnabled || CGDisplayer.isActiveAndEnabled)
+            {
+                EventSystem.current.SetSelectedGameObject(returnButton.gameObject);
+            }
         }
     }
 
