@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      UnderTheBed_monster_0: 3236181160820056653
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
