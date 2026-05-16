@@ -100,10 +100,18 @@ public class GameManager : MonoBehaviour
 
     public void PushState(GameStateType newState)
     {
-        stateStack.Push(newState);
-        OnGameStateChanged?.Invoke(newState);
+        if (stateStack.Count > 0 &&
+            stateStack.Peek() == newState)
+        {
+            Debug.Log($"Skipped duplicate push: {newState}");
+            return;
+        }
 
-        Debug.Log("Pushed: " + newState);
+        stateStack.Push(newState);
+
+        Debug.Log($"Pushed: {newState}");
+
+        OnGameStateChanged?.Invoke(newState);
     }
 
     public void PopState(GameStateType expectedState)
@@ -174,7 +182,6 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f;
                 break;
             case GameStateType.Cutscene:
-                AudioListener.pause = true;
                 Time.timeScale = 0f;
                 break;
         }

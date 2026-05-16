@@ -24,7 +24,6 @@ public class FocusPuzzle : MonoBehaviour
     [SerializeField] private float puzzleThreshold = 0.3f;
     [SerializeField] private float requiredHold = 0.7f; // seconds required for success
     [SerializeField] private TextAsset puzzleDialogue;
-    [SerializeField] private AudioClip shinySFX;
     [SerializeField] private Button _button;
     private AudioSource _aud;
     private Animator _anim;
@@ -206,7 +205,6 @@ public class FocusPuzzle : MonoBehaviour
     private IEnumerator HandlePuzzleSucceed()
     {
         yield return new WaitForSecondsRealtime(0.2f);
-        _aud.PlayOneShot(shinySFX);
         marker.gameObject.SetActive(true);
         yield return null;
         OnPuzzleCompleted?.Invoke();

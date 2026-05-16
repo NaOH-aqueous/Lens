@@ -45,11 +45,6 @@ public class DialogueTrigger : MonoBehaviour
                 StartDialogue();
             }
         }
-        else
-        {
-            //play trigger sound if dialogue is not playing
-            PlayTriggerSound();
-        }
     }
 
     //start the dialogue attached to this trigger upon user input
@@ -72,23 +67,6 @@ public class DialogueTrigger : MonoBehaviour
             lastDialogueTime = Time.time;
             DialogueManager.Instance.NewStory(inkAsset);
             Debug.Log("Current story has been set to " + inkAsset.name);
-        }
-    }
-
-    // Play the trigger sound
-    private void PlayTriggerSound()
-    {
-        foreach(TriggerSounds triggerSound in triggerSounds)
-        {
-            if (triggerSound != null && 
-                !string.IsNullOrEmpty(triggerSound.triggerSoundName))
-            {
-                DialogueManager.Instance.PlaySound(triggerSound.triggerSound, triggerSound.triggerSoundName);
-            }
-            else
-            {
-                Debug.Log("Triggersound hasn't been defined");
-            }
         }
     }
 

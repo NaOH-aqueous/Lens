@@ -18,6 +18,7 @@ public class DialogueManager : MonoBehaviour
     public System.Action<bool> OnDialogueStatusChanged;
 
     public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
+    public event System.Action<string> OnCutsceneTriggered;
     public event System.Action<string> OnPortraitTagChanged;
 
 
@@ -27,6 +28,7 @@ public class DialogueManager : MonoBehaviour
 
     private bool isChoicesDiaplayed = false;
     private bool animPlaying = false;
+    private bool cutscenePlaying;
 
     //private tag-related variables
     private List<string> tags = new List<string>();
@@ -34,6 +36,7 @@ public class DialogueManager : MonoBehaviour
     private const string PORTRAIT_TAG = "portrait";
     private const string AUDIO_TAG = "audio";
     private const string ITEM_TAG = "item";
+    private const string CUTSCENE_TAG = "cutscene";
 
     //private audio and animation variables
     private Animator _anim;
@@ -42,6 +45,7 @@ public class DialogueManager : MonoBehaviour
     private string lastItemTag = "";
     private string lastPortraitTag = "";
     private string lastPlayedTag = "";
+    private string lastCutSceneTag = "";
 
     // variable for the load_globals.ink JSON
     [Header("Load Globals JSON")]
@@ -103,6 +107,11 @@ public class DialogueManager : MonoBehaviour
     {
         // return right away if dialogue isn't playing
         if (!isDialoguePlaying)
+        {
+            return;
+        }
+
+        if (cutscenePlaying)
         {
             return;
         }
@@ -204,22 +213,6 @@ public class DialogueManager : MonoBehaviour
             }
         }
         return "";
-    }
-
-    public void PlaySound(AudioClip sound, string audioName) //play sound 
-    {
-        string currentTag = GetAudioTag();
-
-        if (currentTag == audioName && sound != null && lastPlayedTag != audioName)
-        {
-            _audio.PlayOneShot(sound);
-            lastPlayedTag = audioName;
-            Debug.Log("sound is playing");
-        } 
-        else if(currentTag != null && (sound == null || string.IsNullOrEmpty(audioName)))
-        {
-            Debug.Log("Sound is not defined for current audio tag");
-        }
     }
 
     //set the inkasset as current story to the manager
@@ -361,6 +354,7 @@ public class DialogueManager : MonoBehaviour
         string currentItemTag = string.Empty;
         string currentSpeakerTag = string.Empty;
         string currentPortraitTag = string.Empty;
+        string currentCutsceneTag = string.Empty;
 
         foreach (string tag in tags)
         {
@@ -376,6 +370,12 @@ public class DialogueManager : MonoBehaviour
                 case PORTRAIT_TAG:
                     currentPortraitTag = splitTag[1];
                     break;
+                case CUTSCENE_TAG:
+                    currentCutsceneTag = splitTag[1];
+                    break;
+                case AUDIO_TAG:
+                    AudioManager.Instance.Play(splitTag[1]);
+                    break;
             }
         }
         //only notify when the tag changed
@@ -389,6 +389,12 @@ public class DialogueManager : MonoBehaviour
         {
             lastPortraitTag = currentPortraitTag;
             OnPortraitTagChanged?.Invoke(currentPortraitTag);
+        }
+
+        if(currentCutsceneTag != lastCutSceneTag)
+        {
+            lastCutSceneTag = currentCutsceneTag;
+            OnCutsceneTriggered?.Invoke(currentCutsceneTag);
         }
     }
 
@@ -454,5 +460,30 @@ public class DialogueManager : MonoBehaviour
                 InventoryManager.Instance.GetCurrentItem()
             );
         });
+    }
+
+    public void PauseDialogue()
+    {
+        cutscenePlaying = true;
+
+        StartCoroutine(PauseDialogueCoroutine());
+    }
+
+    public void ResumeDialogue()
+    {
+        dialoguePanel.SetActive(true);
+        _anim.SetTrigger("dialogueStart");
+
+        cutscenePlaying = false;
+    }
+
+    private IEnumerator PauseDialogueCoroutine()
+    {
+        _anim.SetTrigger("dialogueEnd");
+        _audio.PlayOneShot(endSFX);
+
+        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
+            yield return null;
+        dialoguePanel.SetActive(false);
     }
 }

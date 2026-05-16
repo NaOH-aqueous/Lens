@@ -19,11 +19,11 @@ Do you want to look inside?
 
 {
 - check_box_times == 4 : 
-    You have checked 5 times. This task has already got a bit tedious. #audio:box_search
+    You have checked 5 times. This task has already got a bit tedious. #audio:grab
     -> look_again
     
  - check_box_times < 7 :
-    There is a box inside a box. #audio:box_search
+    There is a box inside a box. #audio:grab
     ->look_again
         
  - else:->7_times
@@ -42,5 +42,5 @@ Do you want to look inside?
 -> END
 
 === 7_times ===
-- You checked the box 7 times. There is nothing inside. #audio:box_search
+- You checked the box 7 times. There is nothing inside. #audio:grab
  -> END

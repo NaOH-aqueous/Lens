@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Linq.Expressions;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -11,18 +9,19 @@ public class CGItem : MonoBehaviour
     public Image itemDisplayer;
     public GameObject itemInspector;
     public Image CGDisplayer;
+    public Image InDialogueCG;
 
     private Coroutine clearDisplayCoroutine;
     private Coroutine clearInspectCoroutine;
+    private Coroutine clearItemCoroutine;
     private Button returnButton;
     private Item displayItem;
-    private Item nullItem;
-
     private void Start()
     {
         itemDisplayer.gameObject.SetActive(false);
         itemInspector.gameObject.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
+        InDialogueCG.gameObject.SetActive(false);
 
         GameManager.instance.OnGameStateChanged += HandleCGStateChange;
     }
@@ -43,11 +42,13 @@ public class CGItem : MonoBehaviour
     {
         itemDisplayer.sprite = null;
         CGDisplayer.sprite = null;
+        InDialogueCG.sprite = null;
 
         displayItem = null;
 
         itemDisplayer.gameObject.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
+        InDialogueCG.gameObject.SetActive(false);
 
         InputManager.Instance.RegisterInteractPressed();
         InputManager.Instance.RegisterSubmitPressed();
@@ -56,6 +57,25 @@ public class CGItem : MonoBehaviour
         GameManager.instance.PopState(GameStateType.ItemDisplay);
 
         clearDisplayCoroutine = null;
+    }
+
+    public void ClearItemOnly()
+    {
+        if (clearItemCoroutine == null)
+        {
+            clearItemCoroutine = StartCoroutine(ClearItemOnlyCoroutine());
+        }
+    }
+
+    private IEnumerator ClearItemOnlyCoroutine()
+    {
+        itemDisplayer.sprite = null;
+        displayItem = null;
+        itemDisplayer.gameObject.SetActive(false);
+        InputManager.Instance.RegisterInteractPressed();
+        InputManager.Instance.RegisterSubmitPressed();
+        yield return null;
+        clearItemCoroutine = null;
     }
 
     public void ClearDisplay()
@@ -118,13 +138,12 @@ public class CGItem : MonoBehaviour
     {
         if (DisplayItem.item_Sprite != null)
         {
-            returnButton = null;
-            if (!CGDisplayer.gameObject.activeSelf)
+            if (!InDialogueCG.gameObject.activeSelf)
             {
-                CGDisplayer.gameObject.SetActive(true);
+                InDialogueCG.gameObject.SetActive(true);
                 GameManager.instance.PushState(GameStateType.ItemDisplay);
             }
-            CGDisplayer.sprite = DisplayItem.item_Sprite;
+            InDialogueCG.sprite = DisplayItem.item_Sprite;
             displayItem = DisplayItem;
         }
     }
@@ -137,7 +156,7 @@ public class CGItem : MonoBehaviour
         }
         if(gameState == GameStateType.ItemDisplay)
         {
-            if (itemDisplayer.isActiveAndEnabled || CGDisplayer.isActiveAndEnabled)
+            if (itemInspector.activeSelf || CGDisplayer.isActiveAndEnabled)
             {
                 EventSystem.current.SetSelectedGameObject(returnButton.gameObject);
             }
