@@ -34,11 +34,6 @@ public class PlayerController : MonoBehaviour
         Init();
         DialogueManager.Instance.OnDialogueStatusChanged += SetPlayerControl;
     }
-    private void Update()
-    {
-        PauseGame();
-    }
-
     private void OnDisable()
     {
         DialogueManager.Instance.OnDialogueStatusChanged -= SetPlayerControl;
@@ -116,15 +111,6 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("Speed", 0);
         }
     } 
-
-    private void PauseGame()  //pause the game according to user inputs
-    {
-        if (InputManager.Instance.IsCancelPressed())
-        {
-            // Show Pause Menu UI
-            m_gameManager.PushState(GameStateType.Paused);
-        }
-    }
 
     private void MovePlayer() //move the player according to user inputs
     {

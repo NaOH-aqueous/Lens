@@ -15,3 +15,7 @@ VAR read_notes = false
 VAR window_clean = false
 
 VAR magnifier_get = false
+
+VAR shovel_get = false
+
+VAR read_diary = false

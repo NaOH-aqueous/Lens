@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class FocusPuzzle : MonoBehaviour
@@ -23,8 +24,9 @@ public class FocusPuzzle : MonoBehaviour
     [SerializeField] private float puzzleThreshold = 0.3f;
     [SerializeField] private float requiredHold = 0.7f; // seconds required for success
     [SerializeField] private TextAsset puzzleDialogue;
-    [SerializeField] private AudioClip shinySFX;
+    [SerializeField] private Button _button;
     private AudioSource _aud;
+    private Animator _anim;
 
     private float minAlpha = 0f;
     private float maxAlpha = 1f; 
@@ -37,63 +39,86 @@ public class FocusPuzzle : MonoBehaviour
     private Coroutine successCoroutine;
     private bool success = false;
 
+    private float holdTimer = 0f;
+    private bool holdActivated = false;
+
+
+
     void Start()
     {
         _color1 = image1.color;
         _color2 = image2.color;
         marker.gameObject.SetActive(false);
         _aud = GetComponent<AudioSource>();
+        _anim = GetComponentInChildren<Animator>();
+        _anim.gameObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        DialogueManager.Instance.OnDialogueStatusChanged += HandleIntroDialogueFinished;
     }
 
 
     void Update()
     {
         if (success)
-        {
             return;
-        }
 
 
+        // Key is being held
         if (Input.GetKey(KeyCode.F))
         {
-            //change speed
-            float d = Mathf.Max(0.0001f, duration);
-            float time = Time.unscaledTime;
-            float t = Mathf.PingPong(time / d, 1);
+            holdTimer += Time.unscaledDeltaTime;
 
-            //Ping-pong between minAlpha and maxAlpha;
-            _color1.a = Mathf.Lerp(minAlpha, maxAlpha, t);
-
-            //apply new color back
-            image1.color = _color1;
-
-            switch (mode)
+            // Only activate after long hold
+            if (holdTimer >= 0.5f)
             {
-                case FadeMode.Inverse:
-                    _color2.a = Mathf.Lerp(maxAlpha, minAlpha, t);
-                    image2.color = _color2;
-                    break;
+                holdActivated = true;
 
-                case FadeMode.Chain:
-                    if (_color1.a <= chainThreshold && fadeCoroutine == null)
-                    {
-                        //increase transparency when the focus image is not
-                        //visible
-                        fadeCoroutine = StartCoroutine(FadeBlurToTargetAlpha(maxAlpha));
-                    }
-                    else if (_color1.a > chainThreshold && fadeCoroutine == null)
-                    {
-                        //fade to 0 when the alpha of focus image is visible
-                        fadeCoroutine = StartCoroutine(FadeBlurToTargetAlpha(minAlpha));
-                    }
-                    break;
+                // change speed
+                float d = Mathf.Max(0.0001f, duration);
+                float time = Time.unscaledTime;
+                float t = Mathf.PingPong(time / d, 1);
+
+                // Ping-pong between minAlpha and maxAlpha
+                _color1.a = Mathf.Lerp(minAlpha, maxAlpha, t);
+
+                image1.color = _color1;
+
+                switch (mode)
+                {
+                    case FadeMode.Inverse:
+                        _color2.a = Mathf.Lerp(maxAlpha, minAlpha, t);
+                        image2.color = _color2;
+                        break;
+
+                    case FadeMode.Chain:
+                        if (_color1.a <= chainThreshold && fadeCoroutine == null)
+                        {
+                            fadeCoroutine = StartCoroutine(FadeBlurToTargetAlpha(maxAlpha));
+                        }
+                        else if (_color1.a > chainThreshold && fadeCoroutine == null)
+                        {
+                            fadeCoroutine = StartCoroutine(FadeBlurToTargetAlpha(minAlpha));
+                        }
+                        break;
+                }
             }
         }
 
+        // Key released
         if (Input.GetKeyUp(KeyCode.F))
         {
-            //check if the puzzel has been solved upon key released
-            FocusSucceed();
+            // Only allow success if player held long enough
+            if (holdActivated)
+            {
+                FocusSucceed();
+            }
+
+            // Reset hold state
+            holdTimer = 0f;
+            holdActivated = false;
         }
     }
 
@@ -153,7 +178,6 @@ public class FocusPuzzle : MonoBehaviour
 
             if (!focusCondition || !blurCondition)
             {
-                // if one of the conditions cannot be succeed, break the loop
                 successCoroutine = null;
                 yield break;
             }
@@ -161,8 +185,6 @@ public class FocusPuzzle : MonoBehaviour
             successTime += Time.unscaledDeltaTime;
             waited += Time.unscaledDeltaTime;
             Debug.Log(successTime);
-
-            //if the success time has been achieved, break out from the loop
             if (successTime >= requiredHold)
             {
                 success = true;
@@ -180,9 +202,27 @@ public class FocusPuzzle : MonoBehaviour
     private IEnumerator HandlePuzzleSucceed()
     {
         yield return new WaitForSecondsRealtime(0.2f);
-        _aud.PlayOneShot(shinySFX);
         marker.gameObject.SetActive(true);
+        InputManager.Instance.RegisterInteractPressed();
+        InputManager.Instance.RegisterSubmitPressed();
         yield return null;
         OnPuzzleCompleted?.Invoke();
     }
+    
+    IEnumerator SetButtonActive() //intro animation
+    {
+        yield return null;
+        _anim.gameObject.SetActive(true);
+        _anim.SetTrigger("enterPuzzle");
+    }
+
+    private void HandleIntroDialogueFinished(bool isPlaying)
+    {
+        if (isPlaying)
+            return;
+
+        StartCoroutine(SetButtonActive());
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandleIntroDialogueFinished;
+    }
+
 }

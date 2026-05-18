@@ -1,10 +1,12 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BookContents : MonoBehaviour
 {
-    [TextArea(10, 20)] // This attribute allows you to edit the string in a larger text area in the Unity Inspector.
-    [SerializeField]private string contents; // This field will hold the contents of the book.
+    [TextArea(10, 20)] 
+    [SerializeField]private string contents;
 
     [SerializeField] private TMP_Text leftSide; // Reference to the TextMeshPro component for the left side of the book.
     [SerializeField] private TMP_Text rightSide; // Reference to the TextMeshPro component for the right side of the book.
@@ -12,13 +14,17 @@ public class BookContents : MonoBehaviour
     [SerializeField] private TMP_Text leftPagination; // Reference to the TextMeshPro component for the left page number.
     [SerializeField] private TMP_Text rightPagination; // Reference to the TextMeshPro component for the right page number.
 
+    [SerializeField] private Image leftArrow;
+    [SerializeField] private Image rightArrow;
 
     private void OnValidate()
     {
-        UpdatePagination(); // Update the pagination whenever the script is validated in the Unity Editor.
+        UpdatePagination();
+
+        leftArrow.enabled = false;
 
         if (leftSide.text == contents)
-            return; // If the left side text is already set to the contents, do nothing.
+            return; 
 
         SetupContent(); // Set up the content of the book whenever the script is validated in the Unity Editor.
     }
@@ -55,19 +61,24 @@ public class BookContents : MonoBehaviour
 
     public void PreviousPage()
     {
+        rightArrow.enabled = true;
+
         if (leftSide.pageToDisplay < 1)
         {
-            leftSide.pageToDisplay = 1; // Ensure the left page number does not go below 1.
+            leftSide.pageToDisplay = 1;
+            leftArrow.enabled = false;
             return;
         }
 
         if (leftSide.pageToDisplay -2 > 1)
         {
+            leftArrow.enabled = true;
             leftSide.pageToDisplay -= 2;
         }
         else
         {
-            leftSide.pageToDisplay = 1; // Set the left page number to 1 if it goes below 1.
+            leftSide.pageToDisplay = 1;
+            leftArrow.enabled = false;
         }
         
         rightSide.pageToDisplay = leftSide.pageToDisplay + 1; // Set the right page number to be one more than the left page number.
@@ -77,18 +88,34 @@ public class BookContents : MonoBehaviour
 
     public void NextPage()
     {
+        if (rightSide.pageToDisplay == rightSide.textInfo.pageCount - 2)
+        {
+            Debug.Log("rightside: " + rightSide.pageToDisplay + "pagecount: " + rightSide.textInfo.pageCount);
+            rightArrow.enabled = false;
+        }
+
         if (rightSide.pageToDisplay >= rightSide.textInfo.pageCount)
+        {
             return;
+        } 
+
+
 
         if (leftSide.pageToDisplay >= leftSide.textInfo.pageCount - 1)
         {
-            leftSide.pageToDisplay = leftSide.textInfo.pageCount - 1; // Set the left page number to the total page count minus one if it exceeds it.
-            rightSide.pageToDisplay = leftSide.pageToDisplay + 1; // Set the right page number to be one more than the left page number.
+            //if the current page of left side is the last page,
+            //clamp the leftside display page as well as the right side page display.
+            leftArrow.enabled = true;
+            rightArrow.enabled = false;
+            leftSide.pageToDisplay = leftSide.textInfo.pageCount - 1;
+            rightSide.pageToDisplay = leftSide.pageToDisplay + 1;
         }
         else
         {
-            leftSide.pageToDisplay += 2; // Increment the left page number by 2 to move to the next set of pages.
-            rightSide.pageToDisplay = leftSide.pageToDisplay + 1; // Set the right page number to be one more than the left page number.
+            //otherwise, do not clamp it
+            leftArrow.enabled = true;
+            leftSide.pageToDisplay += 2;
+            rightSide.pageToDisplay = leftSide.pageToDisplay + 1;
         }
         
         UpdatePagination(); // Update the pagination after changing the page numbers.

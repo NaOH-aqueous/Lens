@@ -245,8 +245,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -30, y: -30}
+  m_AnchoredPosition: {x: 1.3078, y: 22.519}
+  m_SizeDelta: {x: -69.8692, y: -70.961}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &685436055
 MonoBehaviour:
@@ -268,36 +268,44 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<color=#8B0000><size=160%><b>The Raven at the Door</b></size></color>\n\nAt
-    midnight, someone knocked upon my door.\n\nThree times.\n\nI opened it, but no
-    one stood outside.\n\nOnly a raven sat upon the railing, its feathers wet with
-    rain.\n\nIt looked at me with eyes too bright for any living bird.\n\nThen, in
-    a voice like a buried bell, it whispered:\n\n\"He remembers.\"\n\nI closed the
-    door at once.\n\nBut the knocking continued from inside the room.\n\n<page><color=#4B0082><size=160%><b>The
-    Candle in the Mirror</b></size></color>\n\nI lit one candle before the mirror.\n\nIn
-    the glass, there were two.\n\nI turned around, but behind me the room was dark.\n\nThe
-    second flame burned only in the reflection.\n\nThen a pale hand appeared beside
-    it.\n\nSlowly, the hand reached forward from inside the mirror.\n\nBefore I could
-    move, it pressed one finger to the glass and wrote:\n\n\"Your turn.\"\n\n<page><color=#003366><size=160%><b>The
-    House Beneath the Rain</b></size></color>\n\nThe old house had no windows, yet
-    every night a light shone from within.\n\nI entered during a storm, carrying
-    only a lantern.\n\nInside, the floor was dry, but I heard rain falling somewhere
-    below.\n\nBeneath the cellar stairs, I found a locked wooden door.\n\nFrom behind
-    it came the sound of thunder.\n\nThen a child\u2019s voice whispered:\n\n\"Do
-    not open it. The sky is buried here.\"\n\n<page><color=#006400><size=160%><b>The
-    Portrait That Blinked</b></size></color>\n\nThe portrait hung above the fireplace
-    for one hundred years.\n\nEveryone said the woman in it had died smiling.\n\nBut
-    when I looked closely, her smile faded.\n\nI stepped back.\n\nThe painted eyes
-    blinked.\n\nThen the woman raised one painted finger and pointed behind me.\n\nI
-    turned and saw nothing.\n\nWhen I looked again, the portrait was empty.\n\n<page><color=#B8860B><size=160%><b>The
+  m_text: "<color=#8B0000><size=120%><b>Jan 2nd, Saturday</b></size></color>\r\nDear
+    diary:\r\n\r\nToday's being pretty okay.\r\n\r\nI don't think I've been thinking
+    enough...Or maybe...I do?\r\n\r\nThe brewery of wine takes years; so, what eventually
+    get compiled from thoughts into ideas might take more.\r\n\r\nI've been having
+    a thought for years, and now what I need to do is just, to make it come true.\n\n<page>\nGood
+    thing happened today:\n\nI ate icecream. After doing this it got freezing cold,
+    though. Maybe I won't ate in during snowy day anymore.\n\nIt's 2 :00 am, I've
+    got to sleep now. Bye, my dear diary. And sleep well.\n\n\n<page><color=#4B0082><size=120%><b>Jan
+    22th, Friday</b></size></color>\nDear Diary:\n\nI haven't been seeing you for
+    half a month.\n\nSometimes, I want to walk straight from home to anywhere else,
+    or everywhere, even. Just wandering around without having to think about anything.\n\nToday
+    is the second time I tried to do so, but I failed. It was just too cold and whever
+    I got further away from home, I kinda missed the warmth in the bed.\n\n<page>\nGood
+    thing happened today:\n\nI got a new shovel!\n\nNow I can plant the seed sometimes
+    when the weather gets warmer.\n\n<page><color=#003366><size=120%><b>Feb 3rd,
+    Wednesday </b></size></color>\nDear diary:\nToday I felt bored! \n\nI don't have
+    much to talk about, honestly. The only thing I think of right now is just how
+    fast the days have past. I mean, the last year past in a blink, and even now,
+    I never realized until I saw on the calender it's already Feburary.\n\nEvery
+    day is plain and, almost the same. I woke up at morning, and went to the underground,
+    and back to the surface of the globe again, to work, or just taking a walk.\n\n<page>\nGood
+    thing happened today:\n\nNothing happened! Just ordinary day, I guess. At least
+    no one has shouted at me for arriving late by half an hour. \n\nI didn't mean
+    it! But getting engrossed by the concept of passed subway has made me to missed
+    the next one as well.\n\n<page><color=#006400><size=160%><b>The Portrait That
+    Blinked</b></size></color>\n\nThe portrait hung above the fireplace for one hundred
+    years.\n\nEveryone said the woman in it had died smiling.\n\nBut when I looked
+    closely, her smile faded.\n\nI stepped back.\n\nThe painted eyes blinked.\n\nThen
+    the woman raised one painted finger and pointed behind me.\n\nI turned and saw
+    nothing.\n\nWhen I looked again, the portrait was empty.\n\n<page><color=#B8860B><size=160%><b>The
     Last Bell</b></size></color>\n\nThe chapel bell had not rung since the village
     was abandoned.\n\nYet at dawn, it sounded once.\n\nI climbed the tower to see
     who had pulled the rope.\n\nNo one was there.\n\nOnly a shadow hung where the
     bell should have been.\n\nIt swayed gently in the cold air.\n\nThen the bell
     rang again.\n\nThis time, the sound came from inside my chest."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b8583fa3f28cb1443853f95d4d93f6af, type: 2}
+  m_sharedMaterial: {fileID: 3121925947708642713, guid: b8583fa3f28cb1443853f95d4d93f6af, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -321,8 +329,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -411,8 +419,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.508, y: 0.114888884}
   m_AnchorMax: {x: 0.75837487, y: 0.82488894}
-  m_AnchoredPosition: {x: 98.89221, y: -4.403412}
-  m_SizeDelta: {x: 185.90424, y: 103.830444}
+  m_AnchoredPosition: {x: 94.0887, y: 25.302}
+  m_SizeDelta: {x: 188.1756, y: 87.249}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712652376
 MonoBehaviour:
@@ -427,7 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -601,7 +609,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 30}
+  m_AnchoredPosition: {x: 16, y: 80}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1042169532
@@ -633,8 +641,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -737,7 +745,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -487.16016, y: 5.519989}
+  m_AnchoredPosition: {x: -471, y: 22.519}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126245000
@@ -747,7 +755,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1126244998}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -812,7 +820,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 493, y: 20}
+  m_AnchoredPosition: {x: 498, y: -0.000020981}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1172938191
@@ -890,8 +898,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000014782, y: -0.000015259}
-  m_SizeDelta: {x: 1177.4962, y: 933.76}
+  m_AnchoredPosition: {x: 25, y: -7.4222}
+  m_SizeDelta: {x: 1408.3802, y: 1094.8444}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1476028555
 MonoBehaviour:
@@ -913,7 +921,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2089385250147466525, guid: 700e4cf74d2020644952938c19430831, type: 3}
+  m_Sprite: {fileID: 4025243291508468552, guid: ecc19abda89a7894f8f8d93317fed2d7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -943,28 +951,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33a0efbcfd1680747828646caf155780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  contents: "<color=#8B0000><size=160%><b>The Raven at the Door</b></size></color>\n\nAt
-    midnight, someone knocked upon my door.\n\nThree times.\n\nI opened it, but no
-    one stood outside.\n\nOnly a raven sat upon the railing, its feathers wet with
-    rain.\n\nIt looked at me with eyes too bright for any living bird.\n\nThen, in
-    a voice like a buried bell, it whispered:\n\n\"He remembers.\"\n\nI closed the
-    door at once.\n\nBut the knocking continued from inside the room.\n\n<page><color=#4B0082><size=160%><b>The
-    Candle in the Mirror</b></size></color>\n\nI lit one candle before the mirror.\n\nIn
-    the glass, there were two.\n\nI turned around, but behind me the room was dark.\n\nThe
-    second flame burned only in the reflection.\n\nThen a pale hand appeared beside
-    it.\n\nSlowly, the hand reached forward from inside the mirror.\n\nBefore I could
-    move, it pressed one finger to the glass and wrote:\n\n\"Your turn.\"\n\n<page><color=#003366><size=160%><b>The
-    House Beneath the Rain</b></size></color>\n\nThe old house had no windows, yet
-    every night a light shone from within.\n\nI entered during a storm, carrying
-    only a lantern.\n\nInside, the floor was dry, but I heard rain falling somewhere
-    below.\n\nBeneath the cellar stairs, I found a locked wooden door.\n\nFrom behind
-    it came the sound of thunder.\n\nThen a child\u2019s voice whispered:\n\n\"Do
-    not open it. The sky is buried here.\"\n\n<page><color=#006400><size=160%><b>The
-    Portrait That Blinked</b></size></color>\n\nThe portrait hung above the fireplace
-    for one hundred years.\n\nEveryone said the woman in it had died smiling.\n\nBut
-    when I looked closely, her smile faded.\n\nI stepped back.\n\nThe painted eyes
-    blinked.\n\nThen the woman raised one painted finger and pointed behind me.\n\nI
-    turned and saw nothing.\n\nWhen I looked again, the portrait was empty.\n\n<page><color=#B8860B><size=160%><b>The
+  contents: "<color=#8B0000><size=120%><b>Jan 2nd, Saturday</b></size></color>\r\nDear
+    diary:\r\n\r\nToday's being pretty okay.\r\n\r\nI don't think I've been thinking
+    enough...Or maybe...I do?\r\n\r\nThe brewery of wine takes years; so, what eventually
+    get compiled from thoughts into ideas might take more.\r\n\r\nI've been having
+    a thought for years, and now what I need to do is just, to make it come true.\n\n<page>\nGood
+    thing happened today:\n\nI ate icecream. After doing this it got freezing cold,
+    though. Maybe I won't ate in during snowy day anymore.\n\nIt's 2 :00 am, I've
+    got to sleep now. Bye, my dear diary. And sleep well.\n\n\n<page><color=#4B0082><size=120%><b>Jan
+    22th, Friday</b></size></color>\nDear Diary:\n\nI haven't been seeing you for
+    half a month.\n\nSometimes, I want to walk straight from home to anywhere else,
+    or everywhere, even. Just wandering around without having to think about anything.\n\nToday
+    is the second time I tried to do so, but I failed. It was just too cold and whever
+    I got further away from home, I kinda missed the warmth in the bed.\n\n<page>\nGood
+    thing happened today:\n\nI got a new shovel!\n\nNow I can plant the seed sometimes
+    when the weather gets warmer.\n\n<page><color=#003366><size=120%><b>Feb 3rd,
+    Wednesday </b></size></color>\nDear diary:\nToday I felt bored! \n\nI don't have
+    much to talk about, honestly. The only thing I think of right now is just how
+    fast the days have past. I mean, the last year past in a blink, and even now,
+    I never realized until I saw on the calender it's already Feburary.\n\nEvery
+    day is plain and, almost the same. I woke up at morning, and went to the underground,
+    and back to the surface of the globe again, to work, or just taking a walk.\n\n<page>\nGood
+    thing happened today:\n\nNothing happened! Just ordinary day, I guess. At least
+    no one has shouted at me for arriving late by half an hour. \n\nI didn't mean
+    it! But getting engrossed by the concept of passed subway has made me to missed
+    the next one as well.\n\n<page><color=#006400><size=160%><b>The Portrait That
+    Blinked</b></size></color>\n\nThe portrait hung above the fireplace for one hundred
+    years.\n\nEveryone said the woman in it had died smiling.\n\nBut when I looked
+    closely, her smile faded.\n\nI stepped back.\n\nThe painted eyes blinked.\n\nThen
+    the woman raised one painted finger and pointed behind me.\n\nI turned and saw
+    nothing.\n\nWhen I looked again, the portrait was empty.\n\n<page><color=#B8860B><size=160%><b>The
     Last Bell</b></size></color>\n\nThe chapel bell had not rung since the village
     was abandoned.\n\nYet at dawn, it sounded once.\n\nI climbed the tower to see
     who had pulled the rope.\n\nNo one was there.\n\nOnly a shadow hung where the
@@ -974,6 +990,8 @@ MonoBehaviour:
   rightSide: {fileID: 1767363765}
   leftPagination: {fileID: 1527091484}
   rightPagination: {fileID: 1042169532}
+  leftArrow: {fileID: 1126245000}
+  rightArrow: {fileID: 1172938191}
 --- !u!1 &1527091482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1008,7 +1026,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 30}
+  m_AnchoredPosition: {x: -17, y: 82.999}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1527091484
@@ -1040,8 +1058,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1148,8 +1166,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -255.9386, y: -30.72641}
-  m_SizeDelta: {x: -705.7152, y: -162.81555}
+  m_AnchoredPosition: {x: -307, y: -16}
+  m_SizeDelta: {x: -837.6317, y: -213.5858}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1531045663
 MonoBehaviour:
@@ -1164,7 +1182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1328,8 +1346,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -300, y: -720}
+  m_AnchoredPosition: {x: -2.251587, y: -47.1978}
+  m_SizeDelta: {x: -354.36, y: -713.5474}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1767363765
 MonoBehaviour:
@@ -1351,36 +1369,44 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "<color=#8B0000><size=160%><b>The Raven at the Door</b></size></color>\n\nAt
-    midnight, someone knocked upon my door.\n\nThree times.\n\nI opened it, but no
-    one stood outside.\n\nOnly a raven sat upon the railing, its feathers wet with
-    rain.\n\nIt looked at me with eyes too bright for any living bird.\n\nThen, in
-    a voice like a buried bell, it whispered:\n\n\"He remembers.\"\n\nI closed the
-    door at once.\n\nBut the knocking continued from inside the room.\n\n<page><color=#4B0082><size=160%><b>The
-    Candle in the Mirror</b></size></color>\n\nI lit one candle before the mirror.\n\nIn
-    the glass, there were two.\n\nI turned around, but behind me the room was dark.\n\nThe
-    second flame burned only in the reflection.\n\nThen a pale hand appeared beside
-    it.\n\nSlowly, the hand reached forward from inside the mirror.\n\nBefore I could
-    move, it pressed one finger to the glass and wrote:\n\n\"Your turn.\"\n\n<page><color=#003366><size=160%><b>The
-    House Beneath the Rain</b></size></color>\n\nThe old house had no windows, yet
-    every night a light shone from within.\n\nI entered during a storm, carrying
-    only a lantern.\n\nInside, the floor was dry, but I heard rain falling somewhere
-    below.\n\nBeneath the cellar stairs, I found a locked wooden door.\n\nFrom behind
-    it came the sound of thunder.\n\nThen a child\u2019s voice whispered:\n\n\"Do
-    not open it. The sky is buried here.\"\n\n<page><color=#006400><size=160%><b>The
-    Portrait That Blinked</b></size></color>\n\nThe portrait hung above the fireplace
-    for one hundred years.\n\nEveryone said the woman in it had died smiling.\n\nBut
-    when I looked closely, her smile faded.\n\nI stepped back.\n\nThe painted eyes
-    blinked.\n\nThen the woman raised one painted finger and pointed behind me.\n\nI
-    turned and saw nothing.\n\nWhen I looked again, the portrait was empty.\n\n<page><color=#B8860B><size=160%><b>The
+  m_text: "<color=#8B0000><size=120%><b>Jan 2nd, Saturday</b></size></color>\r\nDear
+    diary:\r\n\r\nToday's being pretty okay.\r\n\r\nI don't think I've been thinking
+    enough...Or maybe...I do?\r\n\r\nThe brewery of wine takes years; so, what eventually
+    get compiled from thoughts into ideas might take more.\r\n\r\nI've been having
+    a thought for years, and now what I need to do is just, to make it come true.\n\n<page>\nGood
+    thing happened today:\n\nI ate icecream. After doing this it got freezing cold,
+    though. Maybe I won't ate in during snowy day anymore.\n\nIt's 2 :00 am, I've
+    got to sleep now. Bye, my dear diary. And sleep well.\n\n\n<page><color=#4B0082><size=120%><b>Jan
+    22th, Friday</b></size></color>\nDear Diary:\n\nI haven't been seeing you for
+    half a month.\n\nSometimes, I want to walk straight from home to anywhere else,
+    or everywhere, even. Just wandering around without having to think about anything.\n\nToday
+    is the second time I tried to do so, but I failed. It was just too cold and whever
+    I got further away from home, I kinda missed the warmth in the bed.\n\n<page>\nGood
+    thing happened today:\n\nI got a new shovel!\n\nNow I can plant the seed sometimes
+    when the weather gets warmer.\n\n<page><color=#003366><size=120%><b>Feb 3rd,
+    Wednesday </b></size></color>\nDear diary:\nToday I felt bored! \n\nI don't have
+    much to talk about, honestly. The only thing I think of right now is just how
+    fast the days have past. I mean, the last year past in a blink, and even now,
+    I never realized until I saw on the calender it's already Feburary.\n\nEvery
+    day is plain and, almost the same. I woke up at morning, and went to the underground,
+    and back to the surface of the globe again, to work, or just taking a walk.\n\n<page>\nGood
+    thing happened today:\n\nNothing happened! Just ordinary day, I guess. At least
+    no one has shouted at me for arriving late by half an hour. \n\nI didn't mean
+    it! But getting engrossed by the concept of passed subway has made me to missed
+    the next one as well.\n\n<page><color=#006400><size=160%><b>The Portrait That
+    Blinked</b></size></color>\n\nThe portrait hung above the fireplace for one hundred
+    years.\n\nEveryone said the woman in it had died smiling.\n\nBut when I looked
+    closely, her smile faded.\n\nI stepped back.\n\nThe painted eyes blinked.\n\nThen
+    the woman raised one painted finger and pointed behind me.\n\nI turned and saw
+    nothing.\n\nWhen I looked again, the portrait was empty.\n\n<page><color=#B8860B><size=160%><b>The
     Last Bell</b></size></color>\n\nThe chapel bell had not rung since the village
     was abandoned.\n\nYet at dawn, it sounded once.\n\nI climbed the tower to see
     who had pulled the rope.\n\nNo one was there.\n\nOnly a shadow hung where the
     bell should have been.\n\nIt swayed gently in the cold air.\n\nThen the bell
     rang again.\n\nThis time, the sound came from inside my chest."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b8583fa3f28cb1443853f95d4d93f6af, type: 2}
+  m_sharedMaterial: {fileID: 3121925947708642713, guid: b8583fa3f28cb1443853f95d4d93f6af, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1404,8 +1430,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

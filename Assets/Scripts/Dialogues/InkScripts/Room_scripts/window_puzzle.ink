@@ -2,6 +2,6 @@
 INCLUDE Globals.ink
 
 ~ magnifier_get = true
-You've got... A magnifier! Check it out in the inventory. #item:Magnifier
+You've got... A magnifier! Check it out in the inventory. #item:Magnifier #audio:shiny2
 -> END
 
