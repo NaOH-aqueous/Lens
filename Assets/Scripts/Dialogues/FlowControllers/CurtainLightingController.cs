@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -25,6 +26,8 @@ public class CurtainLightingController : MonoBehaviour
     [SerializeField] private GameObject floor_Light;
     [SerializeField] private ParticleSystem dust;
 
+    private bool lightingPerformed = false;
+
     private void Start()
     {
         Init();
@@ -32,7 +35,10 @@ public class CurtainLightingController : MonoBehaviour
 
     private void Update()
     {
-        CurtainOpened();
+        if (!lightingPerformed)
+        {
+            CurtainOpened();
+        }
     }
 
     private void Init() //initiate the sprites, lighting and materials
@@ -65,6 +71,8 @@ public class CurtainLightingController : MonoBehaviour
             //enable the lighting
             curtain_light.enabled = true;
             floor_Light.SetActive(true);
+
+            lightingPerformed = true;
         }
     }
 }

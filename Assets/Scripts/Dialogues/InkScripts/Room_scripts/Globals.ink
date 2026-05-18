@@ -9,3 +9,9 @@ VAR door_open = false //if the door has been unlocked
 VAR have_paper = false //if the player has taken the paper
 
 VAR lamp_switch = true //if the switch has been turned on
+
+VAR read_notes = false
+
+VAR window_clean = false
+
+VAR magnifier_get = false

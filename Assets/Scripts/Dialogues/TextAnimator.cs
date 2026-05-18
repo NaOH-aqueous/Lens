@@ -48,11 +48,6 @@ namespace TMPro.Examples
                 hasTextChanged = true;
         }
 
-        private void Start()
-        {
-           
-        }
-
         /// <summary>
         /// Method to animate vertex colors of a TMP Text object.
         /// </summary>
@@ -99,7 +94,7 @@ namespace TMPro.Examples
                 if (characterCount == 0)
                 {
                     
-                    yield return new WaitForSeconds(0.25f);
+                    yield return new WaitForSecondsRealtime(0.25f);
                     continue;
                 }
 
@@ -167,7 +162,7 @@ namespace TMPro.Examples
 
                 loopCount += 1;
 
-                yield return new WaitForSeconds(0.1f * SpeedMultiplier);
+                yield return new WaitForSecondsRealtime(0.1f * SpeedMultiplier);
             }
         }
 

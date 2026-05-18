@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using Ink.Runtime;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -11,9 +13,18 @@ public class DialogueManager : MonoBehaviour
     //public instance to be retrived from other scripts
     public static DialogueManager Instance { get; private set; }
 
+    public event System.Action<string> OnItemTagChanged;
+
+    public System.Action<bool> OnDialogueStatusChanged;
+
+    public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
+    public event System.Action<string> OnPortraitTagChanged;
+
+
     //private ink integrating variables
-    Ink.Runtime.Story _inkstory;
+    Story _inkstory;
     private bool isDialoguePlaying = false; //check if there's any dialogue played
+
     private bool isChoicesDiaplayed = false;
     private bool animPlaying = false;
 
@@ -22,11 +33,14 @@ public class DialogueManager : MonoBehaviour
     private const string SPEAKER_TAG = "speaker";
     private const string PORTRAIT_TAG = "portrait";
     private const string AUDIO_TAG = "audio";
+    private const string ITEM_TAG = "item";
 
     //private audio and animation variables
     private Animator _anim;
     private AudioSource _audio;
     private DialogueVariables dialogueVariables;
+    private string lastItemTag = "";
+    private string lastPortraitTag = "";
     private string lastPlayedTag = "";
 
     // variable for the load_globals.ink JSON
@@ -96,8 +110,7 @@ public class DialogueManager : MonoBehaviour
         // contiue story upon user input if there's no choices in current line
         if (_inkstory.currentChoices.Count == 0 &&
             !animPlaying &&
-           (InputManager.Instance.IsSubmitPressed() ||
-            InputManager.Instance.IsInteractPressed()))
+           (InputManager.Instance.IsSubmitPressed()))
         {
             ContinueStory();
         }
@@ -180,6 +193,19 @@ public class DialogueManager : MonoBehaviour
         return "";
     }
 
+    public string GetItemTag()
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == ITEM_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
+
     public void PlaySound(AudioClip sound, string audioName) //play sound 
     {
         string currentTag = GetAudioTag();
@@ -200,6 +226,7 @@ public class DialogueManager : MonoBehaviour
     public void NewStory(TextAsset story)
     {
         _inkstory = new Ink.Runtime.Story(story.text);
+        BindItemUseFunction();
         dialogueVariables.StartListening(_inkstory);
 
         EnterDialogueMode();
@@ -211,6 +238,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
+        OnDialogueStatusChanged?.Invoke(true);
 
         ContinueStory();
         _anim.SetTrigger("dialogueStart");
@@ -228,9 +256,16 @@ public class DialogueManager : MonoBehaviour
 
         animPlaying = false;
         isDialoguePlaying = false;
+        OnDialogueStatusChanged?.Invoke(false);
+
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
+
+        if (GameManager.instance.CurrentState == GameStateType.Inventory)
+        {
+            StartCoroutine(InventoryManager.Instance.SelectFirstSlotNextFrame());
+        }
     }
 
     //continue to the next line of the story
@@ -296,13 +331,12 @@ public class DialogueManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         yield return new WaitForEndOfFrame();
         EventSystem.current.SetSelectedGameObject(firstButton);
-        EventSystem.current.firstSelectedGameObject = firstButton;
     }
 
     //select the choice from the list and to continue to corresponding dialogues
     private IEnumerator MakeChoices(int currentIndex)
     {   
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSecondsRealtime(0.1f);
         _inkstory.ChooseChoiceIndex(currentIndex);
         GameObject[] choicesButtons = GameObject.FindGameObjectsWithTag("ChoiceButton");
         foreach (GameObject choice in choicesButtons)
@@ -323,6 +357,39 @@ public class DialogueManager : MonoBehaviour
     private void GetTags() //get tags in current line
     {
         tags = _inkstory.currentTags;
+
+        string currentItemTag = string.Empty;
+        string currentSpeakerTag = string.Empty;
+        string currentPortraitTag = string.Empty;
+
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            switch (splitTag[0])
+            {
+                case ITEM_TAG:
+                    currentItemTag = splitTag[1];
+                    break;
+                case SPEAKER_TAG:
+                    currentSpeakerTag = splitTag[1];
+                    break;
+                case PORTRAIT_TAG:
+                    currentPortraitTag = splitTag[1];
+                    break;
+            }
+        }
+        //only notify when the tag changed
+        if (currentItemTag != lastItemTag)
+        {
+            lastItemTag = currentItemTag;
+            OnItemTagChanged?.Invoke(currentItemTag);
+        }
+
+        if (currentPortraitTag != lastPortraitTag)
+        {
+            lastPortraitTag = currentPortraitTag;
+            OnPortraitTagChanged?.Invoke(currentPortraitTag);
+        }
     }
 
     public bool CheckDialoguePlaying() //Check if current dialogue is playing
@@ -345,5 +412,47 @@ public class DialogueManager : MonoBehaviour
             Debug.LogWarning("Ink Variable was found to be null: " + variableName);
         }
         return variableValue;
+    }
+
+    public void RaiseVariableChaned(string name, Ink.Runtime.Object value)
+    {
+        OnVariableChanged?.Invoke(name, value);
+    }
+
+    public void SetBoolVariable(string variable, bool value)
+    {
+        if(variable == null || string.IsNullOrEmpty(variable))
+        {
+            return;
+        }
+
+        _inkstory.variablesState[variable] = value;
+
+        Debug.Log("the variable" + variable + "has been set to" + value);
+    }
+    
+    public void BindItemUseFunction()
+    {
+        HomeItemController homeController = GameObject.FindFirstObjectByType<HomeItemController>();
+        _inkstory.BindExternalFunction("CanUseItem", () =>
+        {
+           bool result = homeController != null && homeController.CanUseItem();
+            if (homeController == null)
+            {
+                Debug.Log("homecontroller not found!");
+                return false;
+            }
+
+           Debug.Log("CanUseItem called: " + result);
+           return result;
+
+        });
+        _inkstory.BindExternalFunction("UseItem", () =>
+        {
+            homeController.TryUseItem();
+            InventoryManager.Instance.UseItem(
+                InventoryManager.Instance.GetCurrentItem()
+            );
+        });
     }
 }

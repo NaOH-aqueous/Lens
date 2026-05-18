@@ -16,6 +16,7 @@ public class SetSprites : MonoBehaviour
     [SerializeField] private Image spriteImage;
 
     private SpriteRenderer spriteRenderer;
+    private string _speakerName;
 
     private void Start()
     {
@@ -24,15 +25,23 @@ public class SetSprites : MonoBehaviour
 
     private void Update()
     {
+        _speakerName = DialogueManager.Instance.GetSpeakerTag();
         ChangeSprite();
     }
 
     private void ChangeSprite()
     {
-        if(DialogueManager.Instance.GetSpeakerTag() == characterName)
+        if (string.IsNullOrEmpty(_speakerName))
         {
-            string currrentSprite = DialogueManager.Instance.GetExpressionTag();
-            switch (currrentSprite)
+            Debug.Log("the name of speaker has not been assigned");
+            return;
+        }
+
+        if(_speakerName == characterName)
+        {
+            string currrentSpriteTag = DialogueManager.Instance.GetExpressionTag();
+
+            switch (currrentSpriteTag)
             {
                 case "normal":
                     setPortrait(spriteNormal);
@@ -59,13 +68,13 @@ public class SetSprites : MonoBehaviour
 
     private void setPortrait(Sprite sprite)
     {
+        if(spriteRenderer.sprite == sprite)
+        {
+            return;
+        }
         if(sprite != null && sprite != spriteRenderer.sprite)
         {
             spriteRenderer.sprite = sprite;
-        }
-        else
-        {
-            return;
         }
     }
 }

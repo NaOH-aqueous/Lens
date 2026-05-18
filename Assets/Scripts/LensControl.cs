@@ -12,11 +12,11 @@ public class LensControl : MonoBehaviour
 
     private InputAction navigateAction;
     private RectTransform lensPos;
-    public float requiredStayTime = 1f; // 需要停留的时间（秒）
+    public float requiredStayTime = 1f;
 
     private List<RectTransform> itemRects = new List<RectTransform>();
 
-    private List<string> itemNames = new List<string>();   // 对应物品名称
+    private List<string> itemNames = new List<string>();
 
     private RectTransform currentItem;
     private Coroutine stayCoroutine;
@@ -38,7 +38,7 @@ public class LensControl : MonoBehaviour
             if (rt != null)
             {
                 itemRects.Add(rt);
-                itemNames.Add(item.name); // 存储物品名称
+                itemNames.Add(item.name);
             }
         }
     }
@@ -79,31 +79,24 @@ public class LensControl : MonoBehaviour
     
     private void CheckTouchItem()
     {
-        // 获取放大镜的世界矩形
         Rect lensRectWorld = GetWorldRect(lensPos);
         RectTransform newItem = null;
 
-        // 寻找第一个重叠的物品
         for (int i = 0; i < itemRects.Count; i++)
         {
             RectTransform itemRect = itemRects[i];
 
-            if(itemRect == null) continue; // 如果物品被销毁，跳过
-            // 获取物品的世界矩形
+            if(itemRect == null) continue;
             Rect itemRectWorld = GetWorldRect(itemRect);
-            // 判断是否重叠
             if (lensRectWorld.Overlaps(itemRectWorld))
             {
-                // 找到重叠的物品，记录下来
                 newItem = itemRect;
                 break;
             }
         }
 
-        // 如果当前重叠的物品发生了变化
         if (newItem != currentItem)
         {
-            // 停止之前的计时协程
             if (stayCoroutine != null)
             {
                 StopCoroutine(stayCoroutine);
@@ -111,7 +104,7 @@ public class LensControl : MonoBehaviour
             }
             currentItem = newItem;
 
-            // 如果新的物品存在，开始计时
+
             if (currentItem != null)
             {
                 stayCoroutine = StartCoroutine(StayAndLog(currentItem));

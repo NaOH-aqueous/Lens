@@ -144,4 +144,5 @@ public class InputManager : MonoBehaviour
     {
         InteractPressed = false;
     }
+
 }

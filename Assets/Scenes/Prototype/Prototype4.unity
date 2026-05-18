@@ -208,6 +208,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 200
+  scaleSpeed: 0.1
+  transformLimitX: 100
+  transformLimitY: 100
 --- !u!1 &412544575
 GameObject:
   m_ObjectHideFlags: 0
