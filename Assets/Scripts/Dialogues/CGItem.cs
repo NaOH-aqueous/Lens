@@ -9,27 +9,26 @@ public class CGItem : MonoBehaviour
     public Image itemDisplayer;
     public GameObject itemInspector;
     public Image CGDisplayer;
-    public Image InDialogueCG;
 
     private Coroutine clearDisplayCoroutine;
     private Coroutine clearInspectCoroutine;
     private Coroutine clearItemCoroutine;
-    private Button returnButton;
     private Item displayItem;
+    private CanvasGroup cgCanvasGroup;
     private void Start()
     {
         itemDisplayer.gameObject.SetActive(false);
         itemInspector.gameObject.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
-        InDialogueCG.gameObject.SetActive(false);
 
-        GameManager.instance.OnGameStateChanged += HandleCGStateChange;
+        cgCanvasGroup = GetComponent<CanvasGroup>();
     }
 
     public void DisplayItemInfo(Item new_Item)
     {
         if (!string.IsNullOrEmpty(new_Item.item_Name))
         {
+            StartCoroutine(Fade(0f, 1f, 0.25f));
             itemDisplayer.gameObject.SetActive(true);
             itemDisplayer.sprite = new_Item.item_Sprite;
             itemDisplayer.SetNativeSize();
@@ -40,18 +39,19 @@ public class CGItem : MonoBehaviour
 
     private IEnumerator ClearDisplayCoroutine()
     {
+        yield return StartCoroutine(Fade(1f, 0f, 0.25f));
+
         itemDisplayer.sprite = null;
         CGDisplayer.sprite = null;
-        InDialogueCG.sprite = null;
 
         displayItem = null;
 
         itemDisplayer.gameObject.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
-        InDialogueCG.gameObject.SetActive(false);
 
         InputManager.Instance.RegisterInteractPressed();
         InputManager.Instance.RegisterSubmitPressed();
+
         yield return null;
 
         GameManager.instance.PopState(GameStateType.ItemDisplay);
@@ -88,13 +88,13 @@ public class CGItem : MonoBehaviour
 
     public void InspectItem(Item inspect_Item)
     {
+        StartCoroutine(Fade(0f, 1f, 0.25f));
         itemInspector.gameObject.SetActive(true);
 
         Image itemViewer = itemInspector.GetComponentInChildren<Image>();
         itemViewer.sprite = inspect_Item.item_Sprite;
         itemViewer.SetNativeSize();
 
-        returnButton = itemInspector.GetComponentInChildren<Button>();
         GameManager.instance.PushState(GameStateType.ItemDisplay);
     }
 
@@ -108,6 +108,8 @@ public class CGItem : MonoBehaviour
 
     private IEnumerator ClearInspectCoroutine()
     {
+        yield return StartCoroutine(Fade(1f, 0f, 0.25f));
+
         Image itemViewer = itemInspector.GetComponentInChildren<Image>();
         itemViewer.sprite = null;
         itemInspector.SetActive(false);
@@ -115,6 +117,7 @@ public class CGItem : MonoBehaviour
         InputManager.Instance.RegisterSubmitPressed();
 
         yield return null;
+
         GameManager.instance.PopState(GameStateType.ItemDisplay);
         clearInspectCoroutine = null;
     }
@@ -123,43 +126,14 @@ public class CGItem : MonoBehaviour
     {
         if (DisplayItem.item_Sprite != null)
         {
-            returnButton = CGDisplayer.gameObject.GetComponentInChildren<Button>();
             if (!CGDisplayer.gameObject.activeSelf)
             {
+                StartCoroutine(Fade(0f, 1f, 0.25f));
                 CGDisplayer.gameObject.SetActive(true);
                 GameManager.instance.PushState(GameStateType.ItemDisplay);
             }
             CGDisplayer.sprite = DisplayItem.item_Sprite;
             displayItem = DisplayItem;
-        }
-    }
-
-    public void CGDisplayInDialogue(Item DisplayItem)
-    {
-        if (DisplayItem.item_Sprite != null)
-        {
-            if (!InDialogueCG.gameObject.activeSelf)
-            {
-                InDialogueCG.gameObject.SetActive(true);
-                GameManager.instance.PushState(GameStateType.ItemDisplay);
-            }
-            InDialogueCG.sprite = DisplayItem.item_Sprite;
-            displayItem = DisplayItem;
-        }
-    }
-
-    public void HandleCGStateChange(GameStateType gameState)
-    {
-        if(returnButton == null)
-        {
-            return;
-        }
-        if(gameState == GameStateType.ItemDisplay)
-        {
-            if (itemInspector.activeSelf || CGDisplayer.isActiveAndEnabled)
-            {
-                EventSystem.current.SetSelectedGameObject(returnButton.gameObject);
-            }
         }
     }
 
@@ -172,5 +146,39 @@ public class CGItem : MonoBehaviour
         return null;
     }
 
+    public void ExitCGMode()
+    {
+        if (itemInspector.activeSelf)
+        {
+            ClearInspect();
+        }
+        else
+        {
+            ClearDisplay();
+        }
+
+    }
+
+    private IEnumerator Fade(float start, float end, float duration)
+    {
+        float elapsed = 0f;
+
+        cgCanvasGroup.alpha = start;
+        cgCanvasGroup.blocksRaycasts = true;
+        cgCanvasGroup.interactable = false;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            cgCanvasGroup.alpha = Mathf.Lerp(start, end, elapsed / duration);
+
+            yield return null;
+        }
+
+        cgCanvasGroup.alpha = end;
+
+        cgCanvasGroup.blocksRaycasts = end > 0f;
+    }
 
 }

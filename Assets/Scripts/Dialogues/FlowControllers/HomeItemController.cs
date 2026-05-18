@@ -4,21 +4,31 @@ using TMPro.Examples;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HomeItemController : MonoBehaviour
 {
-    public CGItem cgPlayer;
+    [Header("CG&Puzzle")]
+    [SerializeField] private CGItem cgPlayer;
+    [SerializeField] private HomePuzzleController homePuzzle;
+
+    [Header("Sprites")]
     [SerializeField] private Sprite windowDust;
     [SerializeField] private Sprite windowClean;
     [SerializeField] private Sprite windowPuzzleClear;
     [SerializeField] private Sprite underTheBed;
     [SerializeField] private Sprite underTheBedAlt;
     [SerializeField] private Sprite monsterUnderBed;
+
+    [Header("Puzzles")]
     [SerializeField] private GameObject windowPuzzle;
+    [SerializeField] private GameObject diaryPuzzle;
     [SerializeField] private TextAsset magnifierDialogue;
+
+    [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
 
-
+    [Header("Items")]
     public Item papertowel;
     public Item notes;
     public Item window;
@@ -157,13 +167,13 @@ public class HomeItemController : MonoBehaviour
                 break;
             case (NORMALBED):
                 under_the_bed.item_Sprite = underTheBed;
-                cgPlayer.CGDisplayInDialogue(under_the_bed);
+                cgPlayer.CGDisplay(under_the_bed);
                 break;
             case (UNDERTHEBED):
                 _aud.Pause();
                 _aud.clip = specialTime;
                 under_the_bed.item_Sprite = underTheBedAlt;
-                cgPlayer.CGDisplayInDialogue(under_the_bed);
+                cgPlayer.CGDisplay(under_the_bed);
                 _aud.Play();
                 break;
             case (SOCK):
@@ -223,7 +233,7 @@ public class HomeItemController : MonoBehaviour
 
         InventoryManager.Instance.CloseInventory();
         windowPuzzle.SetActive(true);
-        GameManager.instance.PushState(GameStateType.Puzzle);
+        homePuzzle.Open();
     }
 
     private void HandlePuzzleCompleted()
@@ -244,15 +254,9 @@ public class HomeItemController : MonoBehaviour
         DialogueManager.Instance.OnDialogueStatusChanged -= HandlePuzzleDialogueFinished;
 
         windowPuzzle.SetActive(false);
-        GameManager.instance.PopState(GameStateType.Puzzle);
+        homePuzzle.Close();
     }
 
-    public void ExitPuzzle()
-    {
-        windowPuzzle.SetActive(false);
-        GameManager.instance.PopState(GameStateType.Puzzle);
-        cgPlayer.ClearDisplay();
-    }
 
     private void HandleCutscene(string cutsceneID)
     {
@@ -273,7 +277,7 @@ public class HomeItemController : MonoBehaviour
         yield return new WaitForSecondsRealtime(2f);
 
         under_the_bed.item_Sprite = monsterUnderBed;
-        cgPlayer.CGDisplayInDialogue(under_the_bed);
+        cgPlayer.CGDisplay(under_the_bed);
 
         yield return new WaitForSecondsRealtime(3f);
 
@@ -281,4 +285,11 @@ public class HomeItemController : MonoBehaviour
 
         DialogueManager.Instance.ResumeDialogue();
     }
+
+    public void ReadDiary()
+    {
+        diaryPuzzle.SetActive(true);
+        homePuzzle.Open();
+    }
+
 }

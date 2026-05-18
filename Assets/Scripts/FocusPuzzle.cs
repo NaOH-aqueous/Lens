@@ -178,7 +178,6 @@ public class FocusPuzzle : MonoBehaviour
 
             if (!focusCondition || !blurCondition)
             {
-                // if one of the conditions cannot be succeed, break the loop
                 successCoroutine = null;
                 yield break;
             }
@@ -186,8 +185,6 @@ public class FocusPuzzle : MonoBehaviour
             successTime += Time.unscaledDeltaTime;
             waited += Time.unscaledDeltaTime;
             Debug.Log(successTime);
-
-            //if the success time has been achieved, break out from the loop
             if (successTime >= requiredHold)
             {
                 success = true;
@@ -206,19 +203,17 @@ public class FocusPuzzle : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(0.2f);
         marker.gameObject.SetActive(true);
+        InputManager.Instance.RegisterInteractPressed();
+        InputManager.Instance.RegisterSubmitPressed();
         yield return null;
         OnPuzzleCompleted?.Invoke();
     }
     
-    IEnumerator SetButtonActive()
+    IEnumerator SetButtonActive() //intro animation
     {
-        yield return null; // wait 1 frame
+        yield return null;
         _anim.gameObject.SetActive(true);
         _anim.SetTrigger("enterPuzzle");
-        _button.gameObject.SetActive(false);
-        yield return new WaitForSecondsRealtime(2f);
-        _button.gameObject.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(_button.gameObject);
     }
 
     private void HandleIntroDialogueFinished(bool isPlaying)

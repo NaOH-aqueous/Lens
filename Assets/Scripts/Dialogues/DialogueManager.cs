@@ -460,6 +460,10 @@ public class DialogueManager : MonoBehaviour
                 InventoryManager.Instance.GetCurrentItem()
             );
         });
+        _inkstory.BindExternalFunction("ReadDiary", () =>
+        {
+            homeController.ReadDiary();
+        });
     }
 
     public void PauseDialogue()

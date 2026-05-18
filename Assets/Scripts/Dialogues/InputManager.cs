@@ -145,4 +145,8 @@ public class InputManager : MonoBehaviour
         InteractPressed = false;
     }
 
+    public void RegisterCancelPressed()
+    {
+        CancelPressed = false;
+    }
 }
