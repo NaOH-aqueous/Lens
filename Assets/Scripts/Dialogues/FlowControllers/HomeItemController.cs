@@ -1,3 +1,4 @@
+using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.Examples;
@@ -6,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HomeItemController : MonoBehaviour
+public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 {
     [Header("CG&Puzzle")]
     [SerializeField] private CGItem cgPlayer;
@@ -292,4 +293,38 @@ public class HomeItemController : MonoBehaviour
         homePuzzle.Open();
     }
 
+    public void WriteDiary()
+    {
+        BookContents diary = diaryPuzzle.GetComponent<BookContents>();
+        diary.WriteNewDiary();
+        Debug.Log("you wrote some diary");
+    }
+
+    public void BindFunctions(Story story)
+    {
+        story.BindExternalFunction(
+            "CanUseItem",
+            () => CanUseItem()
+        );
+
+        story.BindExternalFunction(
+            "UseItem",
+            () =>
+            {
+                TryUseItem();
+
+                InventoryManager.Instance.UseItem(
+                    InventoryManager.Instance.GetCurrentItem()
+                );
+            });
+
+        story.BindExternalFunction(
+            "ReadDiary",
+            () => ReadDiary()
+        );
+
+        story.BindExternalFunction(
+            "WriteDiary",
+            () => WriteDiary());
+    }
 }

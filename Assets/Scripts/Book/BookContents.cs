@@ -1,21 +1,28 @@
+using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BookContents : MonoBehaviour
 {
-    [TextArea(10, 20)] 
-    [SerializeField]private string contents;
+    [TextArea(10, 20)]
+    [SerializeField] private string contents;
 
-    [SerializeField] private TMP_Text leftSide; // Reference to the TextMeshPro component for the left side of the book.
-    [SerializeField] private TMP_Text rightSide; // Reference to the TextMeshPro component for the right side of the book.
+    [TextArea(10, 20)]
+    [SerializeField] private string newContents;
 
-    [SerializeField] private TMP_Text leftPagination; // Reference to the TextMeshPro component for the left page number.
-    [SerializeField] private TMP_Text rightPagination; // Reference to the TextMeshPro component for the right page number.
+    [SerializeField] private TMP_Text leftSide; 
+    [SerializeField] private TMP_Text rightSide; 
+
+    [SerializeField] private TMP_Text leftPagination; 
+    [SerializeField] private TMP_Text rightPagination;
 
     [SerializeField] private Image leftArrow;
     [SerializeField] private Image rightArrow;
+
+    [SerializeField] private List<GameObject> stickers;
+
+    private GameObject lastActiveSticker;
 
     private void OnValidate()
     {
@@ -26,13 +33,14 @@ public class BookContents : MonoBehaviour
         if (leftSide.text == contents)
             return; 
 
-        SetupContent(); // Set up the content of the book whenever the script is validated in the Unity Editor.
+        SetupContent();
     }
 
     private void Awake()
     {
-        SetupContent(); // Set up the content of the book when the script awakes.
-        UpdatePagination(); // Update the pagination when the script awakes.
+        SetupContent(); 
+        UpdatePagination();
+        InitStickers();
     }
 
     private void Update()
@@ -49,8 +57,8 @@ public class BookContents : MonoBehaviour
 
     private void SetupContent()
     {
-        leftSide.text = contents; // Set the left side text to the contents of the book.
-        rightSide.text = contents; // Set the right side text to the contents of the book.
+        leftSide.text = contents; // Set the left side text
+        rightSide.text = contents; // Set the right side text
     }
 
     private void UpdatePagination()
@@ -83,7 +91,8 @@ public class BookContents : MonoBehaviour
         
         rightSide.pageToDisplay = leftSide.pageToDisplay + 1; // Set the right page number to be one more than the left page number.
 
-        UpdatePagination(); // Update the pagination after changing the page numbers.
+        UpdatePagination(); // Update the pagination after flipping pages
+        SetStickers();
     }
 
     public void NextPage()
@@ -119,5 +128,37 @@ public class BookContents : MonoBehaviour
         }
         
         UpdatePagination(); // Update the pagination after changing the page numbers.
+        SetStickers();
+    }
+
+    private void InitStickers()
+    {
+        foreach (GameObject sticker in stickers)
+        {
+            sticker.SetActive(false);
+        }
+
+        stickers[0].SetActive(true);
+        lastActiveSticker = stickers[0];
+    }
+
+    private void SetStickers()
+    {
+        if (lastActiveSticker != null)
+        {
+            lastActiveSticker.SetActive(false);
+        }
+        int currentSticker = rightSide.pageToDisplay / 2 - 1;
+        stickers[currentSticker].SetActive(true);
+        lastActiveSticker = stickers[currentSticker];
+    }
+
+    public void WriteNewDiary()
+    {
+        if (contents != newContents)
+        {
+            contents = newContents;
+        }
+        SetupContent();
     }
 }

@@ -1,10 +1,11 @@
+using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using Ink.Runtime;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -219,7 +220,7 @@ public class DialogueManager : MonoBehaviour
     public void NewStory(TextAsset story)
     {
         _inkstory = new Ink.Runtime.Story(story.text);
-        BindItemUseFunction();
+        BindExternalFunctions();
         dialogueVariables.StartListening(_inkstory);
 
         EnterDialogueMode();
@@ -437,33 +438,18 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("the variable" + variable + "has been set to" + value);
     }
     
-    public void BindItemUseFunction()
+    public void BindExternalFunctions()
     {
-        HomeItemController homeController = GameObject.FindFirstObjectByType<HomeItemController>();
-        _inkstory.BindExternalFunction("CanUseItem", () =>
-        {
-           bool result = homeController != null && homeController.CanUseItem();
-            if (homeController == null)
-            {
-                Debug.Log("homecontroller not found!");
-                return false;
-            }
+        IDialogueFunctionBinder[] binders =
+            FindObjectsByType<MonoBehaviour>(
+                FindObjectsSortMode.None)
+            .OfType<IDialogueFunctionBinder>()
+            .ToArray();
 
-           Debug.Log("CanUseItem called: " + result);
-           return result;
-
-        });
-        _inkstory.BindExternalFunction("UseItem", () =>
+        foreach (var binder in binders)
         {
-            homeController.TryUseItem();
-            InventoryManager.Instance.UseItem(
-                InventoryManager.Instance.GetCurrentItem()
-            );
-        });
-        _inkstory.BindExternalFunction("ReadDiary", () =>
-        {
-            homeController.ReadDiary();
-        });
+            binder.BindFunctions(_inkstory);
+        }
     }
 
     public void PauseDialogue()

@@ -2,6 +2,7 @@
 //bool variables
 INCLUDE Globals.ink
 EXTERNAL ReadDiary()
+EXTERNAL WriteDiary()
 
 This is your desk. 
 A diary, pencil, and a planter can be seen here. You spend most of time here when you're not in bed.
@@ -33,9 +34,11 @@ Nothing catches your interest at the moment.
 //---------------------------------
 = pencil
 Write something?
-{read_notes:
+{read_notes && read_diary:
 
-+ [Yes] You seems to be interested in writing something at the start of today. -> back
++ [Yes] You seem to be interested in writing something at the start of today.<> #audio:writing2
+    ~ WriteDiary()
+-> END
 + [No] You are not in the mood right now. ->back
 
 - else:
