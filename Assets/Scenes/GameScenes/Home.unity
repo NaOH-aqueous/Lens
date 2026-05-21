@@ -128,6 +128,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1147380760}
     m_Modifications:
     - target: {fileID: 3043420534113623637, guid: 0da7fe81aa2cd7043a57ab7cab3b9d68, type: 3}
+      propertyPath: diaryBlank
+      value: 
+      objectReference: {fileID: 4900000, guid: 559f4b56afa26114e8ee0c3cd123e4d1, type: 3}
+    - target: {fileID: 3043420534113623637, guid: 0da7fe81aa2cd7043a57ab7cab3b9d68, type: 3}
       propertyPath: newContents
       value: "<color=#8B0000><size=120%><b>Jan 2nd, Saturday</b></size></color>\r\nDear
         diary:\r\n\r\nToday's being pretty okay.\r\n\r\nI don't think I've been thinking
@@ -156,7 +160,12 @@ PrefabInstance:
         late by half an hour. \n\nI didn't mean it! But getting engrossed by the
         concept of passed subway has made me to missed the next one as well.\n\n<page><color=#006400><size=120%><b>March
         18th, Thursday</b></size></color>\nToday I learned how to make diary flower.\n\n<page>
-        \n\n<page><color=#B8860B><size=120%><b>????</b></size></color>\n\nppp\n<page>"
+        \n\n<page><color=#B8860B><size=120%><b>?April?? Monday</b></size></color>\nDear
+        Diary:\n\nToday I want to talk about love, and how love can radiant its warmth
+        even in the darkest corner in the room.\n\nIt's getting warmer. I finally
+        decided to make the diary flower a real thing.\n\nI don't know what it could
+        yield...A strange fruit of love? Or just a strange plant that looks like
+        nothing but trash? I'll give it a try no matter what.\n<page>"
       objectReference: {fileID: 0}
     - target: {fileID: 3184745575372734059, guid: 0da7fe81aa2cd7043a57ab7cab3b9d68, type: 3}
       propertyPath: m_Name
@@ -5863,7 +5872,7 @@ MonoBehaviour:
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
-  weight: 0.893
+  weight: 1
   sharedProfile: {fileID: 11400000, guid: ab279810dab611d4ea16641b31a5cc67, type: 2}
 --- !u!1 &427942218
 GameObject:
@@ -11889,8 +11898,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 782199451}
   - {fileID: 1821911206}
+  - {fileID: 782199451}
   - {fileID: 2060501641}
   - {fileID: 482420715}
   - {fileID: 438700672}
@@ -11913,15 +11922,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 842f3079500108d4d8925c5a812fdc09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image1: {fileID: 2060501642}
-  image2: {fileID: 1821911207}
+  clearImage: {fileID: 2060501642}
+  focusImage: {fileID: 1821911207}
+  blurryImage: {fileID: 782199452}
   marker: {fileID: 482420716}
   duration: 3
-  chainThreshold: 0.3
-  puzzleThreshold: 0.2
+  puzzleThreshold: 0.25
+  overHoldDuration: 1.5
   requiredHold: 1
   puzzleDialogue: {fileID: 4900000, guid: 8f9ada0a3dfb8924099df1019bd7ae14, type: 3}
-  _button: {fileID: 0}
 --- !u!82 &1746840361
 AudioSource:
   m_ObjectHideFlags: 0

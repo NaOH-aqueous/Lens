@@ -21,8 +21,11 @@ public class BookContents : MonoBehaviour
     [SerializeField] private Image rightArrow;
 
     [SerializeField] private List<GameObject> stickers;
+    [SerializeField] private TextAsset diaryBlank;
+    [SerializeField] private TextAsset diaryFilled;
 
     private GameObject lastActiveSticker;
+    private bool hasWritten = false;
 
     private void OnValidate()
     {
@@ -52,6 +55,11 @@ public class BookContents : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             PreviousPage();
+        }
+
+        if (InputManager.Instance.IsSubmitPressed())
+        {
+            Investigate();
         }
     }
 
@@ -158,7 +166,21 @@ public class BookContents : MonoBehaviour
         if (contents != newContents)
         {
             contents = newContents;
+            hasWritten = true;
         }
         SetupContent();
     }
+
+    private void Investigate()
+    {
+        if(leftSide.pageToDisplay != 9)
+        {
+            return;
+        }
+        if (!hasWritten)
+        {
+            DialogueManager.Instance.NewStory(diaryBlank);
+        }
+    }
+
 }
