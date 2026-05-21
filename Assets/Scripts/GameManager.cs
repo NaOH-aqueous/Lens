@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum GameStateType
@@ -28,6 +29,9 @@ public class GameManager : MonoBehaviour
     public GameObject cgUI;
     public GameObject puzzleUI;
 
+    [Header("Scene Names")]
+    public string mainMenuSceneName = "MainMenu";
+    public string gameSceneName = "Home";
 
     private Stack<GameStateType> stateStack = new Stack<GameStateType>();
     public GameStateType CurrentState =>
@@ -78,13 +82,13 @@ public class GameManager : MonoBehaviour
         {
             m_dialogueManager.OnDialogueStatusChanged += HandleDialogueStateChanged;
         }
+
     }
 
 
     private void OnEnable()
     {
         OnGameStateChanged += ApplyState;
-
     }
 
     private void OnDisable()
@@ -201,7 +205,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void RefreshUIInteractivity()
-{
+    {
     bool dialoguePlaying = m_dialogueManager != null &&
                            m_dialogueManager.CheckDialoguePlaying();
 
@@ -215,7 +219,7 @@ public class GameManager : MonoBehaviour
         CurrentState == GameStateType.Puzzle && !dialoguePlaying;
 
     dialogueCanvasGroup.interactable = dialoguePlaying;
-}
+    }
 
     private void HideAllMenu()
     {
@@ -273,6 +277,11 @@ public class GameManager : MonoBehaviour
         pauseMenuUI.SetActive(true);
         AudioListener.pause = true;
         EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
+    }
+
+    public void StartGame()
+    {
+        SceneManager.LoadScene(gameSceneName);
     }
 
     public void QuitGame()
