@@ -6,7 +6,7 @@ This is your bed, {~ you can stay inside forever in rainy days. | it's the place
 
 -> inspect
 === inspect ===
-Where do you want to inspect?
+Where do you want to inspect? #item:clearDisplay
 
  * [On the bed]
  -> on_the_bed
@@ -24,47 +24,47 @@ Where do you want to inspect?
  -> END
  
  = on_the_bed
- You inspect the bed. The bedsheet has been soaked with sunshine and dust. It's the smell of home. #audio:search_bed
+ You inspect the bed. The bedsheet has been soaked with sunshine and dust. It's the smell of home. #audio:grab
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
 
   
  = under_the_bed
- You inspect under the bed. Nothing is there, expect darkness. #audio:search_bed
+ You inspect under the bed. Nothing is there, expect darkness. #audio:grab #item:normal_bed
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
 
 #------------------------------------------------------------------------------------
 
  === have_magnifier_dialogue
-  There's an ominous feeling arises... #item:Under_the_bed
-  Something seems to be different than before.
+  There's an ominous feeling arising... #item:Under_the_bed
+  Something seems to be different from before.
   * [Inspect] -> monster
-  * [Leave] ->END
   
   = monster
+  #cutscene:show_monster
   Hello...? #speaker:Lens
   -> question
   
   = question
-  Is there anything you want, little one? #speaker:Monster 
+  Is there anything you want, little one? #speaker:Monster #audio:monster_normal
   + [Ask who he is] ->q1
   + [Ask for the thing you lost] ->q2
   
   = q1
-Who are you, sir? #speaker:Lens
+Who are you, sir? #speaker:Lens #audio:lens_normal
 I’ve been beneathe your bed all these years. And YOU, aren't even familar with me? #speaker:Monster
-... #speaker:Lens
+... #speaker:Lens #audio:lens_speechless
 -> back0
 
   = q2
   I'm looking for um... a thing I lost. #speaker:Lens
   This one, you say? #speaker:Monster #item:sock
-  No, not this one. #speaker:Lens
+  No, not this one. #speaker:Lens #item:clearItemOnly
   -> last_question
   = last_question
-  Uh huh? Then which one are you looking for? #speaker:Monster 
-  + [Gold] It's better if you're not so greedy, child. #speaker:Monster 
+  Uh huh? Then which one are you looking for? #speaker:Monster #audio:monster_serious
+  + [Gold] It's better if you're not so greedy, child. #speaker:Monster
   -> back
   + {not shovel_get} [Shovel] I don't remember I have taken things like this before. #speaker:Monster 
   ->shovel_dialogue
@@ -77,11 +77,11 @@ I’ve been beneathe your bed all these years. And YOU, aren't even familar with
   -> END
 
 = shovel_dialogue
-... #speaker:Monster
-... ... ... #speaker:Monster
+... #speaker:Monster #audio:monster_speechless
+... ... ... #speaker:Monster #audio:monster_speechless
 ~ shovel_get = true
 Oh wait...Here it is. #speaker:Monster #item:shovel
-Thank you, sir. #speaker:Lens
+Thank you, sir. #speaker:Lens #item:clearItemOnly
 There is no need for it, But take care, child. #speaker:Monster 
 And remember, don't leave it to me next time. #speaker:Monster 
 -> back 

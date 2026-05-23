@@ -131,6 +131,7 @@ public class InventoryManager : MonoBehaviour
     public void QueueItem(Item item)
     {
         itemQueue.Enqueue(item);
+        Debug.Log("Queued " + item.item_Name);
         if (!isProcessingQueue)
         {
             StartCoroutine(ProcessQueue());

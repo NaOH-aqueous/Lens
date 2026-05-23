@@ -1,11 +1,12 @@
 //Desk dialogue
 //bool variables
-
-VAR read_diary = false
-VAR read_note = false
+INCLUDE Globals.ink
+EXTERNAL ReadDiary()
+EXTERNAL WriteDiary()
 
 This is your desk. 
 A diary, pencil, and a planter can be seen here. You spend most of time here when you're not in bed.
+
 -> Inspect
 === Inspect ===
 Where do you want to inspect? 
@@ -23,7 +24,8 @@ Read the diary?
 + [Yes]
 ~ read_diary = true
 You read the diary. 
--> back
+    ~ ReadDiary()
+-> END
 
 + [No]
 Nothing catches your interest at the moment.
@@ -32,22 +34,30 @@ Nothing catches your interest at the moment.
 //---------------------------------
 = pencil
 Write something?
-+ [Yes] ->write
-+ [No]  You are not in the mood right now. ->back
+{read_notes && read_diary:
 
-= write
-{
-- read_note:
++ [Yes] You seem to be interested in writing something at the start of today.<> #audio:writing2
+    ~ WriteDiary()
+-> END
++ [No] You are not in the mood right now. ->back
+
+- else:
+
++ [Yes] Maybe not now. ->back
++ [No]  You are not in the mood right now. ->back
+}
+
+/*= write
+{- read_note:
 -> notetrue
 - else:
--> notefalse
+ -> notefalse
 }
 = notetrue
 You seems to be interested in writing something at the start of today. -> back
 
 = notefalse
-Maybe not now. -> back
-
+ -> back*/
 //---------------------------------
 = planter
 Nothing resides in this planter right now, expect some bone-dry and malnutritional soil. -> back

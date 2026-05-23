@@ -1,34 +1,52 @@
+using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.Examples;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class HomeItemController : MonoBehaviour
+public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 {
-    public CGItem cgPlayer;
+    [Header("CG&Puzzle")]
+    [SerializeField] private CGItem cgPlayer;
+    [SerializeField] private HomePuzzleController homePuzzle;
+
+    [Header("Sprites")]
     [SerializeField] private Sprite windowDust;
     [SerializeField] private Sprite windowClean;
     [SerializeField] private Sprite windowPuzzleClear;
+    [SerializeField] private Sprite underTheBed;
     [SerializeField] private Sprite underTheBedAlt;
+    [SerializeField] private Sprite monsterUnderBed;
+
+    [Header("Puzzles")]
     [SerializeField] private GameObject windowPuzzle;
+    [SerializeField] private GameObject diaryPuzzle;
     [SerializeField] private TextAsset magnifierDialogue;
+
+    [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
 
-
+    [Header("Items")]
     public Item papertowel;
     public Item notes;
     public Item window;
     public Item magnifier;
     public Item under_the_bed;
+    public Item sock;
+    public Item shovel;
 
     private const string PAPERTOWEL = "PaperTowel";
-    private const string NOTES = "Notes";
-    private const string WINDOW = "window";
     private const string WINDOW_DUST = "window_dust";
     private const string WINDOW_CLEAN = "window_clean";
+    private const string WINDOW_CLEAR = "window_clear";
     private const string MAGNIFIER = "Magnifier";
+    private const string NORMALBED = "normal_bed";
     private const string UNDERTHEBED = "Under_the_bed";
-
+    private const string SOCK = "sock";
+    private const string SHOVEL = "shovel";
     private const string USE_TAG = "can_use";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
@@ -40,6 +58,7 @@ public class HomeItemController : MonoBehaviour
         {
             DialogueManager.Instance.OnItemTagChanged += HandleItemTagChanged;
             DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+            DialogueManager.Instance.OnCutsceneTriggered += HandleCutscene;
         }
         if (windowPuzzle != null)
         {
@@ -54,6 +73,7 @@ public class HomeItemController : MonoBehaviour
         {
             DialogueManager.Instance.OnItemTagChanged -= HandleItemTagChanged;
             DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
+            DialogueManager.Instance.OnCutsceneTriggered -= HandleCutscene;
         }
         if (windowPuzzle != null)
         {
@@ -66,6 +86,7 @@ public class HomeItemController : MonoBehaviour
     {
         rules.Add(new PaperTowelOnWindowRule());
         window.item_Sprite = windowDust;
+        under_the_bed.item_Sprite = underTheBed;
     }
 
     private void Start()
@@ -137,16 +158,36 @@ public class HomeItemController : MonoBehaviour
                 window.item_Sprite = windowClean;
                 cgPlayer.CGDisplay(window);
                 break;
+            case (WINDOW_CLEAR):
+                window.item_Sprite = windowPuzzleClear;
+                cgPlayer.CGDisplay(window);
+                break;
             case (MAGNIFIER):
                 window.item_Sprite = windowPuzzleClear;
                 InventoryManager.Instance.QueueItem(magnifier);
+                break;
+            case (NORMALBED):
+                under_the_bed.item_Sprite = underTheBed;
+                cgPlayer.CGDisplay(under_the_bed);
                 break;
             case (UNDERTHEBED):
                 _aud.Pause();
                 _aud.clip = specialTime;
                 under_the_bed.item_Sprite = underTheBedAlt;
-                cgPlayer.CGDisplayInDialogue(under_the_bed);
+                cgPlayer.CGDisplay(under_the_bed);
                 _aud.Play();
+                break;
+            case (SOCK):
+                cgPlayer.DisplayItemInfo(sock);
+                InventoryManager.Instance.QueueItem(sock);
+                break;
+            case (SHOVEL):
+                Debug.Log("Adding shovel");
+                cgPlayer.DisplayItemInfo(shovel);
+                InventoryManager.Instance.QueueItem(shovel);
+                break;
+            case ("clearItemOnly"):
+                cgPlayer.ClearItemOnly();
                 break;
             case ("clearDisplay"):
                 cgPlayer.ClearDisplay();
@@ -156,20 +197,24 @@ public class HomeItemController : MonoBehaviour
 
     private void HandleVariableChanged(string name, Ink.Runtime.Object value)
     {
-        if (name != "read_notes" && name != USE_TAG)
-            return;
+        bool boolValue = (bool)value;
 
-        if (name == "read_notes" && value)
+        switch (name)
         {
-            cgPlayer.InspectItem(notes);
-        }
-        else if (name == USE_TAG && value)
-        {
-            Debug.Log("can use is" + value);
-        }
-        else
-        {
-            cgPlayer.ClearInspect();
+            case "read_notes":
+
+                if (boolValue)
+                    cgPlayer.InspectItem(notes);
+                else
+                    cgPlayer.ClearInspect();
+                break;
+
+
+            case USE_TAG:
+
+                Debug.Log($"can use = {boolValue}");
+                break;
+
         }
     }
 
@@ -189,11 +234,14 @@ public class HomeItemController : MonoBehaviour
 
         InventoryManager.Instance.CloseInventory();
         windowPuzzle.SetActive(true);
-        GameManager.instance.PushState(GameStateType.Puzzle);
+        homePuzzle.Open();
     }
 
     private void HandlePuzzleCompleted()
     {
+        window.item_Sprite = windowPuzzleClear;
+        cgPlayer.CGDisplay(window);
+
         DialogueManager.Instance.NewStory(magnifierDialogue);
 
         DialogueManager.Instance.OnDialogueStatusChanged += HandlePuzzleDialogueFinished;
@@ -207,13 +255,76 @@ public class HomeItemController : MonoBehaviour
         DialogueManager.Instance.OnDialogueStatusChanged -= HandlePuzzleDialogueFinished;
 
         windowPuzzle.SetActive(false);
-        GameManager.instance.PopState(GameStateType.Puzzle);
+        homePuzzle.Close();
     }
 
-    public void ExitPuzzle()
+
+    private void HandleCutscene(string cutsceneID)
     {
-        windowPuzzle.SetActive(false);
-        GameManager.instance.PopState(GameStateType.Puzzle);
-        cgPlayer.ClearDisplay();
+        switch (cutsceneID)
+        {
+            case "show_monster":
+                StartCoroutine(ShowMonsterCutscene());
+                break;
+        }
+    }
+
+    private IEnumerator ShowMonsterCutscene()
+    {
+        DialogueManager.Instance.PauseDialogue();
+
+        GameManager.instance.PushState(GameStateType.Cutscene);
+
+        yield return new WaitForSecondsRealtime(2f);
+
+        under_the_bed.item_Sprite = monsterUnderBed;
+        cgPlayer.CGDisplay(under_the_bed);
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        GameManager.instance.PopState(GameStateType.Cutscene);
+
+        DialogueManager.Instance.ResumeDialogue();
+    }
+
+    public void ReadDiary()
+    {
+        diaryPuzzle.SetActive(true);
+        homePuzzle.Open();
+    }
+
+    public void WriteDiary()
+    {
+        BookContents diary = diaryPuzzle.GetComponent<BookContents>();
+        diary.WriteNewDiary();
+        Debug.Log("you wrote some diary");
+    }
+
+    public void BindFunctions(Story story)
+    {
+        story.BindExternalFunction(
+            "CanUseItem",
+            () => CanUseItem()
+        );
+
+        story.BindExternalFunction(
+            "UseItem",
+            () =>
+            {
+                TryUseItem();
+
+                InventoryManager.Instance.UseItem(
+                    InventoryManager.Instance.GetCurrentItem()
+                );
+            });
+
+        story.BindExternalFunction(
+            "ReadDiary",
+            () => ReadDiary()
+        );
+
+        story.BindExternalFunction(
+            "WriteDiary",
+            () => WriteDiary());
     }
 }

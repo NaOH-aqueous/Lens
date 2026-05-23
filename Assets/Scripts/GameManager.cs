@@ -22,8 +22,6 @@ public class GameManager : MonoBehaviour
     public static GameManager instance { get; private set; }
     public System.Action<GameStateType> OnGameStateChanged;
 
-    // UI references
-    public GameObject mainMenuUI;
     public GameObject pauseMenuUI;
     public GameObject inventoryUI;
     public GameObject dialogueUI;
@@ -44,9 +42,9 @@ public class GameManager : MonoBehaviour
     private CanvasGroup cgCanvasGroup;
     private CanvasGroup puzzleCanvasGroup;
     private Button pauseButton;
+    private PuzzleController puzzleController;
 
     private bool isTransitioning;
-    private PlayerController m_playerController;
 
     private void Awake()
     {
@@ -69,9 +67,9 @@ public class GameManager : MonoBehaviour
         dialogueCanvasGroup = dialogueUI.GetComponent<CanvasGroup>();
         cgCanvasGroup = cgUI.GetComponent<CanvasGroup>();
         puzzleCanvasGroup = puzzleUI.GetComponent<CanvasGroup>();
+        puzzleController = puzzleUI.GetComponent<PuzzleController>();
 
         pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
-        m_playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
 
         PushState(GameStateType.Playing);
         blurVFX.enabled = false;
@@ -98,12 +96,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (InputManager.Instance.IsCancelPressed())
+        {
+            ExitCurrentMode();
+        }
+    }
+
     public void PushState(GameStateType newState)
     {
-        stateStack.Push(newState);
-        OnGameStateChanged?.Invoke(newState);
+        if (stateStack.Count > 0 &&
+            stateStack.Peek() == newState)
+        {
+            Debug.Log($"Skipped duplicate push: {newState}");
+            return;
+        }
 
-        Debug.Log("Pushed: " + newState);
+        stateStack.Push(newState);
+
+        Debug.Log($"Pushed: {newState}");
+
+        OnGameStateChanged?.Invoke(newState);
     }
 
     public void PopState(GameStateType expectedState)
@@ -136,7 +150,8 @@ public class GameManager : MonoBehaviour
             isTransitioning = false;
         }
         else if (state == GameStateType.Inventory ||
-                 state == GameStateType.ItemDisplay)
+                 state == GameStateType.ItemDisplay ||
+                 state == GameStateType.Puzzle)
         {
             isTransitioning = true;
             yield return StartCoroutine(blurVFX.OutroTransition());
@@ -156,7 +171,6 @@ public class GameManager : MonoBehaviour
                 break;
             case GameStateType.MainMenu:
                 Time.timeScale = 0f; 
-                mainMenuUI.SetActive(true);
                 break;
             case GameStateType.Paused:
                 PausedMode();
@@ -174,7 +188,6 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f;
                 break;
             case GameStateType.Cutscene:
-                AudioListener.pause = true;
                 Time.timeScale = 0f;
                 break;
         }
@@ -206,7 +219,6 @@ public class GameManager : MonoBehaviour
 
     private void HideAllMenu()
     {
-        mainMenuUI.SetActive(false);
         pauseMenuUI.SetActive(false);
     }
 
@@ -218,6 +230,41 @@ public class GameManager : MonoBehaviour
         dialogueCanvasGroup.interactable = true;
         cgCanvasGroup.interactable = false;
         puzzleCanvasGroup.interactable = false;
+    }
+
+    public void ExitCurrentMode()
+    {
+        if (DialogueManager.Instance.CheckDialoguePlaying())
+            return;
+        switch (CurrentState)
+        {
+            case GameStateType.Playing:
+                StartCoroutine(PauseGame());
+                break;
+            case GameStateType.Inventory:
+                InventoryManager.Instance.CloseInventory();
+                break;
+
+            case GameStateType.ItemDisplay:
+                FindFirstObjectByType<CGItem>().ExitCGMode();
+                break;
+
+            case GameStateType.Puzzle:
+                puzzleController.ExitAllPuzzle();
+                break;
+        }
+    }
+
+    private IEnumerator PauseGame()  //pause the game according to user inputs
+    {
+        yield return null;
+        PushState(GameStateType.Paused);
+    }
+
+    public void ResumeGame()
+    {
+        pauseMenuUI.SetActive(false);
+        PopState(GameStateType.Paused);
     }
 
     private void PausedMode()
