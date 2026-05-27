@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Diary_sticker1_0: -4846075140207155344
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

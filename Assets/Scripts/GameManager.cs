@@ -168,7 +168,6 @@ public class GameManager : MonoBehaviour
     {
         HideAllMenu();
         StartCoroutine(HandleModeTransition(currentState));
-        SyncInputLayer(currentState);
 
         switch (currentState)
         {
@@ -295,24 +294,4 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
-
-    private InputLayer GetDesiredLayer(GameStateType state)
-    {
-        return state switch
-        {
-            GameStateType.Playing => InputLayer.Gameplay,
-            GameStateType.Inventory => InputLayer.UI,
-            GameStateType.ItemDisplay => InputLayer.UI,
-            GameStateType.Puzzle => InputLayer.UI,
-            GameStateType.Cutscene => InputLayer.Cutscene,
-            GameStateType.Paused => InputLayer.Cutscene,
-            _ => InputLayer.Gameplay
-        };
-    }
-
-    private void SyncInputLayer(GameStateType state)
-    {
-        InputRouter.Instance.SetRootLayer(GetDesiredLayer(state));
-    }
-
 }

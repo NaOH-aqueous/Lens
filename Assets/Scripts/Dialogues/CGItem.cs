@@ -151,6 +151,7 @@ public class CGItem : MonoBehaviour
         yield return null;
 
         ExitDisplayMode();
+        InputRouter.Instance.Clear();
         clearInspectCoroutine = null;
     }
 

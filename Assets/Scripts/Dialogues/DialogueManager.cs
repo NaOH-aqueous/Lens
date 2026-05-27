@@ -233,8 +233,6 @@ public class DialogueManager : MonoBehaviour
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
 
-        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
-
         OnDialogueStatusChanged?.Invoke(true);
 
         ContinueStory();
@@ -258,7 +256,6 @@ public class DialogueManager : MonoBehaviour
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
-        InputRouter.Instance.PopLayer();
 
         if (GameManager.instance.CurrentState == GameStateType.Inventory)
         {
@@ -473,7 +470,7 @@ public class DialogueManager : MonoBehaviour
 
     public void ResumeWithoutAnim(bool autoPlay)
     {
-        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
+        InputRouter.Instance.PopLayer(InputLayer.Cutscene);
         cutscenePlaying = false;
 
         if (autoPlay)
@@ -484,11 +481,11 @@ public class DialogueManager : MonoBehaviour
 
     public void ResumeDialogue()
     {
-        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
         dialoguePanel.SetActive(true);
         _anim.SetTrigger("dialogueStart");
 
         cutscenePlaying = false;
+        InputRouter.Instance.PopLayer(InputLayer.Cutscene);
     }
 
     private IEnumerator PauseDialogueCoroutine()

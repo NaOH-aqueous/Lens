@@ -362,6 +362,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         _aud.Pause();
         _aud.clip = home;
         _aud.Play();
+
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandleMonsterDialogueFinished;
     }
 
     private IEnumerator TakeDiaryPageCutscene()
@@ -439,9 +441,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         InventoryManager.Instance.UseItem(planter);
         Animator plantAnim = plantPuzzle.GetComponent<Animator>();
         plantAnim.enabled = false;
-        _aud.Pause();
 
         GameManager.instance.PushState(GameStateType.Cutscene);
+        _aud.Pause();
         plantPuzzle.SetActive(true);
 
         yield return new WaitForSecondsRealtime(1f);

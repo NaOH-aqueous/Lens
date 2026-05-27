@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      OrigamiFlower_0: 6952223629535545503
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

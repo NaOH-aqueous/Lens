@@ -6,7 +6,6 @@ public enum InputLayer
     Gameplay,
     UI,
     Cutscene, //blocks everything
-    Dialogue, //blocks everything except confirm key
     InventoryBlock
 }
 
@@ -14,12 +13,28 @@ public class InputRouter : MonoBehaviour
 {
     public static InputRouter Instance { get; private set; }
 
-    public InputLayer CurrentLayer => overlayStack.Count > 0 ? overlayStack.Peek(): rootLayer;
-
     private InputLayer rootLayer = InputLayer.Gameplay;
     private Stack<InputLayer> overlayStack = new();
 
-    private InputLayer previousLayer;
+    public InputLayer CurrentLayer
+    {
+        get
+        {
+            if (overlayStack.Count > 0)
+                return overlayStack.Peek();
+
+            return GameManager.instance.CurrentState switch
+            {
+                GameStateType.Playing => InputLayer.Gameplay,
+                GameStateType.Inventory => InputLayer.UI,
+                GameStateType.ItemDisplay => InputLayer.UI,
+                GameStateType.Puzzle => InputLayer.InventoryBlock,
+                GameStateType.Cutscene => InputLayer.Cutscene,
+                _ => InputLayer.Gameplay
+            };
+        }
+    }
+
 
     private void Awake()
     {
@@ -37,11 +52,24 @@ public class InputRouter : MonoBehaviour
         Debug.Log("pushed input:" + layer);
     }
 
-    public void PopLayer()
+    public void PopLayer(InputLayer expected)
     {
-        if (overlayStack.Count > 0)
-            overlayStack.Pop();
-        Debug.Log("poped input -> now:" + CurrentLayer);
+        if (overlayStack.Count == 0)
+        {
+            Debug.LogWarning("stack is empty");
+            return;
+        }
+
+        if (overlayStack.Peek() != expected)
+        {
+            Debug.LogWarning(
+                $"PopLayer mismatch! Expected {expected} but top is {overlayStack.Peek()}"
+            );
+            return;
+        }
+
+        overlayStack.Pop();
+        Debug.Log("popped input -> now: " + CurrentLayer);
     }
 
     public void SetRootLayer(InputLayer layer)
@@ -61,8 +89,8 @@ public class InputRouter : MonoBehaviour
 
     public bool AllowsUIInput()
     {
-        return CurrentLayer == InputLayer.Dialogue||
-               CurrentLayer == InputLayer.UI;
+        return CurrentLayer == InputLayer.UI;
+
     }
 
     public bool AllowsInventoryInput()
@@ -70,5 +98,8 @@ public class InputRouter : MonoBehaviour
         return CurrentLayer != InputLayer.InventoryBlock;
     }
 
-
+    public void Clear()
+    {
+        overlayStack.Clear();
+    }
 }

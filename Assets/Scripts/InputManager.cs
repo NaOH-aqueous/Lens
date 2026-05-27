@@ -79,9 +79,6 @@ public class InputManager : MonoBehaviour
         if (InputRouter.Instance.BlocksEverything())
             return;
 
-        if (!InputRouter.Instance.AllowsUIInput())
-            return;
-
         if (context.performed)
         {
             SubmitPressed = true;
