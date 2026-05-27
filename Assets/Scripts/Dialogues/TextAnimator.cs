@@ -40,18 +40,12 @@ namespace TMPro.Examples
         void OnDisable()
         {
             TMPro_EventManager.TEXT_CHANGED_EVENT.Remove(ON_TEXT_CHANGED);
-            Debug.Log(hasTextChanged);
         }
 
         void ON_TEXT_CHANGED(Object obj)
         {
             if (obj == m_TextComponent)
                 hasTextChanged = true;
-        }
-
-        private void Start()
-        {
-           
         }
 
         /// <summary>
@@ -99,8 +93,8 @@ namespace TMPro.Examples
                 // If No Characters then just yield and wait for some text to be added
                 if (characterCount == 0)
                 {
-                    Debug.Log("has changed");
-                    yield return new WaitForSeconds(0.25f);
+                    
+                    yield return new WaitForSecondsRealtime(0.25f);
                     continue;
                 }
 
@@ -168,7 +162,7 @@ namespace TMPro.Examples
 
                 loopCount += 1;
 
-                yield return new WaitForSeconds(0.1f * SpeedMultiplier);
+                yield return new WaitForSecondsRealtime(0.1f * SpeedMultiplier);
             }
         }
 

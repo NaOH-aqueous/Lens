@@ -1,0 +1,493 @@
+using Ink.Runtime;
+using JetBrains.Annotations;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro.Examples;
+using UnityEditor.PackageManager.UI;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
+{
+    [Header("CG&Puzzle")]
+    [SerializeField] private CGItem cgPlayer;
+    [SerializeField] private HomePuzzleController homePuzzle;
+
+    [Header("Sprites")]
+    [SerializeField] private Sprite windowDust;
+    [SerializeField] private Sprite windowClean;
+    [SerializeField] private Sprite windowPuzzleClear;
+    [SerializeField] private Sprite underTheBed;
+    [SerializeField] private Sprite underTheBedAlt;
+    [SerializeField] private Sprite monsterUnderBed;
+    [SerializeField] private Sprite planterOnly;
+    [SerializeField] private Sprite planterWithFlower;
+    [SerializeField] private Sprite desk_normal;
+    [SerializeField] private Sprite desk_withoutPlanter;
+
+    [Header("Puzzles")]
+    [SerializeField] private GameObject windowPuzzle;
+    [SerializeField] private GameObject diaryPuzzle;
+    [SerializeField] private GameObject plantPuzzle;
+    [SerializeField] private SpriteRenderer deskRenderer;
+    [SerializeField] private TextAsset magnifierDialogue;
+    [SerializeField] private TextAsset origamiPlantingDialogue;
+    [SerializeField] private TextAsset plantGrowingDialogue;
+
+    [Header("Audios")]
+    [SerializeField] private AudioClip specialTime;
+    [SerializeField] private AudioClip home;
+
+    [Header("Items")]
+    public Item papertowel;
+    public Item notes;
+    public Item window;
+    public Item magnifier;
+    public Item under_the_bed;
+    public Item sock;
+    public Item shovel;
+    public Item stackPaper;
+    public Item origamiFlower;
+    public Item planter;
+    public Item strangeFruit;
+
+    private const string PAPERTOWEL = "paper towel";
+    private const string WINDOW_DUST = "window_dust";
+    private const string WINDOW_CLEAN = "window_clean";
+    private const string WINDOW_CLEAR = "window_clear";
+    private const string MAGNIFIER = "Magnifier";
+    private const string NORMALBED = "normal_bed";
+    private const string UNDERTHEBED = "Under_the_bed";
+    private const string SOCK = "sock";
+    private const string SHOVEL = "shovel";
+    private const string USE_TAG = "can_use";
+    private const string STACKPAPER = "stack of paper";
+    private const string PLANTER = "planter";
+    private const string PLANTER_WITH_FLOWER = "planter_with_flower";
+    private const string ORIGAMI = "origami flower";
+    private const string FRUIT = "strange fruit";
+
+    private List<IItemUseRule> rules = new List<IItemUseRule>();
+    private AudioSource _aud;
+
+    private void OnEnable()
+    {
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnItemTagChanged += HandleItemTagChanged;
+            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+            DialogueManager.Instance.OnCutsceneTriggered += HandleCutscene;
+        }
+        if (windowPuzzle != null)
+        {
+            FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
+            focusPuzzle.OnPuzzleCompleted += HandlePuzzleCompleted;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnItemTagChanged -= HandleItemTagChanged;
+            DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
+            DialogueManager.Instance.OnCutsceneTriggered -= HandleCutscene;
+        }
+        if (windowPuzzle != null)
+        {
+            FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
+            focusPuzzle.OnPuzzleCompleted -= HandlePuzzleCompleted;
+        }
+    }
+
+    private void Awake()
+    {
+        rules.Add(new PaperTowelOnWindowRule());
+        rules.Add(new FoldPaperRule());
+        rules.Add(new PlantFlowerRule());
+        rules.Add(new ShovelOnPlanterRule());
+        window.item_Sprite = windowDust;
+        under_the_bed.item_Sprite = underTheBed;
+        planter.item_Sprite = planterOnly;
+        deskRenderer.sprite = desk_normal;
+    }
+
+    private void Start()
+    {
+        _aud = GetComponent<AudioSource>();
+;    }
+
+    public bool CanUseItem()
+    {
+        Item inventoryItem =
+            InventoryManager.Instance.GetCurrentItem();
+
+        Item worldItem =
+            cgPlayer.GetCurrentDisplay();
+
+        Debug.Log(
+            $"[CanUseItem] inventory={inventoryItem?.item_Name}, " +
+            $"world={worldItem?.item_Name}"
+        );
+
+        //return if no selected item
+        if (inventoryItem == null)
+            return false;
+
+        foreach (var rule in rules)
+        {
+            bool result =
+                rule.CanUse(
+                    inventoryItem,
+                    worldItem
+                );
+
+            Debug.Log(
+                $"Rule {rule.GetType().Name} = {result}"
+            );
+
+            if (result)
+                return true;
+        }
+
+        return false;
+    }
+
+    public void TryUseItem()
+    {
+        Item inventoryItem =
+            InventoryManager.Instance.GetCurrentItem();
+
+        Item worldItem =
+            cgPlayer.GetCurrentDisplay();
+
+        if (inventoryItem == null)
+            return;
+
+        foreach (var rule in rules)
+        {
+            if (rule.CanUse(inventoryItem, worldItem))
+            {
+                rule.Apply(
+                    inventoryItem,
+                    worldItem
+                );
+
+                if (rule.ConsumeItem)
+                {
+                    InventoryManager.Instance.UseItem(inventoryItem);
+                }
+
+                return;
+            }
+        }
+
+        Debug.Log(
+            $"No rule matched for {inventoryItem.item_Name}"
+        );
+    }
+
+    private void HandleItemTagChanged(string newTag)
+    {
+        Debug.Log("Item tag changed to: " + newTag);
+
+        //return directly when the string is empty or null
+        if (string.IsNullOrEmpty(newTag))
+        {
+            return;
+        }
+        switch (newTag)
+        {
+            case (PAPERTOWEL):
+                Debug.Log("display");
+                cgPlayer.DisplayItemInfo(papertowel);
+                InventoryManager.Instance.QueueItem(papertowel);
+                break;
+            case (WINDOW_DUST):
+                window.item_Sprite = windowDust;
+                cgPlayer.CGDisplay(window);
+                break;
+            case (WINDOW_CLEAN):
+                window.item_Sprite = windowClean;
+                cgPlayer.CGDisplay(window);
+                break;
+            case (WINDOW_CLEAR):
+                window.item_Sprite = windowPuzzleClear;
+                cgPlayer.CGDisplay(window);
+                break;
+            case (MAGNIFIER):
+                window.item_Sprite = windowPuzzleClear;
+                InventoryManager.Instance.QueueItem(magnifier);
+                break;
+            case (NORMALBED):
+                under_the_bed.item_Sprite = underTheBed;
+                cgPlayer.CGDisplay(under_the_bed);
+                break;
+            case (UNDERTHEBED):
+                _aud.Pause();
+                _aud.clip = specialTime;
+                under_the_bed.item_Sprite = underTheBedAlt;
+                cgPlayer.CGDisplay(under_the_bed);
+                _aud.Play();
+                break;
+            case (SOCK):
+                cgPlayer.DisplayItemInfo(sock);
+                InventoryManager.Instance.QueueItem(sock);
+                break;
+            case (SHOVEL):
+                cgPlayer.DisplayItemInfo(shovel);
+                InventoryManager.Instance.QueueItem(shovel);
+                break;
+            case (STACKPAPER):
+                InventoryManager.Instance.QueueItem(stackPaper);
+                break;
+            case (PLANTER_WITH_FLOWER):
+                InventoryManager.Instance.UseItem(origamiFlower);
+                InventoryManager.Instance.CloseInventory();
+                planter.item_Sprite = planterWithFlower;
+                cgPlayer.DisplayItemInfo(planter);
+                break;
+            case (FRUIT):
+                GameManager.instance.PopState(GameStateType.Cutscene);
+                InventoryManager.Instance.QueueItem(strangeFruit);
+                plantPuzzle.SetActive(false);
+                _aud.Play();
+                break;
+            case ("clearItemOnly"):
+                cgPlayer.ClearItemOnly();
+                break;
+            case ("clearDisplay"):
+                cgPlayer.ClearDisplay();
+                break;
+        }
+    }
+
+    private void HandleVariableChanged(string name, Ink.Runtime.Object value)
+    {
+        bool boolValue = (bool)value;
+
+        switch (name)
+        {
+            case "read_notes":
+                if (boolValue)
+                    cgPlayer.InspectItem(notes);
+                else
+                    cgPlayer.ClearInspect();
+                break;
+
+
+            case USE_TAG:
+                Debug.Log($"can use = {boolValue}");
+                break;
+
+        }
+    }
+
+    public void SetWindowClean()
+    {
+        window.item_Sprite = windowClean;
+        cgPlayer.CGDisplay(window);
+        DialogueManager.Instance.SetBoolVariable("window_clean", true);
+
+        InventoryManager.Instance.CloseInventory();
+        windowPuzzle.SetActive(true);
+        homePuzzle.Open();
+    }
+
+    private void HandlePuzzleCompleted()
+    {
+        window.item_Sprite = windowPuzzleClear;
+        cgPlayer.CGDisplay(window);
+
+        DialogueManager.Instance.NewStory(magnifierDialogue);
+
+        DialogueManager.Instance.OnDialogueStatusChanged += HandlePuzzleDialogueFinished;
+    }
+
+    private void HandlePuzzleDialogueFinished(bool isPlaying)
+    {
+        if (isPlaying)
+            return;
+
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandlePuzzleDialogueFinished;
+
+        windowPuzzle.SetActive(false);
+        homePuzzle.Close();
+    }
+
+
+    private void HandleCutscene(string cutsceneID)
+    {
+        switch (cutsceneID)
+        {
+            case "show_monster":
+                StartCoroutine(ShowMonsterCutscene());
+                break;
+            case "diaryPageRemove":
+                StartCoroutine(TakeDiaryPageCutscene());
+                break;
+            case "plantGrow":
+                StartCoroutine(PlantGrowCoroutine());
+                break;
+        }
+    }
+
+    private IEnumerator ShowMonsterCutscene()
+    {
+        DialogueManager.Instance.PauseDialogue();
+
+        GameManager.instance.PushState(GameStateType.Cutscene);
+
+        yield return new WaitForSecondsRealtime(2f);
+
+        under_the_bed.item_Sprite = monsterUnderBed;
+        cgPlayer.CGDisplay(under_the_bed);
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        GameManager.instance.PopState(GameStateType.Cutscene);
+
+        DialogueManager.Instance.ResumeDialogue();
+        DialogueManager.Instance.OnDialogueStatusChanged += HandleMonsterDialogueFinished;
+    }
+
+    private void HandleMonsterDialogueFinished(bool isPlaying)
+    {
+        if (isPlaying)
+        {
+            return;
+        }
+
+        _aud.Pause();
+        _aud.clip = home;
+        _aud.Play();
+    }
+
+    private IEnumerator TakeDiaryPageCutscene()
+    {
+        homePuzzle.ExitAllPuzzle();
+        DialogueManager.Instance.PauseWithoutAnim();
+
+        yield return new WaitForSecondsRealtime(1.5f);
+        DialogueManager.Instance.ResumeWithoutAnim(false);
+    }
+
+    public void ReadDiary()
+    {
+        diaryPuzzle.SetActive(true);
+        homePuzzle.Open();
+    }
+
+    public void WriteDiary()
+    {
+        BookContents diary = diaryPuzzle.GetComponent<BookContents>();
+        diary.WriteNewDiary();
+    }
+
+    public void InspectItem()
+    {
+        StartCoroutine(InspectRoutine());
+    }
+
+    private IEnumerator InspectRoutine()
+    {
+        InventoryManager.Instance.CloseInventory();
+
+        yield return null;
+
+        Item currentItem =
+            InventoryManager.Instance.GetCurrentItem();
+
+        cgPlayer.InspectItem(currentItem);
+    }
+
+    public void PlantFlower()
+    {
+        StartCoroutine(PlantFlowerCoroutine());
+    }
+
+    private IEnumerator PlantFlowerCoroutine()
+    {
+        yield return null;
+        InventoryManager.Instance.CloseInventory();
+        yield return new WaitForSecondsRealtime(0.5f);
+        DialogueManager.Instance.NewStory(origamiPlantingDialogue);
+    }
+
+    public void FoldOrigamiFlower()
+    { 
+        InventoryManager.Instance.QueueItem(origamiFlower);
+        DialogueManager.Instance.SetBoolVariable("origami_get", true);
+    }
+
+    private void InspectPlanter()
+    {
+        cgPlayer.DisplayItemInfo(planter);
+        cgPlayer.PlayTooltip();
+    }
+
+    private void TakeFlower()
+    {
+        cgPlayer.ClearDisplay();
+        deskRenderer.sprite = desk_withoutPlanter;
+        InventoryManager.Instance.QueueItem(planter);
+    }
+
+    private IEnumerator PlantGrowCoroutine()
+    {
+        InventoryManager.Instance.UseItem(planter);
+        Animator plantAnim = plantPuzzle.GetComponent<Animator>();
+        plantAnim.enabled = false;
+        _aud.Pause();
+
+        GameManager.instance.PushState(GameStateType.Cutscene);
+        plantPuzzle.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(1f);
+        plantAnim.enabled = true;
+    }
+
+    public void HandlePlantAnimComplete()
+    {
+        StartCoroutine(HandlePlantAnimCompleteCoroutine());
+    }
+
+    private IEnumerator HandlePlantAnimCompleteCoroutine()
+    {
+        AudioManager.Instance.Play("fairyTone");
+        yield return new WaitForSecondsRealtime(1.5f);
+        DialogueManager.Instance.NewStory(plantGrowingDialogue);
+    }
+
+    public void BindFunctions(Story story)
+    {
+        story.BindExternalFunction(
+            "CanUseItem",
+            () => CanUseItem());
+
+        story.BindExternalFunction(
+            "UseItem",
+            () =>TryUseItem());
+
+        story.BindExternalFunction(
+            "ReadDiary",
+            () => ReadDiary());
+
+        story.BindExternalFunction(
+            "WriteDiary",
+            () => WriteDiary());
+
+        story.BindExternalFunction(
+            "InspectItem",
+            () => InspectItem());
+
+        story.BindExternalFunction(
+            "InspectPlanter",
+            () => InspectPlanter());
+
+        story.BindExternalFunction(
+            "TakeFlower",
+            () => TakeFlower());
+    }
+}

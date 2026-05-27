@@ -7,16 +7,17 @@ TagManager:
   - ChoiceButton
   - NPC
   - Furniture
+  - Item
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - NPC
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Furniture
+  - Player
+  - Item
   - 
   - 
   - 
@@ -44,8 +45,20 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Floor
+    uniqueID: 2759476473
+    locked: 0
+  - name: Furnitures&Characters
+    uniqueID: 2121218835
+    locked: 0
+  - name: VFX
+    uniqueID: 3043769355
+    locked: 0
   - name: Indications
     uniqueID: 732560375
+    locked: 0
+  - name: Items
+    uniqueID: 379671537
     locked: 0
   m_RenderingLayers:
   - Default

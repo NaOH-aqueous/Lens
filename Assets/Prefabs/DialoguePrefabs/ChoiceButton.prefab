@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: Button
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
-  m_sharedMaterial: {fileID: -6793080633931495713, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
+  m_sharedMaterial: {fileID: -7889903441005636947, guid: 7f55d55864d89df4d91d69f44b3695de, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -92,8 +92,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 132489801425708790}
   - component: {fileID: 4933424841508386116}
   - component: {fileID: 8125944662044217253}
+  - component: {fileID: 8853921442166223292}
   m_Layer: 5
   m_Name: ChoiceButton
   m_TagString: ChoiceButton
@@ -170,11 +171,11 @@ RectTransform:
   - {fileID: 5631248503470370193}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 665.3916, y: 39.8614}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0.6298218, y: -11.335876}
+  m_SizeDelta: {x: 348.3012, y: 40.9342}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &132489801425708790
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -203,15 +204,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
+  m_Sprite: {fileID: 1386685149845824303, guid: 78382612e28a3a54c8669b66cce2bd32, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
-  m_UseSpriteMesh: 0
+  m_UseSpriteMesh: 1
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &8125944662044217253
 MonoBehaviour:
@@ -232,19 +233,19 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 3
   m_Colors:
     m_NormalColor: {r: 0.8553459, g: 0.8553459, b: 0.8553459, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 0.69182384, g: 0.6222784, b: 0.4677425, a: 1}
+    m_SelectedColor: {r: 0.98742133, g: 0.9088742, b: 0.24530262, a: 1}
+    m_DisabledColor: {r: 0.63522005, g: 0.6279386, b: 0.5133696, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1386685149845824303, guid: 78382612e28a3a54c8669b66cce2bd32, type: 3}
+    m_PressedSprite: {fileID: -2640663070355914967, guid: 7903ec4bcec040349bb242f2f87f2f9d, type: 3}
+    m_SelectedSprite: {fileID: 1386685149845824303, guid: 78382612e28a3a54c8669b66cce2bd32, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -257,3 +258,25 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!95 &8853921442166223292
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6953370946080731875}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e1b5780809f066449b871b3a8ab9f6a0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 2
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

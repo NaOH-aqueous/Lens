@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5062909100882314743}
   - component: {fileID: 3981478345950732654}
   - component: {fileID: 2727039621821565991}
+  - component: {fileID: 6053557623009186730}
   - component: {fileID: 2568424066164551822}
-  - component: {fileID: 4862469350204034071}
-  - component: {fileID: 1214915962731101723}
+  - component: {fileID: 1292453546164183694}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -267,11 +267,34 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a7e799d2-94c7-417b-8910-6c8716ac73f0
+    m_ActionName: 'Player/Cancel[/Keyboard/x]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2d725c12-8ae8-485f-8046-e3b0bdbe7fd1
+    m_ActionName: 'Player/Inventory[/Keyboard/tab,/Keyboard/i]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &6053557623009186730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557306020138650035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e347923e20586e4c9fa6d65aec96eff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 4
+  footstepInterval: 0.5
+  inventory: []
 --- !u!95 &2568424066164551822
 Animator:
   serializedVersion: 7
@@ -294,7 +317,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!82 &4862469350204034071
+--- !u!82 &1292453546164183694
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -304,10 +327,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e66dcad0066ac5142a8a861406a11316, type: 3}
-  m_Resource: {fileID: 8300000, guid: e66dcad0066ac5142a8a861406a11316, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 06e0126b48b208c4f89bbaf775378219, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -391,17 +414,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1214915962731101723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 557306020138650035}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acf51831904816f4aa9cb074189036d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 4
-  footstepInterval: 0.5

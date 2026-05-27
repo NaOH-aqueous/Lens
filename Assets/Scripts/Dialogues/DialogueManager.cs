@@ -1,30 +1,69 @@
 using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using TMPro;
-using UnityEditor.Rendering;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    //public instance to be retrived from other scripts
     public static DialogueManager Instance { get; private set; }
+
+    public event System.Action<string> OnItemTagChanged;
+
+    public System.Action<bool> OnDialogueStatusChanged;
+
+    public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
+    public event System.Action<string> OnCutsceneTriggered;
+    public event System.Action<string> OnPortraitTagChanged;
+
+
+    //private ink integrating variables
     Story _inkstory;
-    private bool isDialoguePlaying = false;
+    private bool isDialoguePlaying = false; //check if there's any dialogue played
+
     private bool isChoicesDiaplayed = false;
-    private List<string> tags = new List<string>(); 
+    private bool animPlaying = false;
+    private bool cutscenePlaying;
+
+    //private tag-related variables
+    private List<string> tags = new List<string>();
+    private const string SPEAKER_TAG = "speaker";
+    private const string PORTRAIT_TAG = "portrait";
+    private const string AUDIO_TAG = "audio";
+    private const string ITEM_TAG = "item";
+    private const string CUTSCENE_TAG = "cutscene";
+
+    //private audio and animation variables
+    private Animator _anim;
+    private AudioSource _audio;
+    private DialogueVariables dialogueVariables;
+    private string lastItemTag = "";
+    private string lastPortraitTag = "";
+    private string lastPlayedTag = "";
+    private string lastCutSceneTag = "";
+
+    // variable for the load_globals.ink JSON
+    [Header("Load Globals JSON")]
+    [SerializeField] private TextAsset loadGlobalsJSON;
 
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI textToDisplay;
-    [SerializeField] private TextMeshProUGUI speakerLabel;
     [SerializeField] private GameObject indication;
+    [SerializeField] private TextMeshProUGUI speakerLabel;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject buttonGroup;
+
+    [Header("Sound FX")]
+    [SerializeField] private AudioClip endSFX;
 
     private void Awake()
     {
@@ -38,52 +77,152 @@ public class DialogueManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         EventSystem.current.SetSelectedGameObject(null);
+        dialogueVariables = new DialogueVariables(loadGlobalsJSON);
     }
 
     private void Start()
     {
+        //find animation and audio componenets in the attached object
+        _anim = GameObject.Find("DialoguePanel").GetComponent<Animator>();
+        _audio = GetComponent<AudioSource>();
+
+        if(_anim == null)
+        {
+            Debug.Log("Animator component cannot be found in dialogue manager");
+            return;
+        }
+        if (_audio == null)
+        {
+            Debug.Log("Audio source cannot be found in dialogue manager");
+            return;
+        }
+
+        //initialize the dialogue panel
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
-        speakerLabel.text = string.Empty;
         indication.SetActive(false);
+
     }
 
-    private void Update() //singleton class, only have one in the scene
+    private void Update()
     {
         // return right away if dialogue isn't playing
         if (!isDialoguePlaying)
         {
             return;
         }
-        speakerLabel.text = GetSpeakerTag();
-        if (_inkstory.currentChoices.Count == 0 && 
-            (DialogueInput.Instance.IsSubmitPressed()
-            ||DialogueInput.Instance.IsInteractPressed()))
+
+        if (cutscenePlaying)
+        {
+            return;
+        }
+
+        // contiue story upon user input if there's no choices in current line
+        if (_inkstory.currentChoices.Count == 0 &&
+            !animPlaying &&
+           (InputManager.Instance.IsSubmitPressed()))
         {
             ContinueStory();
         }
-    }
-    private void CurrentTags()
-    {
-        tags = _inkstory.currentTags;
+
+        // continue to next line directly if there's no content in current line
+        if (string.IsNullOrEmpty(_inkstory.currentText))
+        {
+            ContinueStory();
+        }
+
+        // set the indication active only when the story can be continue
+        if (!_inkstory.canContinue)
+        {
+            indication.SetActive(false);
+        }
+        else
+        {
+            indication.SetActive(true);
+        }
+
+        // set the speaker label. if the speaker is empty, set the label to
+        //empty string
+        if (speakerLabel != null && !string.IsNullOrEmpty(GetSpeakerTag()))
+        {
+            speakerLabel.text = GetSpeakerTag();
+        }
+        else if (string.IsNullOrEmpty(GetSpeakerTag()))
+        {
+            speakerLabel.text = "";
+        }
     }
 
-    public string GetSpeakerTag()
+    private string[] ParseTags(string tag) //return the parsed tags
+    {
+        // parse the tag
+        string[] splitTag = tag.Split(':');
+        if (splitTag.Length != 2)
+        {
+            Debug.LogError("Tag could not be appropriately parsed: " + tag);
+        }
+        return splitTag;
+    }
+
+    public string GetSpeakerTag() //get tag of the speaker in current line
     {
         foreach (string tag in tags)
         {
-            if (tag.Contains("speaker"))
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == SPEAKER_TAG)
             {
-                return tag.Replace("speaker:", "");
+                return splitTag[1];
             }
         }
         return "";
-    } 
+    }
+
+    public string GetExpressionTag() //get tag of the expression in current line
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == PORTRAIT_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
+
+    public string GetAudioTag() //get tag of the audio in current line
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == AUDIO_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
+
+    public string GetItemTag()
+    {
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            if (splitTag[0] == ITEM_TAG)
+            {
+                return splitTag[1];
+            }
+        }
+        return "";
+    }
 
     //set the inkasset as current story to the manager
     public void NewStory(TextAsset story)
     {
-        _inkstory = new Story(story.text);
+        _inkstory = new Ink.Runtime.Story(story.text);
+        BindExternalFunctions();
+        dialogueVariables.StartListening(_inkstory);
+
         EnterDialogueMode();
     }
 
@@ -93,18 +232,38 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
-        ContinueStory();
 
+        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
+
+        OnDialogueStatusChanged?.Invoke(true);
+
+        ContinueStory();
+        _anim.SetTrigger("dialogueStart");
     }
 
-    //exit dialogue after 1 frame
+    //exit dialogue mode
     private IEnumerator ExitDialogueMode()
     {
-        yield return new WaitForEndOfFrame();
+        _anim.SetTrigger("dialogueEnd");
+        animPlaying = true;
+        _audio.PlayOneShot(endSFX);
 
+        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
+            yield return null;
+
+        animPlaying = false;
         isDialoguePlaying = false;
+        OnDialogueStatusChanged?.Invoke(false);
+
+        dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
+        InputRouter.Instance.PopLayer();
+
+        if (GameManager.instance.CurrentState == GameStateType.Inventory)
+        {
+            StartCoroutine(InventoryManager.Instance.SelectFirstSlotNextFrame());
+        }
     }
 
     //continue to the next line of the story
@@ -114,15 +273,14 @@ public class DialogueManager : MonoBehaviour
     {
         if (_inkstory.canContinue)
         {
-            indication.SetActive(true);
             textToDisplay.text = _inkstory.Continue();
-            CurrentTags();
+            lastPlayedTag = "";
+            GetTags();
 
             DisplayChoices();
         }
         else
         {
-            indication.SetActive(false);
             StartCoroutine(ExitDialogueMode());
         }
     }
@@ -137,8 +295,8 @@ public class DialogueManager : MonoBehaviour
             for (int i = 0; i < _inkstory.currentChoices.Count; ++i)
             {
                 //display all current choices
-                Choice choice = _inkstory.currentChoices[i];
-                Debug.Log("Choice " + (i + 1) + ". " + choice.text);
+                Ink.Runtime.Choice choice = _inkstory.currentChoices[i];
+                //Debug.Log("Choice " + (i + 1) + ". " + choice.text);
 
                 //buttons are initiated according to the num of choices available
                 GameObject newButton = Instantiate(buttonPrefab, buttonGroup.transform, false);
@@ -149,11 +307,11 @@ public class DialogueManager : MonoBehaviour
                 //add listener to the current button
                 newButton.GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    Debug.Log("Clicked: " + currentButton);
+                    //Debug.Log("Clicked: " + currentButton);
 
                     //make the choice according to the index of button
-                    
-                    MakeChoices(currentButton);
+
+                    StartCoroutine(MakeChoices(currentButton));
                 });
 
                 //make the first button default
@@ -174,27 +332,173 @@ public class DialogueManager : MonoBehaviour
     }
 
     //select the choice from the list and to continue to corresponding dialogues
-    private void MakeChoices(int currentIndex)
-    {
+    private IEnumerator MakeChoices(int currentIndex)
+    {   
+        yield return new WaitForSecondsRealtime(0.1f);
         _inkstory.ChooseChoiceIndex(currentIndex);
-
         GameObject[] choicesButtons = GameObject.FindGameObjectsWithTag("ChoiceButton");
-        foreach(GameObject choice in choicesButtons) { 
+        foreach (GameObject choice in choicesButtons)
+        {
             Destroy(choice);
         }
 
-        DialogueInput.Instance.RegisterSubmitPressed();
+        InputManager.Instance.RegisterSubmitPressed();
         isChoicesDiaplayed = false;
-        ContinueStory();
+
+        if (_inkstory.canContinue)
+        {
+            ContinueStory();
+        }
+
     }
 
-    public bool CheckDialoguePlaying()
+    private void GetTags() //get tags in current line
+    {
+        tags = _inkstory.currentTags;
+
+        string currentItemTag = string.Empty;
+        string currentSpeakerTag = string.Empty;
+        string currentPortraitTag = string.Empty;
+        string currentCutsceneTag = string.Empty;
+
+        foreach (string tag in tags)
+        {
+            string[] splitTag = ParseTags(tag);
+            switch (splitTag[0])
+            {
+                case ITEM_TAG:
+                    currentItemTag = splitTag[1];
+                    break;
+                case SPEAKER_TAG:
+                    currentSpeakerTag = splitTag[1];
+                    break;
+                case PORTRAIT_TAG:
+                    currentPortraitTag = splitTag[1];
+                    break;
+                case CUTSCENE_TAG:
+                    currentCutsceneTag = splitTag[1];
+                    break;
+                case AUDIO_TAG:
+                    AudioManager.Instance.Play(splitTag[1]);
+                    break;
+            }
+        }
+        //only notify when the tag changed
+        if (currentItemTag != lastItemTag)
+        {
+            lastItemTag = currentItemTag;
+            OnItemTagChanged?.Invoke(currentItemTag);
+        }
+
+        if (currentPortraitTag != lastPortraitTag)
+        {
+            lastPortraitTag = currentPortraitTag;
+            OnPortraitTagChanged?.Invoke(currentPortraitTag);
+        }
+
+        if(currentCutsceneTag != lastCutSceneTag)
+        {
+            lastCutSceneTag = currentCutsceneTag;
+            OnCutsceneTriggered?.Invoke(currentCutsceneTag);
+        }
+    }
+
+    public bool CheckDialoguePlaying() //Check if current dialogue is playing
     {
         return isDialoguePlaying;
     }
 
-    public bool CheckChoicesDisplay()
+    public bool CheckChoicesDisplay() //Check if any choices are displayed
     {
         return isChoicesDiaplayed;
+    }
+
+    //get current variable as well as value
+    public Ink.Runtime.Object GetVariableState(string variableName)
+    {
+        Ink.Runtime.Object variableValue = null;
+        dialogueVariables.variables.TryGetValue(variableName, out variableValue);
+        if (variableValue == null)
+        {
+            Debug.LogWarning("Ink Variable was found to be null: " + variableName);
+        }
+        return variableValue;
+    }
+
+    public void RaiseVariableChaned(string name, Ink.Runtime.Object value)
+    {
+        OnVariableChanged?.Invoke(name, value);
+    }
+
+    public void SetBoolVariable(string variable, bool value)
+    {
+        var inkValue = new Ink.Runtime.BoolValue(value);
+
+        dialogueVariables.variables[variable] = inkValue;
+
+        if (_inkstory != null)
+        {
+            _inkstory.variablesState.SetGlobal(variable, inkValue);
+        }
+
+        RaiseVariableChaned(variable,inkValue);
+    }
+
+    public void BindExternalFunctions()
+    {
+        IDialogueFunctionBinder[] binders =
+            FindObjectsByType<MonoBehaviour>(
+                FindObjectsSortMode.None)
+            .OfType<IDialogueFunctionBinder>()
+            .ToArray();
+
+        foreach (var binder in binders)
+        {
+            binder.BindFunctions(_inkstory);
+        }
+    }
+
+    public void PauseDialogue()
+    {
+        cutscenePlaying = true;
+
+        StartCoroutine(PauseDialogueCoroutine());
+    }
+
+    public void PauseWithoutAnim()
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Cutscene);
+        cutscenePlaying = true;
+    }
+
+    public void ResumeWithoutAnim(bool autoPlay)
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
+        cutscenePlaying = false;
+
+        if (autoPlay)
+        {
+            ContinueStory();
+        }
+    }
+
+    public void ResumeDialogue()
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
+        dialoguePanel.SetActive(true);
+        _anim.SetTrigger("dialogueStart");
+
+        cutscenePlaying = false;
+    }
+
+    private IEnumerator PauseDialogueCoroutine()
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Cutscene);
+        _anim.SetTrigger("dialogueEnd");
+        _audio.PlayOneShot(endSFX);
+
+        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
+            yield return null;
+        dialoguePanel.SetActive(false);
     }
 }
