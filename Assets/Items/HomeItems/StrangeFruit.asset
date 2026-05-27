@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0da4df8c9756de4d9243005e45077b3, type: 3}
-  m_Name: Magnifier
+  m_Name: StrangeFruit
   m_EditorClassIdentifier: 
-  item_Name: Magnifier
-  item_Sprite: {fileID: -4976215857643454600, guid: 5d3226fec81ae5445b9cdbf627c01e87, type: 3}
-  item_Icon: {fileID: 3380512575762138355, guid: 703f244138fd371468110e2307dfd2b6, type: 3}
+  item_Name: strange fruit
+  item_Sprite: {fileID: 6422085674583116018, guid: e70b4e56a4ba8f14eb1d39ef906c43a8, type: 3}
+  item_Icon: {fileID: 9210313281974541703, guid: 555bafa50d0db734d8958f81ac0c5597, type: 3}
+  item_Dialogue: {fileID: 0}

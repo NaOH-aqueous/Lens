@@ -54,7 +54,7 @@ The light is on.
 = switch_off
 Turn on?
 + [Yes]
-You turned on the switch. #audio:switch_on
+You turned on the switch. #audio:shiny
 ~ lamp_switch = true
 -> Tback
 + [No]
@@ -97,7 +97,7 @@ There lies several blank copy paper. -> before
 + [Back] -> Drawer
 
 = look_closer
-You look closer and saw one unused paper towel. #item:PaperTowel
+You look closer and saw one unused paper towel. #item:paper towel
 * [Take it away]
 ~ have_paper = true
 You took it away. #item:clearDisplay

@@ -59,7 +59,10 @@ public class BookContents : MonoBehaviour
 
         if (InputManager.Instance.IsSubmitPressed())
         {
-            Investigate();
+            if (!DialogueManager.Instance.CheckDialoguePlaying())
+            {
+                Investigate();
+            }
         }
     }
 
@@ -180,6 +183,10 @@ public class BookContents : MonoBehaviour
         if (!hasWritten)
         {
             DialogueManager.Instance.NewStory(diaryBlank);
+        }
+        else
+        {
+            DialogueManager.Instance.NewStory(diaryFilled);
         }
     }
 

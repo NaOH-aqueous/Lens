@@ -1,4 +1,5 @@
 using Ink.Runtime;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.Examples;
@@ -20,14 +21,23 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private Sprite underTheBed;
     [SerializeField] private Sprite underTheBedAlt;
     [SerializeField] private Sprite monsterUnderBed;
+    [SerializeField] private Sprite planterOnly;
+    [SerializeField] private Sprite planterWithFlower;
+    [SerializeField] private Sprite desk_normal;
+    [SerializeField] private Sprite desk_withoutPlanter;
 
     [Header("Puzzles")]
     [SerializeField] private GameObject windowPuzzle;
     [SerializeField] private GameObject diaryPuzzle;
+    [SerializeField] private GameObject plantPuzzle;
+    [SerializeField] private SpriteRenderer deskRenderer;
     [SerializeField] private TextAsset magnifierDialogue;
+    [SerializeField] private TextAsset origamiPlantingDialogue;
+    [SerializeField] private TextAsset plantGrowingDialogue;
 
     [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
+    [SerializeField] private AudioClip home;
 
     [Header("Items")]
     public Item papertowel;
@@ -37,8 +47,12 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public Item under_the_bed;
     public Item sock;
     public Item shovel;
+    public Item stackPaper;
+    public Item origamiFlower;
+    public Item planter;
+    public Item strangeFruit;
 
-    private const string PAPERTOWEL = "PaperTowel";
+    private const string PAPERTOWEL = "paper towel";
     private const string WINDOW_DUST = "window_dust";
     private const string WINDOW_CLEAN = "window_clean";
     private const string WINDOW_CLEAR = "window_clear";
@@ -48,6 +62,11 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private const string SOCK = "sock";
     private const string SHOVEL = "shovel";
     private const string USE_TAG = "can_use";
+    private const string STACKPAPER = "stack of paper";
+    private const string PLANTER = "planter";
+    private const string PLANTER_WITH_FLOWER = "planter_with_flower";
+    private const string ORIGAMI = "origami flower";
+    private const string FRUIT = "strange fruit";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
@@ -85,8 +104,13 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private void Awake()
     {
         rules.Add(new PaperTowelOnWindowRule());
+        rules.Add(new FoldPaperRule());
+        rules.Add(new PlantFlowerRule());
+        rules.Add(new ShovelOnPlanterRule());
         window.item_Sprite = windowDust;
         under_the_bed.item_Sprite = underTheBed;
+        planter.item_Sprite = planterOnly;
+        deskRenderer.sprite = desk_normal;
     }
 
     private void Start()
@@ -96,18 +120,32 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     public bool CanUseItem()
     {
-        Item inventoryItem = InventoryManager.Instance.GetCurrentItem();
-        Item worldItem = cgPlayer.GetCurrentDisplay();
+        Item inventoryItem =
+            InventoryManager.Instance.GetCurrentItem();
 
-        Debug.Log($"[CanUseItem] inventory={inventoryItem?.item_Name}, world={worldItem?.item_Name}");
+        Item worldItem =
+            cgPlayer.GetCurrentDisplay();
 
-        if (inventoryItem == null || worldItem == null)
+        Debug.Log(
+            $"[CanUseItem] inventory={inventoryItem?.item_Name}, " +
+            $"world={worldItem?.item_Name}"
+        );
+
+        //return if no selected item
+        if (inventoryItem == null)
             return false;
 
         foreach (var rule in rules)
         {
-            bool result = rule.CanUse(inventoryItem, worldItem);
-            Debug.Log($"Rule {rule.GetType().Name} = {result}");
+            bool result =
+                rule.CanUse(
+                    inventoryItem,
+                    worldItem
+                );
+
+            Debug.Log(
+                $"Rule {rule.GetType().Name} = {result}"
+            );
 
             if (result)
                 return true;
@@ -118,20 +156,36 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     public void TryUseItem()
     {
-        Item inventoryItem = InventoryManager.Instance.GetCurrentItem();
-        Item worldItem = cgPlayer.GetCurrentDisplay();
+        Item inventoryItem =
+            InventoryManager.Instance.GetCurrentItem();
 
-        if (inventoryItem == null || worldItem == null)
+        Item worldItem =
+            cgPlayer.GetCurrentDisplay();
+
+        if (inventoryItem == null)
             return;
 
         foreach (var rule in rules)
         {
             if (rule.CanUse(inventoryItem, worldItem))
             {
-                ApplyRuleEffect(rule, inventoryItem, worldItem);
+                rule.Apply(
+                    inventoryItem,
+                    worldItem
+                );
+
+                if (rule.ConsumeItem)
+                {
+                    InventoryManager.Instance.UseItem(inventoryItem);
+                }
+
                 return;
             }
         }
+
+        Debug.Log(
+            $"No rule matched for {inventoryItem.item_Name}"
+        );
     }
 
     private void HandleItemTagChanged(string newTag)
@@ -182,9 +236,23 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
                 InventoryManager.Instance.QueueItem(sock);
                 break;
             case (SHOVEL):
-                Debug.Log("Adding shovel");
                 cgPlayer.DisplayItemInfo(shovel);
                 InventoryManager.Instance.QueueItem(shovel);
+                break;
+            case (STACKPAPER):
+                InventoryManager.Instance.QueueItem(stackPaper);
+                break;
+            case (PLANTER_WITH_FLOWER):
+                InventoryManager.Instance.UseItem(origamiFlower);
+                InventoryManager.Instance.CloseInventory();
+                planter.item_Sprite = planterWithFlower;
+                cgPlayer.DisplayItemInfo(planter);
+                break;
+            case (FRUIT):
+                GameManager.instance.PopState(GameStateType.Cutscene);
+                InventoryManager.Instance.QueueItem(strangeFruit);
+                plantPuzzle.SetActive(false);
+                _aud.Play();
                 break;
             case ("clearItemOnly"):
                 cgPlayer.ClearItemOnly();
@@ -202,7 +270,6 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         switch (name)
         {
             case "read_notes":
-
                 if (boolValue)
                     cgPlayer.InspectItem(notes);
                 else
@@ -211,18 +278,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
 
             case USE_TAG:
-
                 Debug.Log($"can use = {boolValue}");
                 break;
 
-        }
-    }
-
-    private void ApplyRuleEffect(IItemUseRule rule, Item inventoryItem, Item worldItem)
-    {
-        if (rule is PaperTowelOnWindowRule)
-        {
-            SetWindowClean();
         }
     }
 
@@ -266,6 +324,12 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             case "show_monster":
                 StartCoroutine(ShowMonsterCutscene());
                 break;
+            case "diaryPageRemove":
+                StartCoroutine(TakeDiaryPageCutscene());
+                break;
+            case "plantGrow":
+                StartCoroutine(PlantGrowCoroutine());
+                break;
         }
     }
 
@@ -285,6 +349,28 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         GameManager.instance.PopState(GameStateType.Cutscene);
 
         DialogueManager.Instance.ResumeDialogue();
+        DialogueManager.Instance.OnDialogueStatusChanged += HandleMonsterDialogueFinished;
+    }
+
+    private void HandleMonsterDialogueFinished(bool isPlaying)
+    {
+        if (isPlaying)
+        {
+            return;
+        }
+
+        _aud.Pause();
+        _aud.clip = home;
+        _aud.Play();
+    }
+
+    private IEnumerator TakeDiaryPageCutscene()
+    {
+        homePuzzle.ExitAllPuzzle();
+        DialogueManager.Instance.PauseWithoutAnim();
+
+        yield return new WaitForSecondsRealtime(1.5f);
+        DialogueManager.Instance.ResumeWithoutAnim(false);
     }
 
     public void ReadDiary()
@@ -297,34 +383,111 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     {
         BookContents diary = diaryPuzzle.GetComponent<BookContents>();
         diary.WriteNewDiary();
-        Debug.Log("you wrote some diary");
+    }
+
+    public void InspectItem()
+    {
+        StartCoroutine(InspectRoutine());
+    }
+
+    private IEnumerator InspectRoutine()
+    {
+        InventoryManager.Instance.CloseInventory();
+
+        yield return null;
+
+        Item currentItem =
+            InventoryManager.Instance.GetCurrentItem();
+
+        cgPlayer.InspectItem(currentItem);
+    }
+
+    public void PlantFlower()
+    {
+        StartCoroutine(PlantFlowerCoroutine());
+    }
+
+    private IEnumerator PlantFlowerCoroutine()
+    {
+        yield return null;
+        InventoryManager.Instance.CloseInventory();
+        yield return new WaitForSecondsRealtime(0.5f);
+        DialogueManager.Instance.NewStory(origamiPlantingDialogue);
+    }
+
+    public void FoldOrigamiFlower()
+    { 
+        InventoryManager.Instance.QueueItem(origamiFlower);
+        DialogueManager.Instance.SetBoolVariable("origami_get", true);
+    }
+
+    private void InspectPlanter()
+    {
+        cgPlayer.DisplayItemInfo(planter);
+        cgPlayer.PlayTooltip();
+    }
+
+    private void TakeFlower()
+    {
+        cgPlayer.ClearDisplay();
+        deskRenderer.sprite = desk_withoutPlanter;
+        InventoryManager.Instance.QueueItem(planter);
+    }
+
+    private IEnumerator PlantGrowCoroutine()
+    {
+        InventoryManager.Instance.UseItem(planter);
+        Animator plantAnim = plantPuzzle.GetComponent<Animator>();
+        plantAnim.enabled = false;
+        _aud.Pause();
+
+        GameManager.instance.PushState(GameStateType.Cutscene);
+        plantPuzzle.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(1f);
+        plantAnim.enabled = true;
+    }
+
+    public void HandlePlantAnimComplete()
+    {
+        StartCoroutine(HandlePlantAnimCompleteCoroutine());
+    }
+
+    private IEnumerator HandlePlantAnimCompleteCoroutine()
+    {
+        AudioManager.Instance.Play("fairyTone");
+        yield return new WaitForSecondsRealtime(1.5f);
+        DialogueManager.Instance.NewStory(plantGrowingDialogue);
     }
 
     public void BindFunctions(Story story)
     {
         story.BindExternalFunction(
             "CanUseItem",
-            () => CanUseItem()
-        );
+            () => CanUseItem());
 
         story.BindExternalFunction(
             "UseItem",
-            () =>
-            {
-                TryUseItem();
-
-                InventoryManager.Instance.UseItem(
-                    InventoryManager.Instance.GetCurrentItem()
-                );
-            });
+            () =>TryUseItem());
 
         story.BindExternalFunction(
             "ReadDiary",
-            () => ReadDiary()
-        );
+            () => ReadDiary());
 
         story.BindExternalFunction(
             "WriteDiary",
             () => WriteDiary());
+
+        story.BindExternalFunction(
+            "InspectItem",
+            () => InspectItem());
+
+        story.BindExternalFunction(
+            "InspectPlanter",
+            () => InspectPlanter());
+
+        story.BindExternalFunction(
+            "TakeFlower",
+            () => TakeFlower());
     }
 }

@@ -3,8 +3,8 @@ guid: 703f244138fd371468110e2307dfd2b6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3380512575762138355
-    second: magnifier_0
+      213: 5226440340088765713
+    second: magnifier_icon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -116,10 +116,10 @@ TextureImporter:
       name: magnifier_icon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 10
-        width: 500
-        height: 490
+        x: 7
+        y: 7
+        width: 493
+        height: 493
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3f40b05e64ef9ee20800000000000000
-      internalID: 3380512575762138355
+      spriteID: 11d33c66ccb088840800000000000000
+      internalID: 5226440340088765713
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b944a26ccc7a3434c9c2017373e20f67
+    spriteID: 962ff78c826c4e04b8dd989a00560f06
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      magnifier_icon_0: 3380512575762138355
+      magnifier_icon_0: 5226440340088765713
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -9,19 +9,39 @@ public class LampFlickerController : MonoBehaviour
     public float maxIntensity = 1f;
     public float minDuration = 0.05f;
     public float maxDuration = 0.2f;
+    public float updateInterval = 0f;
+
+    private Coroutine flickerCoroutine;
 
     void Start()
     {
         myLight = GetComponentInChildren<Light2D>();
-        StartCoroutine(Flicker());
+        if (myLight == null)
+        {
+            Debug.LogWarning($"{nameof(LampFlickerController)}: no Light2D found in children on '{gameObject.name}'");
+            return;
+        }
+
+        flickerCoroutine = StartCoroutine(Flicker());
+    }
+
+    void OnDisable()
+    {
+        if (flickerCoroutine != null)
+            StopCoroutine(flickerCoroutine);
+        flickerCoroutine = null;
     }
 
     private IEnumerator Flicker()
     {
+        WaitForSeconds wait = updateInterval > 0f ? new WaitForSeconds(updateInterval) : null;
+
         while (true)
         {
+            if (myLight == null) yield break;
+
             float targetIntensity = Random.Range(minIntensity, maxIntensity);
-            float duration = Random.Range(minDuration, maxDuration);
+            float duration = Mathf.Max(0.0001f, Random.Range(minDuration, maxDuration));
             float startIntensity = myLight.intensity;
             float time = 0f;
 
@@ -29,11 +49,14 @@ public class LampFlickerController : MonoBehaviour
             {
                 // Smoothly lerp between intensities
                 myLight.intensity = Mathf.Lerp(startIntensity, targetIntensity, time / duration);
-                time += Time.deltaTime;
-                yield return null;
+                time += (wait != null) ? updateInterval : Time.deltaTime;
+                if (wait != null)
+                    yield return wait;
+                else
+                    yield return null;
             }
 
-            myLight.intensity = targetIntensity; // Ensure final target is set
+            myLight.intensity = targetIntensity;
         }
     }
 }

@@ -26,18 +26,20 @@ public class CurtainLightingController : MonoBehaviour
     [SerializeField] private GameObject floor_Light;
     [SerializeField] private ParticleSystem dust;
 
-    private bool lightingPerformed = false;
-
     private void Start()
     {
         Init();
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+        }
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        if (!lightingPerformed)
+        if (DialogueManager.Instance != null)
         {
-            CurtainOpened();
+            DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
         }
     }
 
@@ -71,8 +73,17 @@ public class CurtainLightingController : MonoBehaviour
             //enable the lighting
             curtain_light.enabled = true;
             floor_Light.SetActive(true);
+        }
+    }
 
-            lightingPerformed = true;
+    private void HandleVariableChanged(string name, Ink.Runtime.Object value)
+    {
+        if (name != "curtain_open")
+            return;
+
+        if (value is Ink.Runtime.BoolValue boolVal && boolVal.value)
+        {
+            CurtainOpened();
         }
     }
 }

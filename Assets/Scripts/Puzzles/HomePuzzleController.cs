@@ -6,13 +6,17 @@ public class HomePuzzleController : PuzzleController
     public CGItem cgPlayer;
     public GameObject windowPuzzle;
     public GameObject diaryPuzzle;
+    public GameObject plantPuzzle;
 
-
+    private CanvasGroup puzzleCanvas;
 
     private void Start()
     {
         windowPuzzle.SetActive(false);
         diaryPuzzle.SetActive(false);
+        plantPuzzle.SetActive(false);
+
+        puzzleCanvas = GetComponent<CanvasGroup>();
     }
 
     private void ExitWindowPuzzle()
@@ -25,6 +29,11 @@ public class HomePuzzleController : PuzzleController
     private void ExitDiary()
     {
         diaryPuzzle.SetActive(false);
+    }
+
+    private void ExitPlant()
+    {
+        plantPuzzle.SetActive(false);
     }
 
     public override void ExitAllPuzzle()
@@ -44,6 +53,11 @@ public class HomePuzzleController : PuzzleController
         if (diaryPuzzle.activeSelf)
         {
             ExitDiary();
+        }
+
+        if (plantPuzzle.activeSelf)
+        {
+            ExitPlant();
         }
 
         Close();

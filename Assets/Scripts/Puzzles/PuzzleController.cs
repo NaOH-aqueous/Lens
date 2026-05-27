@@ -17,6 +17,8 @@ public abstract class PuzzleController : MonoBehaviour
     {
         IsOpen = false;
         GameManager.instance.PopState(GameStateType.Puzzle);
+        InputManager.Instance.RegisterInteractPressed();
+        InputManager.Instance.RegisterSubmitPressed();
     }
 
     public virtual void ExitAllPuzzle()

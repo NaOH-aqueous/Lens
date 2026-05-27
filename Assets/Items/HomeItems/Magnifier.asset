@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0da4df8c9756de4d9243005e45077b3, type: 3}
+  m_Name: Magnifier
+  m_EditorClassIdentifier: 
+  item_Name: Magnifier
+  item_Sprite: {fileID: -4976215857643454600, guid: 5d3226fec81ae5445b9cdbf627c01e87, type: 3}
+  item_Icon: {fileID: 5226440340088765713, guid: 703f244138fd371468110e2307dfd2b6, type: 3}
+  item_Dialogue: {fileID: 0}

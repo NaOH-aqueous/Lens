@@ -61,6 +61,9 @@ public class InputManager : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
+        if (!InputRouter.Instance.AllowsGameplayInput())
+            return;
+
         if (context.performed)
         {
             InteractPressed = true;
@@ -73,6 +76,12 @@ public class InputManager : MonoBehaviour
 
     private void OnConfirm(InputAction.CallbackContext context)
     {
+        if (InputRouter.Instance.BlocksEverything())
+            return;
+
+        if (!InputRouter.Instance.AllowsUIInput())
+            return;
+
         if (context.performed)
         {
             SubmitPressed = true;
@@ -85,6 +94,9 @@ public class InputManager : MonoBehaviour
 
     private void OnCancel(InputAction.CallbackContext context)
     {
+        if (InputRouter.Instance.BlocksEverything())
+            return;
+
         if (context.performed)
         {
             CancelPressed = true;
@@ -97,6 +109,11 @@ public class InputManager : MonoBehaviour
 
     private void OnInventory(InputAction.CallbackContext context)
     {
+        if (InputRouter.Instance.BlocksEverything())
+            return;
+        if (!InputRouter.Instance.AllowsInventoryInput())
+            return;
+
         if (context.performed)
         {
             InventoryPressed = true;
@@ -115,7 +132,7 @@ public class InputManager : MonoBehaviour
     }
 
     public bool IsSubmitPressed()
-    {
+    { 
         bool result = SubmitPressed;
         SubmitPressed = false;
         return result;
@@ -128,7 +145,7 @@ public class InputManager : MonoBehaviour
         return result;
     }
 
-    public bool isInventoryPressed()
+    public bool IsInventoryPressed()
     {
         bool result = InventoryPressed;
         InventoryPressed = false;

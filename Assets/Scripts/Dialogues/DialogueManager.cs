@@ -232,6 +232,9 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
+
+        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
+
         OnDialogueStatusChanged?.Invoke(true);
 
         ContinueStory();
@@ -255,6 +258,7 @@ public class DialogueManager : MonoBehaviour
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
         textToDisplay.enabled = false;
+        InputRouter.Instance.PopLayer();
 
         if (GameManager.instance.CurrentState == GameStateType.Inventory)
         {
@@ -428,16 +432,18 @@ public class DialogueManager : MonoBehaviour
 
     public void SetBoolVariable(string variable, bool value)
     {
-        if(variable == null || string.IsNullOrEmpty(variable))
+        var inkValue = new Ink.Runtime.BoolValue(value);
+
+        dialogueVariables.variables[variable] = inkValue;
+
+        if (_inkstory != null)
         {
-            return;
+            _inkstory.variablesState.SetGlobal(variable, inkValue);
         }
 
-        _inkstory.variablesState[variable] = value;
-
-        Debug.Log("the variable" + variable + "has been set to" + value);
+        RaiseVariableChaned(variable,inkValue);
     }
-    
+
     public void BindExternalFunctions()
     {
         IDialogueFunctionBinder[] binders =
@@ -459,8 +465,26 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(PauseDialogueCoroutine());
     }
 
+    public void PauseWithoutAnim()
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Cutscene);
+        cutscenePlaying = true;
+    }
+
+    public void ResumeWithoutAnim(bool autoPlay)
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
+        cutscenePlaying = false;
+
+        if (autoPlay)
+        {
+            ContinueStory();
+        }
+    }
+
     public void ResumeDialogue()
     {
+        InputRouter.Instance.PushLayer(InputLayer.Dialogue);
         dialoguePanel.SetActive(true);
         _anim.SetTrigger("dialogueStart");
 
@@ -469,6 +493,7 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator PauseDialogueCoroutine()
     {
+        InputRouter.Instance.PushLayer(InputLayer.Cutscene);
         _anim.SetTrigger("dialogueEnd");
         _audio.PlayOneShot(endSFX);
 

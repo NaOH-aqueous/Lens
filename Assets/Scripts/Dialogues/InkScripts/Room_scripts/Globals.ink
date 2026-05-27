@@ -19,3 +19,9 @@ VAR magnifier_get = false
 VAR shovel_get = false
 
 VAR read_diary = false
+
+VAR get_pages = false
+
+VAR origami_get = false
+
+VAR planter_get = false

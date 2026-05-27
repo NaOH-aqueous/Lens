@@ -155,7 +155,8 @@ public class GameManager : MonoBehaviour
         }
         else if (state == GameStateType.Inventory ||
                  state == GameStateType.ItemDisplay ||
-                 state == GameStateType.Puzzle)
+                 state == GameStateType.Puzzle||
+                 state == GameStateType.Cutscene)
         {
             isTransitioning = true;
             yield return StartCoroutine(blurVFX.OutroTransition());
@@ -167,6 +168,7 @@ public class GameManager : MonoBehaviour
     {
         HideAllMenu();
         StartCoroutine(HandleModeTransition(currentState));
+        SyncInputLayer(currentState);
 
         switch (currentState)
         {
@@ -206,19 +208,19 @@ public class GameManager : MonoBehaviour
 
     private void RefreshUIInteractivity()
     {
-    bool dialoguePlaying = m_dialogueManager != null &&
+        bool dialoguePlaying = m_dialogueManager != null &&
                            m_dialogueManager.CheckDialoguePlaying();
 
-    inventoryCanvasGroup.interactable =
-        CurrentState == GameStateType.Inventory && !dialoguePlaying;
+        inventoryCanvasGroup.interactable =
+            CurrentState == GameStateType.Inventory && !dialoguePlaying;
 
-    cgCanvasGroup.interactable =
-        CurrentState == GameStateType.ItemDisplay && !dialoguePlaying;
+        cgCanvasGroup.interactable =
+            CurrentState == GameStateType.ItemDisplay && !dialoguePlaying;
 
-    puzzleCanvasGroup.interactable =
-        CurrentState == GameStateType.Puzzle && !dialoguePlaying;
+        puzzleCanvasGroup.interactable =
+            CurrentState == GameStateType.Puzzle && !dialoguePlaying;
 
-    dialogueCanvasGroup.interactable = dialoguePlaying;
+        dialogueCanvasGroup.interactable = dialoguePlaying;
     }
 
     private void HideAllMenu()
@@ -292,6 +294,25 @@ public class GameManager : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    private InputLayer GetDesiredLayer(GameStateType state)
+    {
+        return state switch
+        {
+            GameStateType.Playing => InputLayer.Gameplay,
+            GameStateType.Inventory => InputLayer.UI,
+            GameStateType.ItemDisplay => InputLayer.UI,
+            GameStateType.Puzzle => InputLayer.UI,
+            GameStateType.Cutscene => InputLayer.Cutscene,
+            GameStateType.Paused => InputLayer.Cutscene,
+            _ => InputLayer.Gameplay
+        };
+    }
+
+    private void SyncInputLayer(GameStateType state)
+    {
+        InputRouter.Instance.SetRootLayer(GetDesiredLayer(state));
     }
 
 }

@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0da4df8c9756de4d9243005e45077b3, type: 3}
-  m_Name: PaperTowel
+  m_Name: Planter
   m_EditorClassIdentifier: 
-  item_Name: PaperTowel
-  item_Sprite: {fileID: -7257243884398364093, guid: 51a8dd9eb1724364498bcb1608ac6ed4, type: 3}
-  item_Icon: {fileID: -7391254067920757069, guid: 3152156a127c9534eb6636a05f8ec7fc, type: 3}
+  item_Name: planter
+  item_Sprite: {fileID: -7592670777957325758, guid: c99962873bc2d0448b5f2022d4e06f91, type: 3}
+  item_Icon: {fileID: 1106500651383388825, guid: 58a898b42798bf447924a6cde5003242, type: 3}
+  item_Dialogue: {fileID: 0}
