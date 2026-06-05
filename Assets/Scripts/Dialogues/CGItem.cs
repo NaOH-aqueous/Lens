@@ -6,6 +6,14 @@ using UnityEngine.UI;
 
 public class CGItem : MonoBehaviour
 {
+    private enum DisplayMode
+    {
+        None,
+        CG,
+        Item,
+        Inspect
+    }
+
     public Image itemDisplayer;
     public GameObject itemInspector;
     public Image CGDisplayer;
@@ -18,6 +26,10 @@ public class CGItem : MonoBehaviour
     private Item displayItem;
     private CanvasGroup cgCanvasGroup;
     private Image itemViewer;
+    private DisplayMode currentMode = DisplayMode.None;
+    private DisplayMode previousMode = DisplayMode.None;
+
+    private Item previousItem;
 
     private void Start()
     {
@@ -35,6 +47,10 @@ public class CGItem : MonoBehaviour
 
     private void Update()
     {
+        if(GameManager.instance.CurrentState != GameStateType.ItemDisplay)
+        {
+            return;
+        }
         if (!PlayItemDialogue)
         {
             return;
@@ -42,14 +58,19 @@ public class CGItem : MonoBehaviour
 
         if (InputManager.Instance.IsSubmitPressed())
         {
-            ItemInfoDialogue();
+            if (!DialogueManager.Instance.CheckDialoguePlaying())
+            {
+                ItemInfoDialogue();
+            }
         }
     }
 
     public void DisplayItemInfo(Item new_Item)
     {
+        PlayItemDialogue = false;
         if (!string.IsNullOrEmpty(new_Item.item_Name))
         {
+            currentMode = DisplayMode.Item;
             //display item in the player
             itemDisplayer.gameObject.SetActive(true);
             itemDisplayer.sprite = new_Item.item_Sprite;
@@ -77,6 +98,7 @@ public class CGItem : MonoBehaviour
         else
         {
             DialogueManager.Instance.NewStory(displayItem.item_Dialogue);
+            Debug.Log("no item dialogue");
         }
     }
 
@@ -102,7 +124,10 @@ public class CGItem : MonoBehaviour
 
     public void ClearItemOnly()
     {
-        StartCoroutine(ClearItemOnlyCoroutine());
+        if(clearItemCoroutine == null)
+        {
+            StartCoroutine(ClearItemOnlyCoroutine());
+        }
     }
 
     private IEnumerator ClearItemOnlyCoroutine()
@@ -119,12 +144,18 @@ public class CGItem : MonoBehaviour
 
     public void ClearDisplay()
     {
-        StartCoroutine(ClearDisplayCoroutine());
+        if(clearDisplayCoroutine == null)
+        {
+            StartCoroutine(ClearDisplayCoroutine());
+        }
     }
 
     public void InspectItem(Item inspect_Item)
     {
+        currentMode = DisplayMode.Inspect;
         itemInspector.gameObject.SetActive(true);
+        PlayItemDialogue = true;
+        displayItem = inspect_Item;
         InputRouter.Instance.PushLayer(InputLayer.InventoryBlock);
 
         itemViewer.sprite = inspect_Item.item_Sprite;
@@ -136,7 +167,10 @@ public class CGItem : MonoBehaviour
 
     public void ClearInspect()
     {
-        StartCoroutine(ClearInspectCoroutine());
+        if(clearInspectCoroutine == null)
+        {
+            StartCoroutine(ClearInspectCoroutine());
+        }
     }
 
     private IEnumerator ClearInspectCoroutine()
@@ -155,8 +189,28 @@ public class CGItem : MonoBehaviour
         clearInspectCoroutine = null;
     }
 
+    public void ExitInspect() //exiting without clearing everything
+    {
+        StartCoroutine(ExitInspectCoroutine());
+    }
+
+    private IEnumerator ExitInspectCoroutine()
+    {
+        yield return StartCoroutine(Fade(1f, 0f, 0.25f));
+
+        Image itemViewer = itemInspector.GetComponentInChildren<Image>();
+        itemViewer.sprite = null;
+
+        itemInspector.SetActive(false);
+        tip.gameObject.SetActive(false);
+        InputRouter.Instance.Clear();
+
+        RestorePreviousDisplay();
+    }
+
     public void CGDisplay(Item DisplayItem)
     {
+        PlayItemDialogue = false;
         if (DisplayItem.item_Sprite != null)
         {
             if (!CGDisplayer.gameObject.activeSelf)
@@ -164,6 +218,7 @@ public class CGItem : MonoBehaviour
                 CGDisplayer.gameObject.SetActive(true);
                 EnterDisplayMode();
             }
+            currentMode = DisplayMode.CG;
             CGDisplayer.sprite = DisplayItem.item_Sprite;
             displayItem = DisplayItem;
         }
@@ -176,16 +231,38 @@ public class CGItem : MonoBehaviour
 
     public void ExitCGMode()
     {
-        if (itemInspector.activeSelf)
+        if (currentMode == DisplayMode.Inspect)
         {
-            ClearInspect();
+            ExitInspect();
         }
         else
         {
             ClearDisplay();
         }
-
     }
+
+    public void TransitionToInpsectMode(Item item) //transition from other mode to inspect
+    {
+        previousMode = currentMode;
+        previousItem = displayItem;
+
+        PlayItemDialogue = true;
+
+        currentMode = DisplayMode.Inspect;
+        InputRouter.Instance.PushLayer(InputLayer.InventoryBlock);
+
+        itemDisplayer.gameObject.SetActive(false);
+        CGDisplayer.gameObject.SetActive(false);
+
+        itemInspector.gameObject.SetActive(true);
+        itemViewer.sprite = item.item_Sprite;
+        itemViewer.SetNativeSize();
+
+        tip.gameObject.SetActive(true);
+
+        EnterDisplayMode();
+    }
+
     public void PlayTooltip()
     {
         tip.gameObject.SetActive(true);
@@ -213,13 +290,44 @@ public class CGItem : MonoBehaviour
         cgCanvasGroup.blocksRaycasts = end > 0f;
     }
 
+    private void RestorePreviousDisplay()
+    {
+        switch (previousMode)
+        {
+            case DisplayMode.CG:
+
+                CGDisplayer.gameObject.SetActive(true);
+                CGDisplayer.sprite = previousItem.item_Sprite;
+                tip.gameObject.SetActive(true);
+
+                currentMode = DisplayMode.CG;
+
+                StartCoroutine(Fade(0f, 1f, 0.25f));
+                break;
+
+            case DisplayMode.Item:
+
+                itemDisplayer.gameObject.SetActive(true);
+                itemDisplayer.sprite = previousItem.item_Sprite;
+                tip.gameObject.SetActive(true);
+
+                currentMode = DisplayMode.Item;
+
+                StartCoroutine(Fade(0f, 1f, 0.25f));
+                break;
+
+            default:
+                ExitDisplayMode();
+                break;
+        }
+    }
+
+
     private void EnterDisplayMode()
     {
-        StartCoroutine(Fade(0f, 1f, 0.25f));
+         StartCoroutine(Fade(0f, 1f, 0.25f));
+         GameManager.instance.PushState(GameStateType.ItemDisplay);
 
-        GameManager.instance.PushState(
-            GameStateType.ItemDisplay
-        );
     }
 
     private void ExitDisplayMode()
@@ -231,5 +339,7 @@ public class CGItem : MonoBehaviour
         GameManager.instance.PopState(
             GameStateType.ItemDisplay
         );
+
+        currentMode = DisplayMode.None;
     }
 }

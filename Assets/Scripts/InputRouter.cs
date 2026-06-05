@@ -30,6 +30,7 @@ public class InputRouter : MonoBehaviour
                 GameStateType.ItemDisplay => InputLayer.UI,
                 GameStateType.Puzzle => InputLayer.InventoryBlock,
                 GameStateType.Cutscene => InputLayer.Cutscene,
+                GameStateType.Lens => InputLayer.InventoryBlock,
                 _ => InputLayer.Gameplay
             };
         }

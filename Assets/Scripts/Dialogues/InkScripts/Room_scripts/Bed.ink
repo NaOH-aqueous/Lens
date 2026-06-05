@@ -11,7 +11,7 @@ Where do you want to inspect? #item:clearDisplay
  * [On the bed]
  -> on_the_bed
  
- * {not magnifier_get} [Under the bed] -> under_the_bed
+ * {not magnifier_get && not shovel_get} [Under the bed] -> under_the_bed
  * {magnifier_get && not shovel_get} [Under the bed] -> have_magnifier_dialogue
  * {shovel_get} [Under the bed] -> leave
  

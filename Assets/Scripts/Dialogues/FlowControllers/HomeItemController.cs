@@ -13,6 +13,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [Header("CG&Puzzle")]
     [SerializeField] private CGItem cgPlayer;
     [SerializeField] private HomePuzzleController homePuzzle;
+    [SerializeField] private HomeLensController lens;
 
     [Header("Sprites")]
     [SerializeField] private Sprite windowDust;
@@ -34,6 +35,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private TextAsset magnifierDialogue;
     [SerializeField] private TextAsset origamiPlantingDialogue;
     [SerializeField] private TextAsset plantGrowingDialogue;
+    [SerializeField] private TextAsset pixieDialogue;
 
     [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
@@ -51,6 +53,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public Item origamiFlower;
     public Item planter;
     public Item strangeFruit;
+    public Item corner;
 
     private const string PAPERTOWEL = "paper towel";
     private const string WINDOW_DUST = "window_dust";
@@ -67,9 +70,11 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private const string PLANTER_WITH_FLOWER = "planter_with_flower";
     private const string ORIGAMI = "origami flower";
     private const string FRUIT = "strange fruit";
+    private const string CORNER = "corner of the room";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
+    private LensControl lensControl;
 
     private void OnEnable()
     {
@@ -83,6 +88,10 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         {
             FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
             focusPuzzle.OnPuzzleCompleted += HandlePuzzleCompleted;
+        }
+        if (lens != null)
+        {
+            lens.OnLensTriggered += HandleLensTriggered;
         }
     }
 
@@ -99,6 +108,10 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
             focusPuzzle.OnPuzzleCompleted -= HandlePuzzleCompleted;
         }
+        if (lens != null)
+        {
+            lens.OnLensTriggered -= HandleLensTriggered;
+        }
     }
 
     private void Awake()
@@ -107,6 +120,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         rules.Add(new FoldPaperRule());
         rules.Add(new PlantFlowerRule());
         rules.Add(new ShovelOnPlanterRule());
+        rules.Add(new MagnifierOnWall());
+
         window.item_Sprite = windowDust;
         under_the_bed.item_Sprite = underTheBed;
         planter.item_Sprite = planterOnly;
@@ -207,6 +222,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             case (WINDOW_DUST):
                 window.item_Sprite = windowDust;
                 cgPlayer.CGDisplay(window);
+                cgPlayer.PlayTooltip();
                 break;
             case (WINDOW_CLEAN):
                 window.item_Sprite = windowClean;
@@ -215,6 +231,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             case (WINDOW_CLEAR):
                 window.item_Sprite = windowPuzzleClear;
                 cgPlayer.CGDisplay(window);
+                cgPlayer.PlayTooltip();
                 break;
             case (MAGNIFIER):
                 window.item_Sprite = windowPuzzleClear;
@@ -398,10 +415,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         yield return null;
 
-        Item currentItem =
-            InventoryManager.Instance.GetCurrentItem();
-
-        cgPlayer.InspectItem(currentItem);
+        Item currentItem = InventoryManager.Instance.GetCurrentItem();
+        cgPlayer.TransitionToInpsectMode(currentItem);
     }
 
     public void PlantFlower()
@@ -462,34 +477,69 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         DialogueManager.Instance.NewStory(plantGrowingDialogue);
     }
 
+    private void InspectCorner()
+    {
+        cgPlayer.CGDisplay(corner);
+        cgPlayer.PlayItemDialogue = true;
+        cgPlayer.PlayTooltip();
+    }
+
+    public void MagnifyCorner()
+    {
+        StartCoroutine(MagnifierUICoroutine());
+        lens.SetPixieAltSprite(true);
+    }
+
+    private IEnumerator MagnifierUICoroutine()
+    {
+        yield return null;
+        InventoryManager.Instance.CloseInventory();
+        yield return null;
+        lens.EnableLens();
+    }
+
+    private void HandleLensTriggered()
+    {
+        if(cgPlayer.GetCurrentDisplay() != corner)
+        {
+            return;
+        }
+
+        lens.DisableLens();
+        DialogueManager.Instance.NewStory(pixieDialogue);
+        DialogueManager.Instance.OnDialogueStatusChanged += HandlePixieDialogueComplete;
+    }
+
+    private void HandlePixieDialogueComplete(bool isplaying)
+    {
+        lens.EnableLens();
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandlePixieDialogueComplete;
+    }
+
     public void BindFunctions(Story story)
     {
         story.BindExternalFunction(
-            "CanUseItem",
-            () => CanUseItem());
+            "CanUseItem", () => CanUseItem());
 
         story.BindExternalFunction(
-            "UseItem",
-            () =>TryUseItem());
+            "UseItem", () => TryUseItem());
 
         story.BindExternalFunction(
-            "ReadDiary",
-            () => ReadDiary());
+            "ReadDiary", () => ReadDiary());
 
         story.BindExternalFunction(
-            "WriteDiary",
-            () => WriteDiary());
+            "WriteDiary", () => WriteDiary());
 
         story.BindExternalFunction(
-            "InspectItem",
-            () => InspectItem());
+            "InspectItem", () => InspectItem());
 
         story.BindExternalFunction(
-            "InspectPlanter",
-            () => InspectPlanter());
+            "InspectPlanter", () => InspectPlanter());
 
         story.BindExternalFunction(
-            "TakeFlower",
-            () => TakeFlower());
+            "TakeFlower", () => TakeFlower());
+
+        story.BindExternalFunction(
+            "InspectCorner", () => InspectCorner());
     }
 }

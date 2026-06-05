@@ -15,6 +15,7 @@ public enum GameStateType
     Inventory,
     ItemDisplay,
     Puzzle,
+    Lens,
     Cutscene
 }
 
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GameObject dialogueUI;
     public GameObject cgUI;
     public GameObject puzzleUI;
+    public GameObject lensUI;
 
     [Header("Scene Names")]
     public string mainMenuSceneName = "MainMenu";
@@ -47,6 +49,7 @@ public class GameManager : MonoBehaviour
     private CanvasGroup puzzleCanvasGroup;
     private Button pauseButton;
     private PuzzleController puzzleController;
+    private LensController lensController;
 
     private bool isTransitioning;
 
@@ -72,6 +75,7 @@ public class GameManager : MonoBehaviour
         cgCanvasGroup = cgUI.GetComponent<CanvasGroup>();
         puzzleCanvasGroup = puzzleUI.GetComponent<CanvasGroup>();
         puzzleController = puzzleUI.GetComponent<PuzzleController>();
+        lensController = lensUI.GetComponent<LensController>();
 
         pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
 
@@ -192,6 +196,10 @@ public class GameManager : MonoBehaviour
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
                 break;
+            case GameStateType.Lens:
+                AudioListener.pause = false;
+                Time.timeScale = 0f;
+                break;
             case GameStateType.Cutscene:
                 Time.timeScale = 0f;
                 break;
@@ -256,6 +264,10 @@ public class GameManager : MonoBehaviour
 
             case GameStateType.Puzzle:
                 puzzleController.ExitAllPuzzle();
+                break;
+
+            case GameStateType.Lens:
+                lensController.DisableLens();
                 break;
         }
     }

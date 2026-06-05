@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0da4df8c9756de4d9243005e45077b3, type: 3}
-  m_Name: Notes
+  m_Name: CornerOfTheRoom
   m_EditorClassIdentifier: 
-  item_Name: Notes
-  item_Sprite: {fileID: -3598916374439202735, guid: 423083bb47cbbeb49a32dd6396f5bb7d, type: 3}
-  item_Icon: {fileID: -3598916374439202735, guid: 06ebf31dd6877854dbe06774600c47ce, type: 3}
-  item_Dialogue: {fileID: 4900000, guid: c3f712b1e3f624545b580091a1046061, type: 3}
+  item_Name: corner of the room
+  item_Sprite: {fileID: -4710839731607381225, guid: 0177f9bacfbf1fa438b3493d4f5f1279, type: 3}
+  item_Icon: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: 4f110ac92dd4cae4594f21ad39f4e56a, type: 3}

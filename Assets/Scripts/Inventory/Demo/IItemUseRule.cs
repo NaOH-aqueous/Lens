@@ -82,3 +82,19 @@ public class ShovelOnPlanterRule : IItemUseRule
     }
 }
 
+public class MagnifierOnWall : IItemUseRule
+{
+    public bool ConsumeItem => false;
+    public bool CanUse(Item inventoryItem, Item worldItem)
+    {
+        return inventoryItem.item_Name == "Magnifier"
+            && worldItem?.item_Name == "corner of the room";
+    }
+
+    public void Apply(Item inventoryItem, Item worldItem = null)
+    {
+        var home = GameObject.FindFirstObjectByType<HomeItemController>();
+        home.MagnifyCorner();
+    }
+}
+

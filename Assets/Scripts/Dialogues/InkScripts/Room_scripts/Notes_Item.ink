@@ -1,0 +1,1 @@
+Here's some notes to remind you of daily routine before going out.
