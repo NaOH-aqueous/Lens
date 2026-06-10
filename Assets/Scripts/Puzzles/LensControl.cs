@@ -71,6 +71,10 @@ public class LensControl : MonoBehaviour
     
     public Item InteractLensItem()
     {
+        if(currentLensItem == null)
+        {
+            return null;
+        }
         if (currentLensItem.LensItem == null)
         {
             return null;

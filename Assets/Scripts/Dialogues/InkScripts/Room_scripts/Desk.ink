@@ -32,7 +32,7 @@ There are currently only blank pages in this diary.
 }
 
 + [No]
-Maybe not now.
+Maybe not now. #speaker:Lens #portrait:normal
 -> back
 
 //---------------------------------
@@ -47,7 +47,8 @@ Write something?
 
 - else:
 
-+ [Yes] Maybe not now. ->back
++ [Yes] Maybe not now.<> #speaker:Lens #portrait:normal
+->back
 + [No]  You are not in the mood right now. ->back
 }
 

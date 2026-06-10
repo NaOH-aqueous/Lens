@@ -20,7 +20,7 @@ public class DialogueManager : MonoBehaviour
 
     public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
     public event System.Action<string> OnCutsceneTriggered;
-    public event System.Action<string> OnPortraitTagChanged;
+    public event System.Action<string, string> OnPortraitTagChanged;
 
 
     //private ink integrating variables
@@ -56,6 +56,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI textToDisplay;
     [SerializeField] private GameObject indication;
+    [SerializeField] private Image nameLabel;
     [SerializeField] private TextMeshProUGUI speakerLabel;
 
     [Header("Choices UI")]
@@ -101,7 +102,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
-
+        nameLabel.enabled = false;
     }
 
     private void Update()
@@ -145,10 +146,12 @@ public class DialogueManager : MonoBehaviour
         //empty string
         if (speakerLabel != null && !string.IsNullOrEmpty(GetSpeakerTag()))
         {
+            nameLabel.enabled = true;
             speakerLabel.text = GetSpeakerTag();
         }
         else if (string.IsNullOrEmpty(GetSpeakerTag()))
         {
+            nameLabel.enabled = false;
             speakerLabel.text = "";
         }
     }
@@ -177,7 +180,7 @@ public class DialogueManager : MonoBehaviour
         return "";
     }
 
-    public string GetExpressionTag() //get tag of the expression in current line
+    public string GetExpressionTag() //get tag of the speaker in current line
     {
         foreach (string tag in tags)
         {
@@ -355,8 +358,8 @@ public class DialogueManager : MonoBehaviour
 
         string currentItemTag = string.Empty;
         string currentSpeakerTag = string.Empty;
-        string currentPortraitTag = string.Empty;
         string currentCutsceneTag = string.Empty;
+        string currentPortraitTag = string.Empty;
 
         foreach (string tag in tags)
         {
@@ -380,6 +383,9 @@ public class DialogueManager : MonoBehaviour
                     break;
             }
         }
+
+        OnPortraitTagChanged?.Invoke(currentSpeakerTag, currentPortraitTag);
+
         //only notify when the tag changed
         if (currentItemTag != lastItemTag)
         {
@@ -387,17 +393,12 @@ public class DialogueManager : MonoBehaviour
             OnItemTagChanged?.Invoke(currentItemTag);
         }
 
-        if (currentPortraitTag != lastPortraitTag)
-        {
-            lastPortraitTag = currentPortraitTag;
-            OnPortraitTagChanged?.Invoke(currentPortraitTag);
-        }
-
         if(currentCutsceneTag != lastCutSceneTag)
         {
             lastCutSceneTag = currentCutsceneTag;
             OnCutsceneTriggered?.Invoke(currentCutsceneTag);
         }
+
     }
 
     public bool CheckDialoguePlaying() //Check if current dialogue is playing

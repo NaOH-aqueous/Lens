@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using NUnit.Framework.Internal.Execution;
 using UnityEngine;
 
@@ -96,5 +97,21 @@ public class MagnifierOnWall : IItemUseRule
         var home = GameObject.FindFirstObjectByType<HomeItemController>();
         home.MagnifyCorner();
     }
+}
+
+public class FruitOnWall : IItemUseRule
+{
+    public bool ConsumeItem => true;
+    public bool CanUse(Item inventoryItem, Item worldItem)
+    {
+        return inventoryItem.item_Name == "strange fruit"
+            && worldItem?.item_Name == "corner of the room";
+    }
+    public void Apply(Item inventoryItem, Item worldItem = null)
+    {
+        var home = GameObject.FindFirstObjectByType<HomeItemController>();
+        home.HandleFruitFed();
+    }
+
 }
 

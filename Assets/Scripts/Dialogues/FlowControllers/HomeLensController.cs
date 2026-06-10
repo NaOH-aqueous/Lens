@@ -7,10 +7,13 @@ public class HomeLensController : LensController
     [SerializeField] private LensControl lens;
     [SerializeField] private GameObject altImages;
     [SerializeField] private GameObject pixie;
+    [SerializeField] private GameObject pixieLineup;
+    [SerializeField] private GameObject pixieWithoutKey;
 
     private void Start()
     {
         lens.gameObject.SetActive(false);
+        altImages.SetActive(false);
     }
     private void Update()
     {
@@ -60,5 +63,27 @@ public class HomeLensController : LensController
 
     }
 
+    public void SetPixieLineup(bool enable)
+    {
+        if (enable)
+        {
+            pixieLineup.gameObject.SetActive(true);
+        }
+        else
+        {
+            pixieLineup.gameObject.SetActive(false);
+        }
+    }
 
+    public void SetPixieWithoutKey(bool enable)
+    {
+        if (enable)
+        {
+            pixieWithoutKey.gameObject.SetActive(true);
+        }
+        else
+        {
+            pixieWithoutKey.gameObject.SetActive(false);
+        }
+    }
 }

@@ -14,6 +14,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private CGItem cgPlayer;
     [SerializeField] private HomePuzzleController homePuzzle;
     [SerializeField] private HomeLensController lens;
+    [SerializeField] private Transform focusTargetAlarm;
 
     [Header("Sprites")]
     [SerializeField] private Sprite windowDust;
@@ -36,6 +37,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private TextAsset origamiPlantingDialogue;
     [SerializeField] private TextAsset plantGrowingDialogue;
     [SerializeField] private TextAsset pixieDialogue;
+    [SerializeField] private TextAsset pixieFeedDialogue;
+    [SerializeField] private TextAsset keyGetDialogue;
+    [SerializeField] private TextAsset endSceneDialogue;
 
     [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
@@ -54,6 +58,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public Item planter;
     public Item strangeFruit;
     public Item corner;
+    public Item key;
 
     private const string PAPERTOWEL = "paper towel";
     private const string WINDOW_DUST = "window_dust";
@@ -71,10 +76,12 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private const string ORIGAMI = "origami flower";
     private const string FRUIT = "strange fruit";
     private const string CORNER = "corner of the room";
+    private const string KEY = "key";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
     private LensControl lensControl;
+    private bool isFruitFed = false;
 
     private void OnEnable()
     {
@@ -92,6 +99,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         if (lens != null)
         {
             lens.OnLensTriggered += HandleLensTriggered;
+            lens.OnItemTriggered += HandleItemTriggered;
         }
     }
 
@@ -111,6 +119,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         if (lens != null)
         {
             lens.OnLensTriggered -= HandleLensTriggered;
+            lens.OnItemTriggered -= HandleItemTriggered;
         }
     }
 
@@ -121,6 +130,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         rules.Add(new PlantFlowerRule());
         rules.Add(new ShovelOnPlanterRule());
         rules.Add(new MagnifierOnWall());
+        rules.Add(new FruitOnWall());
 
         window.item_Sprite = windowDust;
         under_the_bed.item_Sprite = underTheBed;
@@ -271,6 +281,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
                 plantPuzzle.SetActive(false);
                 _aud.Play();
                 break;
+            case (KEY):
+                InventoryManager.Instance.QueueItem(key);
+                break;
             case ("clearItemOnly"):
                 cgPlayer.ClearItemOnly();
                 break;
@@ -347,6 +360,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             case "plantGrow":
                 StartCoroutine(PlantGrowCoroutine());
                 break;
+            case "zoom_to_alarm":
+                StartCoroutine(EndSceneCutscene());
+                break;
         }
     }
 
@@ -355,6 +371,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         DialogueManager.Instance.PauseDialogue();
 
         GameManager.instance.PushState(GameStateType.Cutscene);
+        PortraitManager.Instance.SetCutscenePortraitLock(true);
 
         yield return new WaitForSecondsRealtime(2f);
 
@@ -366,6 +383,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         GameManager.instance.PopState(GameStateType.Cutscene);
 
         DialogueManager.Instance.ResumeDialogue();
+        PortraitManager.Instance.SetCutscenePortraitLock(false);
         DialogueManager.Instance.OnDialogueStatusChanged += HandleMonsterDialogueFinished;
     }
 
@@ -390,6 +408,28 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         yield return new WaitForSecondsRealtime(1.5f);
         DialogueManager.Instance.ResumeWithoutAnim(false);
+    }
+
+    private IEnumerator EndSceneCutscene()
+    {
+        PortraitManager.Instance.SetCutscenePortraitLock(true);
+        yield return null;
+        DialogueManager.Instance.PauseDialogue();
+        CameraController.Instance.FocusOn(focusTargetAlarm);
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        PortraitManager.Instance.SetCutscenePortraitLock(false);
+        DialogueManager.Instance.ResumeDialogue();
+
+        DialogueManager.Instance.OnDialogueStatusChanged += HandleEndsceneDialogue;
+    }
+
+    private void HandleEndsceneDialogue(bool isplaying)
+    {
+        CameraController.Instance.ReturnToPlayer();
+
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandleEndsceneDialogue;
     }
 
     public void ReadDiary()
@@ -487,7 +527,17 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public void MagnifyCorner()
     {
         StartCoroutine(MagnifierUICoroutine());
-        lens.SetPixieAltSprite(true);
+        if (!isFruitFed)
+        {
+            lens.SetPixieAltSprite(true);
+            lens.SetPixieLineup(false);
+        }
+        else
+        {
+            lens.SetPixieAltSprite(false);
+            lens.SetPixieLineup(true);
+        }
+
     }
 
     private IEnumerator MagnifierUICoroutine()
@@ -505,15 +555,65 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             return;
         }
 
-        lens.DisableLens();
-        DialogueManager.Instance.NewStory(pixieDialogue);
-        DialogueManager.Instance.OnDialogueStatusChanged += HandlePixieDialogueComplete;
+        if (!isFruitFed)
+        {
+            lens.DisableLens();
+            DialogueManager.Instance.NewStory(pixieDialogue);
+            DialogueManager.Instance.OnDialogueStatusChanged += HandlePixieDialogueComplete;
+        }
+
+    }
+
+    private void HandleItemTriggered(Item item)
+    {
+        if (cgPlayer.GetCurrentDisplay() != corner)
+        {
+            return;
+        }
+
+        if (item == key)
+        {
+            lens.DisableLens();
+            lens.SetPixieLineup(false);
+            lens.SetPixieWithoutKey(true);
+            DialogueManager.Instance.NewStory(keyGetDialogue);
+            DialogueManager.Instance.OnDialogueStatusChanged += HandlePixieDialogueComplete;
+        }
     }
 
     private void HandlePixieDialogueComplete(bool isplaying)
     {
         lens.EnableLens();
         DialogueManager.Instance.OnDialogueStatusChanged -= HandlePixieDialogueComplete;
+    }
+
+    public void HandleFruitFed()
+    {
+        isFruitFed = true;
+        StartCoroutine(StartFruitDialogue());
+    }
+
+    private IEnumerator StartFruitDialogue()
+    {
+        yield return null;
+        InventoryManager.Instance.CloseInventory();
+
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        DialogueManager.Instance.NewStory(pixieFeedDialogue);
+    }
+
+    private void PlayEndScene()
+    {
+        StartCoroutine(PlayEndSceneCoroutine());
+    }
+
+    private IEnumerator PlayEndSceneCoroutine()
+    {
+        _aud.Pause();
+        yield return new WaitForSecondsRealtime(1f);
+
+        DialogueManager.Instance.NewStory(endSceneDialogue);
     }
 
     public void BindFunctions(Story story)
@@ -541,5 +641,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         story.BindExternalFunction(
             "InspectCorner", () => InspectCorner());
+
+        story.BindExternalFunction(
+            "EndScene", () => PlayEndScene());
     }
 }
