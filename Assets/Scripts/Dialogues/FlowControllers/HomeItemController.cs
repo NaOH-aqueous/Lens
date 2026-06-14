@@ -27,12 +27,19 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private Sprite planterWithFlower;
     [SerializeField] private Sprite desk_normal;
     [SerializeField] private Sprite desk_withoutPlanter;
+    [SerializeField] private Sprite door_locked;
+    [SerializeField] private Sprite door_opened;
+    [SerializeField] private Material mat_default;
+    [SerializeField] private Material door_emission;
+    [SerializeField] private SpriteRenderer deskRenderer;
+    [SerializeField] private SpriteRenderer doorRenderer;
+
 
     [Header("Puzzles")]
     [SerializeField] private GameObject windowPuzzle;
     [SerializeField] private GameObject diaryPuzzle;
     [SerializeField] private GameObject plantPuzzle;
-    [SerializeField] private SpriteRenderer deskRenderer;
+
     [SerializeField] private TextAsset magnifierDialogue;
     [SerializeField] private TextAsset origamiPlantingDialogue;
     [SerializeField] private TextAsset plantGrowingDialogue;
@@ -59,6 +66,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public Item strangeFruit;
     public Item corner;
     public Item key;
+    public Item time;
 
     private const string PAPERTOWEL = "paper towel";
     private const string WINDOW_DUST = "window_dust";
@@ -77,6 +85,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private const string FRUIT = "strange fruit";
     private const string CORNER = "corner of the room";
     private const string KEY = "key";
+    private const string TIME = "time";
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
@@ -136,6 +145,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         under_the_bed.item_Sprite = underTheBed;
         planter.item_Sprite = planterOnly;
         deskRenderer.sprite = desk_normal;
+        doorRenderer.sprite = door_locked;
+        doorRenderer.material = mat_default;
     }
 
     private void Start()
@@ -284,6 +295,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             case (KEY):
                 InventoryManager.Instance.QueueItem(key);
                 break;
+            case (TIME):
+                InventoryManager.Instance.QueueItem(time);
+                break;
             case ("clearItemOnly"):
                 cgPlayer.ClearItemOnly();
                 break;
@@ -297,20 +311,28 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     {
         bool boolValue = (bool)value;
 
-        switch (name)
+        if(value is Ink.Runtime.BoolValue boolVal)
         {
-            case "read_notes":
-                if (boolValue)
-                    cgPlayer.InspectItem(notes);
-                else
-                    cgPlayer.ClearInspect();
-                break;
+            switch (name)
+            {
+                case "read_notes":
+                    if (boolVal)
+                        cgPlayer.InspectItem(notes);
+                    else
+                        cgPlayer.ClearInspect();
+                    break;
+                case "door_unlocked":
+                    if (boolVal)
+                    {
+                        doorRenderer.sprite = door_opened;
+                        doorRenderer.material = door_emission;
+                    }
+                    break;
+                case USE_TAG:
+                    Debug.Log($"can use = {boolVal}");
+                    break;
 
-
-            case USE_TAG:
-                Debug.Log($"can use = {boolValue}");
-                break;
-
+            }
         }
     }
 
@@ -610,7 +632,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private IEnumerator PlayEndSceneCoroutine()
     {
+        yield return null;
         _aud.Pause();
+        InventoryManager.Instance.UseItem(key);
         yield return new WaitForSecondsRealtime(1f);
 
         DialogueManager.Instance.NewStory(endSceneDialogue);

@@ -59,21 +59,15 @@ public class CurtainLightingController : MonoBehaviour
     //change the sprites, materials & lighting after opening the curtain
     private void CurtainOpened()
     {
-        bool curtain_open = ((Ink.Runtime.BoolValue)DialogueManager.Instance.
-            GetVariableState("curtain_open")).value;
+        windowRenderer.sprite = window_Open;
+        windowRenderer.material = window_Emission;
+        mirrorRenderer.material = mirror_Brighten;
+        bedRenderer.sprite = bed_brighten;
+        dust.Play();
 
-        if (curtain_open)
-        {
-            windowRenderer.sprite = window_Open;
-            windowRenderer.material = window_Emission;
-            mirrorRenderer.material = mirror_Brighten;
-            bedRenderer.sprite = bed_brighten;
-            dust.Play();
-
-            //enable the lighting
-            curtain_light.enabled = true;
-            floor_Light.SetActive(true);
-        }
+        //enable the lighting
+        curtain_light.enabled = true;
+        floor_Light.SetActive(true);
     }
 
     private void HandleVariableChanged(string name, Ink.Runtime.Object value)

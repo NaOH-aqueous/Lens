@@ -1,3 +1,4 @@
+using MaskTransitions;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,10 +14,9 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Slider")]
     [SerializeField] private Slider loadingSlider;
-
     [SerializeField] private float sliderSmoothSpeed = 0.15f;
-
     [SerializeField] private float finalHoldSeconds = 0.1f;
+    [SerializeField] private float totalTransitionTime = 2f;
 
     public void OnStartButton()
     {
@@ -39,7 +39,7 @@ public class MainMenuController : MonoBehaviour
 #endif
     }
 
-    public void Update()
+    public void Start()
     {
         InputSystem.EnableDevice(Mouse.current);
     }
@@ -68,7 +68,6 @@ public class MainMenuController : MonoBehaviour
         {
             float targetProgress = Mathf.Clamp01(operation.progress / 0.9f);
 
-            // 平滑地将 displayedProgress 逼近 targetProgress（使用非缩放时间）
             displayedProgress = Mathf.MoveTowards(displayedProgress, targetProgress, sliderSmoothSpeed * Time.unscaledDeltaTime);
 
             if (loadingSlider != null)
@@ -76,17 +75,17 @@ public class MainMenuController : MonoBehaviour
 
             if (operation.progress >= 0.9f)
             {
-                // 继续向 1 平滑移动
                 displayedProgress = Mathf.MoveTowards(displayedProgress, 1f, sliderSmoothSpeed * Time.unscaledDeltaTime);
 
                 if (loadingSlider != null)
                     loadingSlider.value = displayedProgress;
 
-                // 等待进度条显示满格后再切换场景（额外停留）
+
                 if (displayedProgress >= 0.999f)
                 {
                     yield return new WaitForSecondsRealtime(finalHoldSeconds);
                     yield return null;
+                    TransitionManager.Instance.PlayEndHalfTransition(totalTransitionTime / 2);
                     operation.allowSceneActivation = true;
                 }
             }

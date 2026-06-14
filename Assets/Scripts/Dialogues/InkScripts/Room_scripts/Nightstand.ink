@@ -117,9 +117,14 @@ You took it away. #item:clearDisplay
 + [Back] ->On_the_table
 
 === clock ===
+{ - not time_get:
 Take TIME with you?
 * [Yes]
 ~ time_get = true
-TIME has joined your team! #audio:shiny2
+TIME has joined your team! #audio:shiny2 #item:time
 Time's up! Lets go! #speaker:Time #audio:alarm
 -> END
+- else: 
+There's no time to waste! LET'S GO! #speaker:Time #audio:alarm
+-> END
+}
