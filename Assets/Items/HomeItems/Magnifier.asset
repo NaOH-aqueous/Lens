@@ -15,4 +15,4 @@ MonoBehaviour:
   item_Name: Magnifier
   item_Sprite: {fileID: -4976215857643454600, guid: 5d3226fec81ae5445b9cdbf627c01e87, type: 3}
   item_Icon: {fileID: 5226440340088765713, guid: 703f244138fd371468110e2307dfd2b6, type: 3}
-  item_Dialogue: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: a307451fa13988c44b9033e9b2e3bc53, type: 3}

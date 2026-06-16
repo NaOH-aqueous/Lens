@@ -46,6 +46,7 @@ public class MainMenuController : MonoBehaviour
 
     private IEnumerator LoadSceneAsync(string sceneName)
     {
+
         if (loadingScreen != null)
             loadingScreen.SetActive(true);
 
@@ -85,7 +86,6 @@ public class MainMenuController : MonoBehaviour
                 {
                     yield return new WaitForSecondsRealtime(finalHoldSeconds);
                     yield return null;
-                    TransitionManager.Instance.PlayEndHalfTransition(totalTransitionTime / 2);
                     operation.allowSceneActivation = true;
                 }
             }

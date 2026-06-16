@@ -7,6 +7,8 @@ public class HomePuzzleController : PuzzleController
     public GameObject windowPuzzle;
     public GameObject diaryPuzzle;
     public GameObject plantPuzzle;
+    public GameObject letter;
+    public GameObject bg;
 
     private CanvasGroup puzzleCanvas;
 
@@ -15,6 +17,7 @@ public class HomePuzzleController : PuzzleController
         windowPuzzle.SetActive(false);
         diaryPuzzle.SetActive(false);
         plantPuzzle.SetActive(false);
+        letter.SetActive(false);
 
         puzzleCanvas = GetComponent<CanvasGroup>();
     }

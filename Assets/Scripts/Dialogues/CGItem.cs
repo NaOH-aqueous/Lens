@@ -98,7 +98,6 @@ public class CGItem : MonoBehaviour
         else
         {
             DialogueManager.Instance.NewStory(displayItem.item_Dialogue);
-            Debug.Log("no item dialogue");
         }
     }
 
@@ -245,6 +244,7 @@ public class CGItem : MonoBehaviour
     {
         previousMode = currentMode;
         previousItem = displayItem;
+        displayItem = item;
 
         PlayItemDialogue = true;
 

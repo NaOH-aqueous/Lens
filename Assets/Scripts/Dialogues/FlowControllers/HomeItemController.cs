@@ -1,8 +1,10 @@
 using Ink.Runtime;
 using JetBrains.Annotations;
+using MaskTransitions;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.Examples;
+using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,7 +41,11 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private GameObject windowPuzzle;
     [SerializeField] private GameObject diaryPuzzle;
     [SerializeField] private GameObject plantPuzzle;
+    [SerializeField] private GameObject letter;
+    [SerializeField] private GameObject bg;
 
+    [Header("Dialogues")]
+    [SerializeField] private TextAsset introDialogue;
     [SerializeField] private TextAsset magnifierDialogue;
     [SerializeField] private TextAsset origamiPlantingDialogue;
     [SerializeField] private TextAsset plantGrowingDialogue;
@@ -47,6 +53,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private TextAsset pixieFeedDialogue;
     [SerializeField] private TextAsset keyGetDialogue;
     [SerializeField] private TextAsset endSceneDialogue;
+    [SerializeField] private TextAsset endDemoDialogue;
 
     [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
@@ -89,7 +96,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
-    private LensControl lensControl;
+    private bool isIntroPlayed = false;
     private bool isFruitFed = false;
 
     private void OnEnable()
@@ -152,6 +159,11 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private void Start()
     {
         _aud = GetComponent<AudioSource>();
+
+        if (!isIntroPlayed)
+        {
+            StartCoroutine(IntroSceneCoroutine());
+        }
 ;    }
 
     public bool CanUseItem()
@@ -222,6 +234,28 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         Debug.Log(
             $"No rule matched for {inventoryItem.item_Name}"
         );
+    }
+
+    private IEnumerator IntroSceneCoroutine()
+    {
+        bg.SetActive(true);
+        yield return null;
+        GameManager.instance.PushState(GameStateType.ItemDisplay);
+        _aud.Stop();
+        yield return null;
+        AudioManager.Instance.Play("alarm");
+        yield return new WaitForSecondsRealtime(2f);
+        DialogueManager.Instance.NewStory(introDialogue);
+        DialogueManager.Instance.OnDialogueStatusChanged += HandleIntroDialogueFinished;
+    }
+
+    private void HandleIntroDialogueFinished(bool isPlaying)
+    {
+        TransitionManager.Instance.PlayEndHalfTransition(0.5f);
+        bg.SetActive(false);
+        _aud.Play();
+        GameManager.instance.PopState(GameStateType.ItemDisplay);
+        DialogueManager.Instance.OnDialogueStatusChanged -= HandleIntroDialogueFinished;
     }
 
     private void HandleItemTagChanged(string newTag)
@@ -637,7 +671,29 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         InventoryManager.Instance.UseItem(key);
         yield return new WaitForSecondsRealtime(1f);
 
+
         DialogueManager.Instance.NewStory(endSceneDialogue);
+    }
+
+    private void EndDemo()
+    {
+        StartCoroutine(EndDemoCoroutine());
+    }
+
+    private IEnumerator EndDemoCoroutine()
+    {
+        yield return null;
+        TransitionManager.Instance.PlayTransition(1.5f);
+        yield return new WaitForSecondsRealtime(0.5f);
+        bg.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(0.5f);
+        DialogueManager.Instance.NewStory(endDemoDialogue);
+    }
+
+    private void ReadLetter()
+    {
+        letter.SetActive(true);
     }
 
     public void BindFunctions(Story story)
@@ -668,5 +724,11 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         story.BindExternalFunction(
             "EndScene", () => PlayEndScene());
+
+        story.BindExternalFunction(
+            "EndDemo", () => EndDemo());
+
+        story.BindExternalFunction(
+           "ReadLetter", () => ReadLetter());
     }
 }
