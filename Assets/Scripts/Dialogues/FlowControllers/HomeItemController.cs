@@ -97,22 +97,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void OnEnable()
     {
-        if (DialogueManager.Instance != null)
-        {
-            DialogueManager.Instance.OnItemTagChanged += HandleItemTagChanged;
-            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
-            DialogueManager.Instance.OnCutsceneTriggered += HandleCutscene;
-        }
-        if (windowPuzzle != null)
-        {
-            FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
-            focusPuzzle.OnPuzzleCompleted += HandlePuzzleCompleted;
-        }
-        if (lens != null)
-        {
-            lens.OnLensTriggered += HandleLensTriggered;
-            lens.OnItemTriggered += HandleItemTriggered;
-        }
+
     }
 
     private void OnDisable()
@@ -155,6 +140,23 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private void Start()
     {
         _aud = GetComponent<AudioSource>();
+
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnItemTagChanged += HandleItemTagChanged;
+            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+            DialogueManager.Instance.OnCutsceneTriggered += HandleCutscene;
+        }
+        if (windowPuzzle != null)
+        {
+            FocusPuzzle focusPuzzle = windowPuzzle.GetComponent<FocusPuzzle>();
+            focusPuzzle.OnPuzzleCompleted += HandlePuzzleCompleted;
+        }
+        if (lens != null)
+        {
+            lens.OnLensTriggered += HandleLensTriggered;
+            lens.OnItemTriggered += HandleItemTriggered;
+        }
 
         if (!isIntroPlayed)
         {

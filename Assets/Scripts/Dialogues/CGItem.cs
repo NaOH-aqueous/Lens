@@ -74,7 +74,6 @@ public class CGItem : MonoBehaviour
             //display item in the player
             itemDisplayer.gameObject.SetActive(true);
             itemDisplayer.sprite = new_Item.item_Sprite;
-            itemDisplayer.SetNativeSize();
             displayItem = new_Item;
 
             if (!CGDisplayer.isActiveAndEnabled)

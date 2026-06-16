@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.LowLevel;
@@ -295,6 +294,25 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene(gameSceneName);
+    }
+
+    public void ReturnToMain()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.CloseInventory();
+        }
+
+        if (blurVFX != null)
+        {
+            blurVFX.enabled = false;
+        }
+
+        stateStack.Clear();
+        PushState(GameStateType.MainMenu);
+
+        // Load main menu scene
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 
     public void QuitGame()
