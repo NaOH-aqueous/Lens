@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Pixie_key_0005_0: 201017997782646428
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
