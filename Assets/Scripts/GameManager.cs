@@ -254,7 +254,7 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(PauseGame());
                 break;
             case GameStateType.Inventory:
-                InventoryManager.Instance.CloseInventory();
+                StartCoroutine(InventoryManager.Instance.CloseInventory());
                 break;
 
             case GameStateType.ItemDisplay:
@@ -300,7 +300,7 @@ public class GameManager : MonoBehaviour
     {
         if (InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.CloseInventory();
+            StartCoroutine(InventoryManager.Instance.CloseInventory());
         }
 
         if (blurVFX != null)

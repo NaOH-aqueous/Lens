@@ -101,7 +101,10 @@ public class DialogueManager : MonoBehaviour
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
         nameLabel.enabled = false;
+
+
     }
+
 
     private void Update()
     {
@@ -121,6 +124,7 @@ public class DialogueManager : MonoBehaviour
             !animPlaying &&
            (InputManager.Instance.IsSubmitPressed()))
         {
+            Debug.Log("continuing");
             ContinueStory();
         }
 
@@ -153,7 +157,6 @@ public class DialogueManager : MonoBehaviour
             speakerLabel.text = "";
         }
     }
-
     private string[] ParseTags(string tag) //return the parsed tags
     {
         // parse the tag

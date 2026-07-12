@@ -116,10 +116,10 @@ TextureImporter:
       name: Line_Pressed_0
       rect:
         serializedVersion: 2
-        x: 31
-        y: 17
+        x: 33
+        y: 32
         width: 1019
-        height: 142
+        height: 132
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 125, y: 22, z: 125, w: 22}

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item_Name: time
   item_Sprite: {fileID: -3092223754324887936, guid: 62d4d96a877297448b0b39148f5e23d5, type: 3}
-  item_Icon: {fileID: 0}
-  item_Dialogue: {fileID: 0}
+  item_Icon: {fileID: 2168064623994967576, guid: f5e8b672fe1b1664eb94351188fda919, type: 3}
+  item_Dialogue: {fileID: 4900000, guid: e2e968ca283533f47acc8f2c22308919, type: 3}

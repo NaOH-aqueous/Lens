@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a7c20a8bd1f46b049bd907d40c5b8aed
+guid: 89cbe3a124d189041ab1d7535d0f3317
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3236181160820056653
-    second: UnderTheBed_monster_0
+      213: -4846075140207155344
+    second: Diary_sticker1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -77,7 +77,7 @@ TextureImporter:
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: UnderTheBed_monster_0
+      name: Diary_sticker1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 3037
-        height: 1993
+        x: 704
+        y: 250
+        width: 103
+        height: 196
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d42ad77ae9939ec20800000000000000
-      internalID: 3236181160820056653
+      spriteID: 077e919e5584fbcb0800000000000000
+      internalID: -4846075140207155344
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      UnderTheBed_monster_0: 3236181160820056653
+      Diary_sticker1_0: -4846075140207155344
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

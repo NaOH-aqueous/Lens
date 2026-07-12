@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0177f9bacfbf1fa438b3493d4f5f1279
+guid: d557d86686b9a274b8bfe2ecf788ee82
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4710839731607381225
-    second: CornerOfTheRoom_0
+      213: -3675728329477958583
+    second: MenuButton_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -77,7 +77,7 @@ TextureImporter:
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CornerOfTheRoom_0
+      name: MenuButton_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 3037
-        height: 1993
+        x: 15
+        y: 16
+        width: 584
+        height: 158
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 71bdeb3293cbf9eb0800000000000000
-      internalID: -4710839731607381225
+      spriteID: 94450a62f803dfcc0800000000000000
+      internalID: -3675728329477958583
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      CornerOfTheRoom_0: -4710839731607381225
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

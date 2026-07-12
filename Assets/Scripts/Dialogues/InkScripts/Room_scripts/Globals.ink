@@ -28,4 +28,6 @@ VAR key_get = false
 
 VAR door_unlocked = false
 
+VAR fruit_get = false
+
 VAR time_get = false

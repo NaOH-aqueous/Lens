@@ -1,5 +1,6 @@
 using Ink.Runtime;
 using MaskTransitions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -92,13 +93,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
-    private bool isIntroPlayed = false;
+    public bool isIntroPlayed = false;
     private bool isFruitFed = false;
-
-    private void OnEnable()
-    {
-
-    }
 
     private void OnDisable()
     {
@@ -163,6 +159,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             StartCoroutine(IntroSceneCoroutine());
         }
 ;    }
+
 
     public bool CanUseItem()
     {
@@ -314,7 +311,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
                 break;
             case (PLANTER_WITH_FLOWER):
                 InventoryManager.Instance.UseItem(origamiFlower);
-                InventoryManager.Instance.CloseInventory();
+                StartCoroutine(InventoryManager.Instance.CloseInventory());
                 planter.item_Sprite = planterWithFlower;
                 cgPlayer.DisplayItemInfo(planter);
                 break;
@@ -370,12 +367,20 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     public void SetWindowClean()
     {
+        StartCoroutine(SetWindowCleanCoroutine());
+    }
+
+    private IEnumerator SetWindowCleanCoroutine()
+    {
         window.item_Sprite = windowClean;
+        yield return null;
         cgPlayer.CGDisplay(window);
         DialogueManager.Instance.SetBoolVariable("window_clean", true);
+        yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
 
-        InventoryManager.Instance.CloseInventory();
         windowPuzzle.SetActive(true);
+        yield return null;
+        windowPuzzle.GetComponent<FocusPuzzle>().SetButtonActive();
         homePuzzle.Open();
     }
 
@@ -505,7 +510,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private IEnumerator InspectRoutine()
     {
-        InventoryManager.Instance.CloseInventory();
+        yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
 
         yield return null;
 
@@ -521,7 +526,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private IEnumerator PlantFlowerCoroutine()
     {
         yield return null;
-        InventoryManager.Instance.CloseInventory();
+        yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
         yield return new WaitForSecondsRealtime(0.5f);
         DialogueManager.Instance.NewStory(origamiPlantingDialogue);
     }
@@ -597,7 +602,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private IEnumerator MagnifierUICoroutine()
     {
         yield return null;
-        InventoryManager.Instance.CloseInventory();
+        yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
         yield return null;
         lens.EnableLens();
     }
@@ -650,10 +655,10 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private IEnumerator StartFruitDialogue()
     {
         yield return null;
-        InventoryManager.Instance.CloseInventory();
+        yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
 
         yield return new WaitForSecondsRealtime(0.5f);
-
+        Debug.Log(InputRouter.Instance.CurrentLayer);
         DialogueManager.Instance.NewStory(pixieFeedDialogue);
     }
 
@@ -694,6 +699,21 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         letter.SetActive(true);
     }
 
+    private void FoldPaper()
+    {
+        StartCoroutine(FoldPaperCoroutine());
+    }
+
+    private IEnumerator FoldPaperCoroutine()
+    {
+        yield return null;
+        cgPlayer.TransitionToInpsectMode(origamiFlower);
+        yield return null;
+        InventoryManager.Instance.UseItem(stackPaper);
+        yield return null;
+        FoldOrigamiFlower();
+    }
+
     public void BindFunctions(Story story)
     {
         story.BindExternalFunction(
@@ -728,5 +748,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         story.BindExternalFunction(
            "ReadLetter", () => ReadLetter());
+        story.BindExternalFunction(
+            "FoldPaper", () => FoldPaper());
     }
 }

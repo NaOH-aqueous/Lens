@@ -1,0 +1,1 @@
+This is the origami flower you just made. It may seems lifeless, but actually, it just needs some soil and sunlight.

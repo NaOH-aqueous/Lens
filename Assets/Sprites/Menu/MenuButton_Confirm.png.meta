@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 89cbe3a124d189041ab1d7535d0f3317
+guid: 5699a61503c799d4eba312291be453f9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4846075140207155344
-    second: Diary_sticker1_0
+      213: -8774774376664128869
+    second: MenuButton_Confirm_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 3
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Diary_sticker1_0
+      name: MenuButton_Confirm_0
       rect:
         serializedVersion: 2
-        x: 704
-        y: 250
-        width: 103
-        height: 196
+        x: 15
+        y: 16
+        width: 584
+        height: 158
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 077e919e5584fbcb0800000000000000
-      internalID: -4846075140207155344
+      spriteID: b922cb6f13db93680800000000000000
+      internalID: -8774774376664128869
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Diary_sticker1_0: -4846075140207155344
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

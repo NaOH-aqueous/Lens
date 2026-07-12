@@ -15,4 +15,4 @@ MonoBehaviour:
   item_Name: planter
   item_Sprite: {fileID: -7592670777957325758, guid: c99962873bc2d0448b5f2022d4e06f91, type: 3}
   item_Icon: {fileID: 1106500651383388825, guid: 58a898b42798bf447924a6cde5003242, type: 3}
-  item_Dialogue: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: a4deb633e5d720840af33508d686c122, type: 3}

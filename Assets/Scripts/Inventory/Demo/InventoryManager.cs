@@ -64,6 +64,10 @@ public class InventoryManager : MonoBehaviour
 
     void Update()
     {
+        if (DialogueManager.Instance.CheckDialoguePlaying())
+        {
+            return;
+        }
         if (InputManager.Instance.IsInventoryPressed() && !isTransitioning)
         {
             StartCoroutine(ToggleInventory());
@@ -87,21 +91,29 @@ public class InventoryManager : MonoBehaviour
         {
             _anim.SetTrigger("Outro");
             InputManager.Instance.RegisterInteractPressed();
-            GameManager.instance.PopState(GameStateType.Inventory);
             while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("Outro"))
                 yield return null;
+            EventSystem.current.SetSelectedGameObject(null);
             InventoryMenu.SetActive(false);
+            GameManager.instance.PopState(GameStateType.Inventory);
         }
 
         isTransitioning = false;
     }
 
-    public void CloseInventory()
+
+    public IEnumerator CloseInventory()
     {
-        if (isInventoryOpen)
-        {
-            StartCoroutine(ToggleInventory());
-        }
+        if (!isInventoryOpen)
+            yield break;
+
+        isTransitioning = true;
+
+        yield return ToggleInventory();
+
+        yield return null;
+
+        isTransitioning = false;
     }
 
     public IEnumerator SelectFirstSlotNextFrame()

@@ -15,3 +15,4 @@ MonoBehaviour:
   item_Name: sock
   item_Sprite: {fileID: -8995742995062308606, guid: 2ad352cacf6b86541a0f76384b0f18e1, type: 3}
   item_Icon: {fileID: 305232350454991439, guid: b0ea8c9a9c15c9341a040192f8dd22c6, type: 3}
+  item_Dialogue: {fileID: 4900000, guid: dc6de973bfbfbc341a4d5172397cfc21, type: 3}

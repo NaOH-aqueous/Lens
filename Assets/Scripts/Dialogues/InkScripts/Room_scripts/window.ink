@@ -37,11 +37,18 @@ The window is covered by the curtain, isolating the room from the outside world.
  * [Leave] ->END
  
  === withplanter ===
-It's extraordinarily bright down here. I'm sure the sunshine could help it to thrive. #speaker:Lens
+ {fruit_get == false:
+It's extraordinarily bright down here. I'm sure the sunshine could help it to thrive. #speaker:Lens #portrait:normal
 * [Get some sunlight]
 While holding the planter, you take a step closer to the window, exposing the planter under the sunlight.
+~ fruit_get = true
     #cutscene:plantGrow
 -> END
+
+- else: 
+You looked through the window. Nothing's better than the fresh air and sunshine in Monday morning. #item:window_clear
+-> END
+}
 /*=== inspect ===
 { window_clean: 
 You cleaned up the window for a better view of the outdoor scene.

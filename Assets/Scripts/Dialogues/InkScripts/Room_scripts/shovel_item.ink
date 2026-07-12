@@ -1,0 +1,2 @@
+This is a handled shovel. You brought it home with excitement few months ago. However, after a while it just have gone missing.
+Luckily, it got returned to you just now so you could continue doing your daily routine.

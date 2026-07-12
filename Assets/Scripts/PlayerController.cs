@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GameManager.instance.CurrentState != GameStateType.Playing)
+            return;
+
         if (!isInDialogue)
         {
             moveValue = moveAction.ReadValue<Vector2>();

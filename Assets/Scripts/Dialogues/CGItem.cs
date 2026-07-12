@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class CGItem : MonoBehaviour
 {
@@ -43,11 +44,16 @@ public class CGItem : MonoBehaviour
         itemInspector.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
         tip.gameObject.SetActive(false);
+
     }
 
     private void Update()
     {
         if(GameManager.instance.CurrentState != GameStateType.ItemDisplay)
+        {
+            return;
+        }
+        if (DialogueManager.Instance.CheckDialoguePlaying())
         {
             return;
         }
@@ -58,10 +64,7 @@ public class CGItem : MonoBehaviour
 
         if (InputManager.Instance.IsSubmitPressed())
         {
-            if (!DialogueManager.Instance.CheckDialoguePlaying())
-            {
-                ItemInfoDialogue();
-            }
+            ItemInfoDialogue();
         }
     }
 
@@ -102,7 +105,10 @@ public class CGItem : MonoBehaviour
 
     private IEnumerator ClearDisplayCoroutine()
     {
-        yield return StartCoroutine(Fade(1f, 0f, 0.25f));
+        // fade out using TweenHelper (DOTween) with default easing, unscaled time
+        cgCanvasGroup.alpha = 1f;
+        var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+        yield return fadeOut.WaitForCompletion();
 
         itemDisplayer.sprite = null;
         CGDisplayer.sprite = null;
@@ -157,7 +163,6 @@ public class CGItem : MonoBehaviour
         InputRouter.Instance.PushLayer(InputLayer.InventoryBlock);
 
         itemViewer.sprite = inspect_Item.item_Sprite;
-        itemViewer.SetNativeSize();
         tip.gameObject.SetActive(true);
 
         EnterDisplayMode();
@@ -173,9 +178,11 @@ public class CGItem : MonoBehaviour
 
     private IEnumerator ClearInspectCoroutine()
     {
-        yield return StartCoroutine(Fade(1f, 0f, 0.25f));
+        // fade out using TweenHelper (DOTween) with default easing, unscaled time
+        cgCanvasGroup.alpha = 1f;
+        var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+        yield return fadeOut.WaitForCompletion();
 
-        Image itemViewer = itemInspector.GetComponentInChildren<Image>();
         itemViewer.sprite = null;
         itemInspector.SetActive(false);
         tip.gameObject.SetActive(false);
@@ -194,9 +201,11 @@ public class CGItem : MonoBehaviour
 
     private IEnumerator ExitInspectCoroutine()
     {
-        yield return StartCoroutine(Fade(1f, 0f, 0.25f));
+        // fade out using TweenHelper (DOTween) with default easing, unscaled time
+        cgCanvasGroup.alpha = 1f;
+        var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+        yield return fadeOut.WaitForCompletion();
 
-        Image itemViewer = itemInspector.GetComponentInChildren<Image>();
         itemViewer.sprite = null;
 
         itemInspector.SetActive(false);
@@ -208,7 +217,7 @@ public class CGItem : MonoBehaviour
 
     public void CGDisplay(Item DisplayItem)
     {
-        PlayItemDialogue = false;
+        PlayItemDialogue = true;
         if (DisplayItem.item_Sprite != null)
         {
             if (!CGDisplayer.gameObject.activeSelf)
@@ -255,7 +264,6 @@ public class CGItem : MonoBehaviour
 
         itemInspector.gameObject.SetActive(true);
         itemViewer.sprite = item.item_Sprite;
-        itemViewer.SetNativeSize();
 
         tip.gameObject.SetActive(true);
 
@@ -265,54 +273,39 @@ public class CGItem : MonoBehaviour
     public void PlayTooltip()
     {
         tip.gameObject.SetActive(true);
+        PlayItemDialogue = true;
     }
 
-    private IEnumerator Fade(float start, float end, float duration)
-    {
-        float elapsed = 0f;
-
-        cgCanvasGroup.alpha = start;
-        cgCanvasGroup.blocksRaycasts = true;
-        cgCanvasGroup.interactable = false;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-
-            cgCanvasGroup.alpha = Mathf.Lerp(start, end, elapsed / duration);
-
-            yield return null;
-        }
-
-        cgCanvasGroup.alpha = end;
-
-        cgCanvasGroup.blocksRaycasts = end > 0f;
-    }
+    
 
     private void RestorePreviousDisplay()
     {
         switch (previousMode)
         {
             case DisplayMode.CG:
-
+                displayItem = previousItem;
                 CGDisplayer.gameObject.SetActive(true);
                 CGDisplayer.sprite = previousItem.item_Sprite;
                 tip.gameObject.SetActive(true);
 
                 currentMode = DisplayMode.CG;
 
-                StartCoroutine(Fade(0f, 1f, 0.25f));
+                // fade in using TweenHelper (DOTween), don't block
+                cgCanvasGroup.alpha = 0f;
+                TweenHelper.FadeCanvasGroup(cgCanvasGroup, 1f, 0.25f, true, DG.Tweening.Ease.OutQuad);
                 break;
 
             case DisplayMode.Item:
-
+                displayItem = previousItem;
                 itemDisplayer.gameObject.SetActive(true);
                 itemDisplayer.sprite = previousItem.item_Sprite;
                 tip.gameObject.SetActive(true);
 
                 currentMode = DisplayMode.Item;
 
-                StartCoroutine(Fade(0f, 1f, 0.25f));
+                // fade in using TweenHelper (DOTween), don't block
+                cgCanvasGroup.alpha = 0f;
+                TweenHelper.FadeCanvasGroup(cgCanvasGroup, 1f, 0.25f, true, DG.Tweening.Ease.OutQuad);
                 break;
 
             default:
@@ -324,21 +317,22 @@ public class CGItem : MonoBehaviour
 
     private void EnterDisplayMode()
     {
-         StartCoroutine(Fade(0f, 1f, 0.25f));
+         // fade in using TweenHelper (DOTween), don't block
+         cgCanvasGroup.alpha = 0f;
+         TweenHelper.FadeCanvasGroup(cgCanvasGroup, 1f, 0.25f, true, DG.Tweening.Ease.OutQuad);
          GameManager.instance.PushState(GameStateType.ItemDisplay);
 
     }
 
     private void ExitDisplayMode()
     {
+        previousMode = currentMode = DisplayMode.None;
+        displayItem = null;
+        currentMode = DisplayMode.None;
         InputManager.Instance.RegisterInteractPressed();
 
         InputManager.Instance.RegisterSubmitPressed();
 
-        GameManager.instance.PopState(
-            GameStateType.ItemDisplay
-        );
-
-        currentMode = DisplayMode.None;
+        GameManager.instance.PopState(GameStateType.ItemDisplay);
     }
 }
