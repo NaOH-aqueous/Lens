@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,6 +17,12 @@ public class InputManager : MonoBehaviour
     private bool CancelPressed;
     private bool InventoryPressed;
 
+    // Event-based API (subscribers will be notified when the input is performed)
+    public event Action InteractPerformed;
+    public event Action SubmitPerformed;
+    public event Action CancelPerformed;
+    public event Action InventoryPerformed;
+
     void Awake()
     {
         //make it a singleton gameobject
@@ -31,18 +38,53 @@ public class InputManager : MonoBehaviour
         CancelAction = InputSystem.actions.FindAction("Cancel");
         InventoryAction = InputSystem.actions.FindAction("Inventory");
 
-        interactAction.performed += OnInteract;
-        SubmitAction.performed += OnConfirm;
-        CancelAction.performed += OnCancel;
-        InventoryAction.performed += OnInventory;
+        if (interactAction != null)
+            interactAction.performed += OnInteract;
+        else
+            Debug.LogWarning("InputManager: 'Interact' action not found.");
+
+        if (SubmitAction != null)
+            SubmitAction.performed += OnConfirm;
+        else
+            Debug.LogWarning("InputManager: 'Submit' action not found.");
+
+        if (CancelAction != null)
+            CancelAction.performed += OnCancel;
+        else
+            Debug.LogWarning("InputManager: 'Cancel' action not found.");
+
+        if (InventoryAction != null)
+            InventoryAction.performed += OnInventory;
+        else
+            Debug.LogWarning("InputManager: 'Inventory' action not found.");
+    }
+
+    void OnDestroy()
+    {
+        // Unsubscribe to avoid memory leaks / dangling delegates
+        if (interactAction != null)
+            interactAction.performed -= OnInteract;
+
+        if (SubmitAction != null)
+            SubmitAction.performed -= OnConfirm;
+
+        if (CancelAction != null)
+            CancelAction.performed -= OnCancel;
+
+        if (InventoryAction != null)
+            InventoryAction.performed -= OnInventory;
     }
 
     void OnEnable()
     {
-        interactAction.Enable();
-        SubmitAction.Enable();
-        CancelAction.Enable();
-        InventoryAction.Enable();
+        if (interactAction != null)
+            interactAction.Enable();
+        if (SubmitAction != null)
+            SubmitAction.Enable();
+        if (CancelAction != null)
+            CancelAction.Enable();
+        if (InventoryAction != null)
+            InventoryAction.Enable();
 
         // To disable the mouse:
         InputSystem.DisableDevice(Mouse.current);
@@ -50,10 +92,14 @@ public class InputManager : MonoBehaviour
 
     void OnDisable()
     {
-        interactAction.Disable();
-        SubmitAction.Disable();
-        CancelAction.Disable();
-        InventoryAction.Disable();
+        if (interactAction != null)
+            interactAction.Disable();
+        if (SubmitAction != null)
+            SubmitAction.Disable();
+        if (CancelAction != null)
+            CancelAction.Disable();
+        if (InventoryAction != null)
+            InventoryAction.Disable();
 
         // To enable the mouse:
         //InputSystem.EnableDevice(Mouse.current);
@@ -67,6 +113,7 @@ public class InputManager : MonoBehaviour
         if (context.performed)
         {
             InteractPressed = true;
+            InteractPerformed?.Invoke();
         }
         else
         {
@@ -75,13 +122,14 @@ public class InputManager : MonoBehaviour
     }
 
     private void OnConfirm(InputAction.CallbackContext context)
-    {
+    {       
         if (InputRouter.Instance.BlocksEverything())
             return;
 
         if (context.performed)
         {
             SubmitPressed = true;
+            SubmitPerformed?.Invoke();
         }
         else
         {
@@ -97,6 +145,7 @@ public class InputManager : MonoBehaviour
         if (context.performed)
         {
             CancelPressed = true;
+            CancelPerformed?.Invoke();
         }
         else
         {
@@ -114,6 +163,7 @@ public class InputManager : MonoBehaviour
         if (context.performed)
         {
             InventoryPressed = true;
+            InventoryPerformed?.Invoke();
         }
         else
         {
@@ -121,15 +171,16 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    // Backwards-compatible polling API retained (still clears the flag when read)
     public bool IsInteractPressed()
     {
-        bool result = InteractPressed; 
+        bool result = InteractPressed;
         InteractPressed = false;
         return result;
     }
 
     public bool IsSubmitPressed()
-    { 
+    {
         bool result = SubmitPressed;
         SubmitPressed = false;
         return result;

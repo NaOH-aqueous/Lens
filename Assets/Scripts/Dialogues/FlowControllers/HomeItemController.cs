@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
@@ -14,6 +15,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private HomePuzzleController homePuzzle;
     [SerializeField] private HomeLensController lens;
     [SerializeField] private Transform focusTargetAlarm;
+    [SerializeField] private GameObject overlayVFX;
 
     [Header("Sprites")]
     [SerializeField] private Sprite windowDust;
@@ -55,6 +57,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
     [SerializeField] private AudioClip home;
+    [SerializeField] private AudioClip voidness;
 
     [Header("Items")]
     public Item papertowel;
@@ -96,6 +99,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public bool isIntroPlayed = false;
     private bool isFruitFed = false;
 
+    private bool isInspecting = false;
+
     private void OnDisable()
     {
         if (DialogueManager.Instance != null)
@@ -124,6 +129,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         rules.Add(new ShovelOnPlanterRule());
         rules.Add(new MagnifierOnWall());
         rules.Add(new FruitOnWall());
+        rules.Add(new MagnifierOnWindow());
 
         window.item_Sprite = windowDust;
         under_the_bed.item_Sprite = underTheBed;
@@ -505,17 +511,28 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     public void InspectItem()
     {
+        if (isInspecting)
+            return;
+
         StartCoroutine(InspectRoutine());
     }
 
     private IEnumerator InspectRoutine()
     {
-        yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
+        isInspecting = true;
+        try
+        {
+            yield return StartCoroutine(InventoryManager.Instance.CloseInventory());
 
-        yield return null;
+            yield return null;
 
-        Item currentItem = InventoryManager.Instance.GetCurrentItem();
-        cgPlayer.TransitionToInpsectMode(currentItem);
+            Item currentItem = InventoryManager.Instance.GetCurrentItem();
+            cgPlayer.TransitionToInpsectMode(currentItem);
+        }
+        finally
+        {
+            isInspecting = false;
+        }
     }
 
     public void PlantFlower()
@@ -586,6 +603,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     public void MagnifyCorner()
     {
         StartCoroutine(MagnifierUICoroutine());
+
         if (!isFruitFed)
         {
             lens.SetPixieAltSprite(true);
@@ -596,7 +614,6 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             lens.SetPixieAltSprite(false);
             lens.SetPixieLineup(true);
         }
-
     }
 
     private IEnumerator MagnifierUICoroutine()
@@ -642,6 +659,14 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void HandlePixieDialogueComplete(bool isplaying)
     {
+        if (!isFruitFed)
+        {
+            lens.SetPixieAltSprite(true);
+        }
+        else
+        {
+            lens.SetPixieLineup(true);
+        }
         lens.EnableLens();
         DialogueManager.Instance.OnDialogueStatusChanged -= HandlePixieDialogueComplete;
     }
@@ -712,6 +737,38 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         InventoryManager.Instance.UseItem(stackPaper);
         yield return null;
         FoldOrigamiFlower();
+    }
+
+    public void MagnifyWindow()
+    {
+        StartCoroutine(MagnifierWindowCoroutine());
+    }
+
+    private IEnumerator MagnifierWindowCoroutine()
+    {
+        StartCoroutine(MagnifierUICoroutine());
+
+        yield return null;
+
+        overlayVFX.SetActive(true);
+        lens.SetVoidnessAlt(true);
+        _aud.Pause();
+        _aud.clip = voidness;
+        yield return null;
+        _aud.Play();
+
+        lens.OnLensClosed += HandleWindowLensExit;
+    }
+
+
+    public void HandleWindowLensExit()
+    {
+        overlayVFX.SetActive(false);
+        _aud.Pause();
+        _aud.clip = home;
+        _aud.Play();
+
+        lens.OnLensClosed -= HandleWindowLensExit;
     }
 
     public void BindFunctions(Story story)

@@ -47,8 +47,9 @@ public class MainMenuController : MonoBehaviour
         {
             InputSystem.DisableDevice(Mouse.current);
         }
+
+        //delete this line if build for web
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
 
         EventSystem.current.SetSelectedGameObject(StartButton.gameObject);
     }

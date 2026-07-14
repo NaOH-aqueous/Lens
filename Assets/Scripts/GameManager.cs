@@ -52,6 +52,9 @@ public class GameManager : MonoBehaviour
 
     private bool isTransitioning;
 
+    // subscription guard for cancel event
+    private bool cancelSubscribed = false;
+
     private void Awake()
     {
         if (instance == null)
@@ -86,12 +89,13 @@ public class GameManager : MonoBehaviour
             m_dialogueManager.OnDialogueStatusChanged += HandleDialogueStateChanged;
         }
 
+        SubscribeCancel();
     }
-
 
     private void OnEnable()
     {
         OnGameStateChanged += ApplyState;
+        SubscribeCancel();
     }
 
     private void OnDisable()
@@ -101,14 +105,43 @@ public class GameManager : MonoBehaviour
         {
             m_dialogueManager.OnDialogueStatusChanged -= HandleDialogueStateChanged;
         }
+
+        UnsubscribeCancel();
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if (InputManager.Instance.IsCancelPressed())
-        {
-            ExitCurrentMode();
-        }
+        UnsubscribeCancel();
+    }
+
+    private void SubscribeCancel()
+    {
+        if (cancelSubscribed)
+            return;
+
+        if (InputManager.Instance == null)
+            return;
+
+        InputManager.Instance.CancelPerformed -= OnCancelPerformed;
+        InputManager.Instance.CancelPerformed += OnCancelPerformed;
+        cancelSubscribed = true;
+    }
+
+    private void UnsubscribeCancel()
+    {
+        if (!cancelSubscribed)
+            return;
+
+        if (InputManager.Instance != null)
+            InputManager.Instance.CancelPerformed -= OnCancelPerformed;
+
+        cancelSubscribed = false;
+    }
+
+    private void OnCancelPerformed()
+    {
+        // delegate to the existing ExitCurrentMode logic
+        ExitCurrentMode();
     }
 
     public void PushState(GameStateType newState)

@@ -5,7 +5,7 @@ EXTERNAL TakeFlower()
 {
 - shovel_get && origami_get:
 You plant the origami flower into the soil. #audio:shiny #item:planter_with_flower
-The light is too dim here.#speaker:Lens
+The light is too dim here.#speaker:Lens #portrait:normal
 Mabye take it to somewhere brighter could help it grow better.#speaker:Lens #portrait:normal
 * [Take it away]
     ~ planter_get = true

@@ -26,7 +26,6 @@ public class DialogueTrigger : MonoBehaviour
 
     private void Update()
     {
-
         if (GameManager.instance.CurrentState != GameStateType.Playing)
         {
             return;
@@ -34,16 +33,8 @@ public class DialogueTrigger : MonoBehaviour
 
         if (!playerInRange)
         {
-            //return directly if player is not around
+            // return directly if player is not around
             return;
-        }
-
-        if (!DialogueManager.Instance.CheckDialoguePlaying())
-        {
-            if (InputManager.Instance.IsInteractPressed())
-            {
-                StartDialogue();
-            }
         }
     }
 
@@ -63,7 +54,6 @@ public class DialogueTrigger : MonoBehaviour
 
         if (player.CheckInteract(layerName))
         {
-            InputManager.Instance.RegisterSubmitPressed();
             lastDialogueTime = Time.time;
             DialogueManager.Instance.NewStory(inkAsset);
             Debug.Log("Current story has been set to " + inkAsset.name);
@@ -75,10 +65,20 @@ public class DialogueTrigger : MonoBehaviour
         //set the indication and bool true if player is nearby
         if (other.CompareTag("Player"))
         {
-            //Debug.Log("player is nearby");
             playerInRange = true;
             indication.SetActive(true);
-            InputManager.Instance.RegisterInteractPressed();
+
+            // Subscribe to interact event when player enters range
+            if (InputManager.Instance != null)
+            {
+                // defensive unsubscribe to avoid duplicate subscriptions
+                InputManager.Instance.InteractPerformed -= OnInteractPerformed;
+                InputManager.Instance.InteractPerformed += OnInteractPerformed;
+            }
+            else
+            {
+                Debug.LogWarning("DialogueTrigger: InputManager instance not found when subscribing to InteractPerformed.");
+            }
         }
     }
 
@@ -89,7 +89,38 @@ public class DialogueTrigger : MonoBehaviour
         {
             playerInRange = false;
             indication.SetActive(false);
+
+            // Unsubscribe from interact event when player leaves range
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.InteractPerformed -= OnInteractPerformed;
+            }
         }
 
+    }
+
+    private void OnDestroy()
+    {
+        // Ensure no dangling subscription
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.InteractPerformed -= OnInteractPerformed;
+        }
+    }
+
+    // Event handler for input (replaces polling)
+    private void OnInteractPerformed()
+    {
+        // Mirror previous guards used in Update
+        if (GameManager.instance == null || GameManager.instance.CurrentState != GameStateType.Playing)
+            return;
+
+        if (!playerInRange)
+            return;
+
+        if (DialogueManager.Instance != null && DialogueManager.Instance.CheckDialoguePlaying())
+            return;
+
+        StartDialogue();
     }
 }

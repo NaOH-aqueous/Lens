@@ -115,3 +115,19 @@ public class FruitOnWall : IItemUseRule
 
 }
 
+public class MagnifierOnWindow: IItemUseRule
+{
+    public bool ConsumeItem => false;
+    public bool CanUse(Item inventoryItem, Item worldItem)
+    {
+        return inventoryItem.item_Name == "Magnifier"
+            && worldItem?.item_Name == "Window";
+    }
+
+    public void Apply(Item inventoryItem, Item worldItem = null)
+    {
+        var home = GameObject.FindFirstObjectByType<HomeItemController>();
+        home.MagnifyWindow();
+    }
+}
+

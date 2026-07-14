@@ -32,6 +32,9 @@ public class CGItem : MonoBehaviour
 
     private Item previousItem;
 
+    // Track whether we've subscribed to the submit event to avoid double subscriptions
+    private bool submitSubscribed = false;
+
     private void Start()
     {
         itemViewer =
@@ -44,28 +47,11 @@ public class CGItem : MonoBehaviour
         itemInspector.SetActive(false);
         CGDisplayer.gameObject.SetActive(false);
         tip.gameObject.SetActive(false);
-
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if(GameManager.instance.CurrentState != GameStateType.ItemDisplay)
-        {
-            return;
-        }
-        if (DialogueManager.Instance.CheckDialoguePlaying())
-        {
-            return;
-        }
-        if (!PlayItemDialogue)
-        {
-            return;
-        }
-
-        if (InputManager.Instance.IsSubmitPressed())
-        {
-            ItemInfoDialogue();
-        }
+        UnsubscribeSubmit();
     }
 
     public void DisplayItemInfo(Item new_Item)
@@ -140,8 +126,13 @@ public class CGItem : MonoBehaviour
         displayItem = null;
         itemDisplayer.gameObject.SetActive(false);
 
-        InputManager.Instance.RegisterInteractPressed();
-        InputManager.Instance.RegisterSubmitPressed();
+        // legacy flag clearing isn't needed with event-driven input, keep for compatibility if other systems rely on it:
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.RegisterInteractPressed();
+            InputManager.Instance.RegisterSubmitPressed();
+        }
+
         yield return null;
         clearItemCoroutine = null;
     }
@@ -276,8 +267,6 @@ public class CGItem : MonoBehaviour
         PlayItemDialogue = true;
     }
 
-    
-
     private void RestorePreviousDisplay()
     {
         switch (previousMode)
@@ -314,14 +303,16 @@ public class CGItem : MonoBehaviour
         }
     }
 
-
     private void EnterDisplayMode()
     {
          // fade in using TweenHelper (DOTween), don't block
          cgCanvasGroup.alpha = 0f;
          TweenHelper.FadeCanvasGroup(cgCanvasGroup, 1f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+
          GameManager.instance.PushState(GameStateType.ItemDisplay);
 
+         // Subscribe to submit input when entering display mode
+         SubscribeSubmit();
     }
 
     private void ExitDisplayMode()
@@ -329,10 +320,55 @@ public class CGItem : MonoBehaviour
         previousMode = currentMode = DisplayMode.None;
         displayItem = null;
         currentMode = DisplayMode.None;
-        InputManager.Instance.RegisterInteractPressed();
 
-        InputManager.Instance.RegisterSubmitPressed();
+        // Unsubscribe from submit input when leaving display mode
+        UnsubscribeSubmit();
+
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.RegisterInteractPressed();
+            InputManager.Instance.RegisterSubmitPressed();
+        }
 
         GameManager.instance.PopState(GameStateType.ItemDisplay);
+    }
+
+    private void SubscribeSubmit()
+    {
+        if (submitSubscribed) return;
+        if (InputManager.Instance == null) return;
+
+        InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+        InputManager.Instance.SubmitPerformed += OnSubmitPerformed;
+        submitSubscribed = true;
+    }
+
+    private void UnsubscribeSubmit()
+    {
+        if (!submitSubscribed) return;
+        if (InputManager.Instance == null)
+        {
+            submitSubscribed = false;
+            return;
+        }
+
+        InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+        submitSubscribed = false;
+    }
+
+    // Event handler for submit input (replaces polling)
+    private void OnSubmitPerformed()
+    {
+        // Mirror previous guards used in Update
+        if (GameManager.instance == null || GameManager.instance.CurrentState != GameStateType.ItemDisplay)
+            return;
+
+        if (DialogueManager.Instance != null && DialogueManager.Instance.CheckDialoguePlaying())
+            return;
+
+        if (!PlayItemDialogue)
+            return;
+
+        ItemInfoDialogue();
     }
 }

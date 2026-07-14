@@ -23,6 +23,8 @@ public class InventoryManager : MonoBehaviour
 
     private Item currentItem;
 
+    private bool inventorySubscribed = false;
+
     private void Awake()
     {
         //make it a singleton gameobject
@@ -60,18 +62,67 @@ public class InventoryManager : MonoBehaviour
                 Debug.LogError("ItemSlot at index " + i + " is not assigned in the inspector.");
             }
         }
+
+        // ensure we subscribe to input events once Start runs and InputManager is available
+        SubscribeInventory();
     }
 
-    void Update()
+    private void OnEnable()
     {
+        // Try to subscribe when the component becomes enabled
+        SubscribeInventory();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeInventory();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeInventory();
+    }
+
+    private void SubscribeInventory()
+    {
+        if (inventorySubscribed)
+            return;
+
+        if (InputManager.Instance == null)
+            return;
+
+        // defensive unsubscribe then subscribe
+        InputManager.Instance.InventoryPerformed -= OnInventoryPerformed;
+        InputManager.Instance.InventoryPerformed += OnInventoryPerformed;
+        inventorySubscribed = true;
+    }
+
+    private void UnsubscribeInventory()
+    {
+        if (!inventorySubscribed)
+            return;
+
+        if (InputManager.Instance != null)
+            InputManager.Instance.InventoryPerformed -= OnInventoryPerformed;
+
+        inventorySubscribed = false;
+    }
+
+    // Event handler replacing the old polling behaviour
+    private void OnInventoryPerformed()
+    {
+        // Apply the same guards that previously existed in Update
         if (DialogueManager.Instance.CheckDialoguePlaying())
         {
             return;
         }
-        if (InputManager.Instance.IsInventoryPressed() && !isTransitioning)
+
+            if (isTransitioning)
         {
-            StartCoroutine(ToggleInventory());
-        } 
+            return;
+        }
+
+        StartCoroutine(ToggleInventory());
     }
 
     private IEnumerator ToggleInventory()

@@ -355,7 +355,7 @@
                 {
                     "name": "",
                     "id": "feea36a4-ef06-4e00-aad9-b2d499d5adf0",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
@@ -937,7 +937,7 @@
                 {
                     "name": "",
                     "id": "1b46aa10-a13c-4420-ae4d-a27da745dc56",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad;Keyboard&Mouse;Touch;Joystick;XR",
