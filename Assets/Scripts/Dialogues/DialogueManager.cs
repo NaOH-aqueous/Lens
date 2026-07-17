@@ -61,9 +61,6 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject buttonGroup;
 
-    [Header("Sound FX")]
-    [SerializeField] private AudioClip endSFX;
-
     private void Awake()
     {
         //make it a singleton gameobject
@@ -107,7 +104,7 @@ public class DialogueManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Ensure we unsubscribe if object is destroyed
+        // unsubscribe if object is destroyed
         if (InputManager.Instance != null)
         {
             InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
@@ -258,7 +255,6 @@ public class DialogueManager : MonoBehaviour
     {
         _anim.SetTrigger("dialogueEnd");
         animPlaying = true;
-        _audio.PlayOneShot(endSFX);
 
         while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
             yield return null;
@@ -512,7 +508,6 @@ public class DialogueManager : MonoBehaviour
     {
         InputRouter.Instance.PushLayer(InputLayer.Cutscene);
         _anim.SetTrigger("dialogueEnd");
-        _audio.PlayOneShot(endSFX);
 
         while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
             yield return null;

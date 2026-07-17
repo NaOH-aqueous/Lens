@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2722b8ba7bf1e7f4288588dc35a79aa5
+guid: a8bc7e1e379a5184ca153c947aefa759
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -232140649997297103
-    second: Nightstand_0
+      213: 285227895287153097
+    second: Window_maintex_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nightstand_0
+      name: Window_maintex_0
       rect:
         serializedVersion: 2
-        x: 138
-        y: 40
-        width: 503
-        height: 624
+        x: 541
+        y: 1163
+        width: 815
+        height: 789
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 13a9bfa0f4547ccf0800000000000000
-      internalID: -232140649997297103
+      spriteID: 9c18f92724555f300800000000000000
+      internalID: 285227895287153097
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: d5e1dfc0b89437e4a9402c09c3321971
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Nightstand_0: -232140649997297103
+      Window_maintex_0: 285227895287153097
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

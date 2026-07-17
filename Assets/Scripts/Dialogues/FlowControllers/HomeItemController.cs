@@ -16,6 +16,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private HomeLensController lens;
     [SerializeField] private Transform focusTargetAlarm;
     [SerializeField] private GameObject overlayVFX;
+    [SerializeField] private GameObject title;
 
     [Header("Sprites")]
     [SerializeField] private Sprite windowDust;
@@ -34,6 +35,9 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private Material door_emission;
     [SerializeField] private SpriteRenderer deskRenderer;
     [SerializeField] private SpriteRenderer doorRenderer;
+    [SerializeField] private SpriteRenderer nightstandRenderer;
+    [SerializeField] private Sprite nightstand_normal;
+    [SerializeField] private Sprite nightstand_withoutAlarm;
 
 
     [Header("Puzzles")]
@@ -53,6 +57,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private TextAsset keyGetDialogue;
     [SerializeField] private TextAsset endSceneDialogue;
     [SerializeField] private TextAsset endDemoDialogue;
+    [SerializeField] private TextAsset voidDialogue;
 
     [Header("Audios")]
     [SerializeField] private AudioClip specialTime;
@@ -137,6 +142,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         deskRenderer.sprite = desk_normal;
         doorRenderer.sprite = door_locked;
         doorRenderer.material = mat_default;
+        nightstandRenderer.sprite = nightstand_normal;
     }
 
     private void Start()
@@ -243,7 +249,15 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         yield return null;
         GameManager.instance.PushState(GameStateType.ItemDisplay);
         _aud.Stop();
+
+        title.SetActive(true);
+        TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 1, 1.5f);
+        yield return new WaitForSecondsRealtime(2f);
+        TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 0, 1.5f);
+        yield return new WaitForSecondsRealtime(2.5f);
+        title.SetActive(false);
         yield return null;
+
         AudioManager.Instance.Play("alarm");
         yield return new WaitForSecondsRealtime(2f);
         DialogueManager.Instance.NewStory(introDialogue);
@@ -252,7 +266,6 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void HandleIntroDialogueFinished(bool isPlaying)
     {
-        TransitionManager.Instance.PlayEndHalfTransition(0.5f);
         bg.SetActive(false);
         _aud.Play();
         GameManager.instance.PopState(GameStateType.ItemDisplay);
@@ -332,6 +345,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
                 break;
             case (TIME):
                 InventoryManager.Instance.QueueItem(time);
+                nightstandRenderer.sprite = nightstand_withoutAlarm;
                 break;
             case ("clearItemOnly"):
                 cgPlayer.ClearItemOnly();
@@ -480,7 +494,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         PortraitManager.Instance.SetCutscenePortraitLock(true);
         yield return null;
         DialogueManager.Instance.PauseDialogue();
-        CameraController.Instance.FocusOn(focusTargetAlarm);
+        CameraController.Instance.ChangeWeight(1,focusTargetAlarm);
+        CameraController.Instance.ChangePlayerWeight(0);
 
         yield return new WaitForSecondsRealtime(3f);
 
@@ -492,7 +507,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void HandleEndsceneDialogue(bool isplaying)
     {
-        CameraController.Instance.ReturnToPlayer();
+        CameraController.Instance.ChangeWeight(0, focusTargetAlarm);
+        CameraController.Instance.ChangePlayerWeight(1);
 
         DialogueManager.Instance.OnDialogueStatusChanged -= HandleEndsceneDialogue;
     }
@@ -626,19 +642,27 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void HandleLensTriggered()
     {
-        if(cgPlayer.GetCurrentDisplay() != corner)
+        if(cgPlayer.GetCurrentDisplay() != corner && 
+            cgPlayer.GetCurrentDisplay() != window)
         {
             return;
         }
 
-        if (!isFruitFed)
+        if(cgPlayer.GetCurrentDisplay() == corner)
         {
-            lens.DisableLens();
-            DialogueManager.Instance.NewStory(pixieDialogue);
-            DialogueManager.Instance.OnDialogueStatusChanged += HandlePixieDialogueComplete;
+            if (!isFruitFed)
+            {
+                lens.DisableLens();
+                DialogueManager.Instance.NewStory(pixieDialogue);
+                DialogueManager.Instance.OnDialogueStatusChanged += HandlePixieDialogueComplete;
+            }
         }
-
+        else
+        {
+            DialogueManager.Instance.NewStory(voidDialogue);
+        }
     }
+
 
     private void HandleItemTriggered(Item item)
     {
@@ -711,7 +735,6 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private IEnumerator EndDemoCoroutine()
     {
         yield return null;
-        TransitionManager.Instance.PlayTransition(1.5f);
         yield return new WaitForSecondsRealtime(0.5f);
         bg.SetActive(true);
 
@@ -721,6 +744,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void ReadLetter()
     {
+        GameManager.instance.PushState(GameStateType.ItemDisplay);
         letter.SetActive(true);
     }
 

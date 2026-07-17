@@ -9,7 +9,6 @@ public static class TweenHelper
         if (canvas == null) return null;
         DOTween.Kill(canvas);
 
-        // Use DOTween.To on the CanvasGroup alpha to avoid depending on extension methods.
         var tween = DOTween.To(() => canvas.alpha, x => canvas.alpha = x, targetAlpha, duration)
             .SetEase(ease)
             .SetUpdate(unscaled)

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 23a692fe7dea245419cd0f9a68a7258e
+guid: 2722b8ba7bf1e7f4288588dc35a79aa5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5843985864524226762
-    second: Chair_0
+      213: -232140649997297103
+    second: Nightstand_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,9 +75,9 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Chair_0
+      name: Nightstand_0
       rect:
         serializedVersion: 2
-        x: 2215
-        y: 92
-        width: 393
-        height: 832
-      alignment: 9
-      pivot: {x: 0.5145969, y: 0.6689352}
+        x: 138
+        y: 40
+        width: 503
+        height: 624
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ac0ee575e220a1150800000000000000
-      internalID: 5843985864524226762
+      spriteID: 13a9bfa0f4547ccf0800000000000000
+      internalID: -232140649997297103
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1dfda50a678b80e46a976a005ec5272b
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Chair_0: 5843985864524226762
+      Nightstand_0: -232140649997297103
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

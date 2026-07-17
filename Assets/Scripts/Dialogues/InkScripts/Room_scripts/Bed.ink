@@ -2,7 +2,7 @@
 
 INCLUDE Globals.ink
 
-This is your bed, {~ you can stay inside forever in rainy days. | it's the place you spend time the longest amongst all of the furniture you own.}
+This is your bed, {~ you can stay here forever in rainy days. | You've probably spent more time here than anywhere else in the house.}
 
 -> inspect
 === inspect ===
@@ -24,13 +24,13 @@ Where do you want to inspect? #item:clearDisplay
  -> END
  
  = on_the_bed
- You inspect the bed. The bedsheet has been soaked with sunshine and dust. It's the smell of home. #audio:grab
+ You inspected the bed. The bedsheet had been soaked with sunshine and dust. It's the smell of home. #audio:grab
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
 
   
  = under_the_bed
- You inspect under the bed. Nothing is there, expect darkness. #audio:grab #item:normal_bed
+ You inspected under the bed. Nothing is there, expect darkness. #audio:grab #item:normal_bed
   * { inspect.on_the_bed && inspect.under_the_bed	 } -> conclude
   * -> inspect
 
@@ -38,7 +38,7 @@ Where do you want to inspect? #item:clearDisplay
 
  === have_magnifier_dialogue
   There's an ominous feeling arising... #item:Under_the_bed
-  Something seems to be different from before.
+  Something feels... different from before.
   * [Inspect] -> monster
   
   = monster
@@ -58,20 +58,28 @@ I’ve been living underneath your bed all these years. And YOU, aren't even fam
 -> back0
 
   = q2
-  I'm looking for um... a thing I lost. #speaker:Lens #portrait:nervous
-  This one, you say? #speaker:Monster #item:sock
-  No, not this one. #speaker:Lens #item:clearItemOnly #portrait:normal
+  
+   I'm looking for um... a thing I lost. #speaker:Lens #portrait:nervous
+ { sock_get == false: 
+  This one, perhaps? #speaker:Monster #item:sock
+  ~ sock_get = true
+  No, not this one. This is the sock I lost long a ago. #speaker:Lens #item:clearItemOnly #portrait:normal 
   -> last_question
+ - else:
+ -> last_question
+ }
+  
+  
   = last_question
   Uh huh? Then which one are you looking for? #speaker:Monster #audio:monster_serious
   + [Gold] It's better if you're not so greedy, child. #speaker:Monster
   -> back
-  + {not shovel_get} [Shovel] I don't remember I have taken things like this before. #speaker:Monster 
+  + {not shovel_get} [Shovel] I don't recall I have taken things like this before. #speaker:Monster 
   ->shovel_dialogue
   + {shovel_get} [Shovel] I have just returned it, child. #speaker:Monster
   -> back
-  + [Gloves] I don't think I still own it anymore. #speaker:Monster 
-  Don't you remember? I've returned it back last year. #speaker:Monster
+  + [Gloves] I don't believe I still have those. #speaker:Monster 
+  Don't you remember? I've returned it back last year already. #speaker:Monster
   -> back
   + [Leave]<> #item:clearDisplay
   -> END
@@ -83,11 +91,11 @@ I’ve been living underneath your bed all these years. And YOU, aren't even fam
 Oh wait...Here it is. #speaker:Monster #item:shovel
 Thank you, sir. #speaker:Lens #item:clearItemOnly #portrait:happy
 There is no need for it, But take care, child. #speaker:Monster 
-And remember, don't leave it to me next time. #speaker:Monster 
+Just try not to leave your things with me again. #speaker:Monster 
 -> back 
 
 === conclude ===
-- You have finished the inspection of the bed.
+- You've finished inspecting the bed. #item:clearDisplay
     -> END
  
 === back0 ===   

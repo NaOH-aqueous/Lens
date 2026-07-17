@@ -75,6 +75,9 @@ public class HomeLensController : LensController
         if (GameManager.instance.CurrentState != GameStateType.Lens)
             return;
 
+        if (DialogueManager.Instance != null && DialogueManager.Instance.CheckDialoguePlaying())
+            return;
+
         Item lensItem = lens.InteractLensItem();
         if (lensItem == null)
         {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MoveItem : MonoBehaviour
 {
@@ -8,13 +9,9 @@ public class MoveItem : MonoBehaviour
     public float transformLimitX = 100f;
     public float transformLimitY = 100f;
 
-    // Store the original scale of the notes for resetting
     private Vector3 originalScale;
 
-    // Reference to the RectTransform component of the notes
     private RectTransform rectTransform;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -27,30 +24,11 @@ public class MoveItem : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (rectTransform == null) return;
 
-        Vector2 move = Vector2.zero;
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            move.y = -moveSpeed * Time.unscaledDeltaTime;
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            move.y = moveSpeed * Time.unscaledDeltaTime;
-        }
-
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            move.x = -moveSpeed * Time.unscaledDeltaTime;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            move.x = moveSpeed * Time.unscaledDeltaTime;
-        }
+        Vector2 move = -InputManager.Instance.GetNavigation();
 
         Vector3 newTransform =  rectTransform.anchoredPosition += move;
 
@@ -60,47 +38,5 @@ public class MoveItem : MonoBehaviour
         newTransform.y = Mathf.Clamp(newTransform.y, -transformLimitY, transformLimitY);
         rectTransform.anchoredPosition = newTransform;
 
-
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ResetTransform();
-        }
-
     }
-
-    void ResetTransform()
-    {
-        rectTransform.anchoredPosition = Vector2.zero;
-        rectTransform.localScale = originalScale;
-    }
-
-    //void ScaleTransform()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Equals))
-    //    {
-    //        if (rectTransform.localScale.x == maxScale)
-    //        {
-    //            return;
-    //        }
-    //        float newScale = rectTransform.localScale.x + scaleSpeed;
-    //        newScale = Mathf.Clamp(newScale, minScale, maxScale);
-    //        rectTransform.localScale = new Vector3(newScale, newScale, 1f);
-    //        transformLimitX += 200f;
-    //        transformLimitY += 200f;
-    //    }
-    //    if (Input.GetKeyDown(KeyCode.Minus))
-    //    {
-    //        if (rectTransform.localScale.x == minScale)
-    //        {
-    //            return;
-    //        }
-    //        float newScale = rectTransform.localScale.x - scaleSpeed;
-    //        newScale = Mathf.Clamp(newScale, minScale, maxScale);
-    //        rectTransform.localScale = new Vector3(newScale, newScale, 1f);
-    //        transformLimitX -= 200f;
-    //        transformLimitY -= 200f;
-    //    }
-    //}
-
 }

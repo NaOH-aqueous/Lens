@@ -14,13 +14,13 @@ This is your nightstand.
 Where do you want to inspect?
 
  + [On the table]
- There is a lamp and an alarm on the table. 
+ There is a lamp and an alarm clock on the table. 
  -> On_the_table
  + [Drawer]
- There are two drawers, top and bottom.
+The nightstand has two drawers, top and bottom.
  -> Drawer
  + [Leave]
- You walked away.
+You step away from the nightstand.
 -> DONE
 
 //--------------------On the table---------------------
@@ -35,36 +35,36 @@ Which one would you inspect ?
 -> question
 
 = alarm
-It's 8:00 am now. 
+You checked the alarm. It's 8:01 am now. 
 -> Tback
 
 = lamp
 {- lamp_switch : 
-The light switch is on. 
+The lamp is on. 
 -> switch_on
 - else:
-The light switch is off.
+The lamp is off.
 -> switch_off
 }
 
 = switch_on
 Turn off?
 + [Yes]
-You turned off the switch. #audio:switch_off
+You turned off the lamp. #audio:switch_off
 ~ lamp_switch = false
 -> Tback
 + [No]
-The light is on.
+The lamp is on.
 -> Tback
 
 = switch_off
 Turn on?
 + [Yes]
-You turned on the switch. #audio:shiny
+You turned on the lamp. #audio:shiny
 ~ lamp_switch = true
 -> Tback
 + [No]
-The light is off.
+The lamp is off.
 -> Tback
 
 //--------------------drawer------------------------
@@ -89,7 +89,7 @@ Where would you inspect ?
 { - have_paper == false: 
 There lies several blank copy paper. -> before
   - else:
-  There is nothing useful in the bottom drawer. -> after
+   Nothing else here seems useful. -> after
 }
 
 = before
@@ -103,7 +103,7 @@ There lies several blank copy paper. -> before
 + [Back] -> Drawer
 
 = look_closer
-You look closer and saw one unused paper towel. #item:paper towel
+You looked closer and saw one unused paper towel. #item:paper towel
 * [Take it away]
 ~ have_paper = true
 You took it away. #item:clearDisplay
@@ -125,6 +125,6 @@ TIME has joined your team! #audio:shiny2 #item:time
 Time's up! Lets go! #speaker:Time #audio:alarm
 -> END
 - else: 
-There's no time to waste! LET'S GO! #speaker:Time #audio:alarm
+No time to waste! LET'S GO! #speaker:Time #audio:alarm
 -> END
 }

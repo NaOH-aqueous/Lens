@@ -10,7 +10,6 @@ public class LensControl : MonoBehaviour
     public RectTransform canvasRect;
     public Item testItem;
 
-    private InputAction navigateAction;
     private RectTransform lensPos;
     public float requiredStayTime = 1f;
 
@@ -20,7 +19,6 @@ public class LensControl : MonoBehaviour
 
     private void Awake()
     {
-        navigateAction = InputSystem.actions.FindAction("Navigate");
         lensPos = GetComponent<RectTransform>();
         SetActiveItem(testItem);
     }
@@ -43,7 +41,7 @@ public class LensControl : MonoBehaviour
     private void MoveLens()
     {
         //move the lens according to the input and given speed
-        Vector2 moveValue = navigateAction.ReadValue<Vector2>();
+        Vector2 moveValue = InputManager.Instance.GetNavigation();
         lensPos.anchoredPosition += moveValue * moveSpeed * Time.unscaledDeltaTime;
     }
 

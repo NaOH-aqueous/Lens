@@ -6,44 +6,46 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController Instance;
 
-    [SerializeField] private Transform player;
-    [SerializeField] private CameraTargetFollow target;
-    [SerializeField] private CinemachineCamera cineCam;
+    public CinemachineTargetGroup targetGroup;
+    public CinemachineGroupFraming camFrame;
+    public Transform player;
 
     private void Awake()
     {
         Instance = this;
     }
-
-    public void FocusOn(Transform focus)
+    public void ChangeWeight(int newWeight, Transform targetToUpdate)
     {
-        target.SetOverride(true);
-        target.FocusPosition(focus.position);
-    }
-
-    public void ReturnToPlayer()
-    {
-        target.SetOverride(false);
-    }
-
-
-    public IEnumerator Zoom(float targetSize, float duration)
-    {
-        float startSize = cineCam.Lens.OrthographicSize;
-
-        float t = 0f;
-
-        while (t < duration)
+        var targets = targetGroup.Targets;
+        for (int i = 0; i < targets.Count; i++)
         {
-            t += Time.deltaTime;
+            if (targets[i].Object == targetToUpdate)
+            {
+                // Create a temporary struct to modify the weight
+                var currentTarget = targets[i];
+                currentTarget.Weight = newWeight;
+                targets[i] = currentTarget;
 
-            cineCam.Lens.OrthographicSize =
-                Mathf.Lerp(startSize, targetSize, t / duration);
-
-            yield return null;
+                targetGroup.Targets = targets;
+                break;
+            }
         }
 
-        cineCam.Lens.OrthographicSize = targetSize;
+    }
+
+    public void ChangeFrameSize(float targetFramingSize)
+    {
+        camFrame.FramingSize = targetFramingSize;
+    }
+
+    public void ChangeDamping(int damping)
+    {
+        camFrame.Damping = damping;
+    }
+
+    public void ChangePlayerWeight(int newWeight)
+    {
+        ChangeWeight(newWeight, player);
     }
 }
 

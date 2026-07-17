@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 64adb25d19842ea46b919deda9ad1c54
+guid: c44f0ef1a5459b84a9f113c7917f1005
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3464117011872522335
-    second: Desk_mainTex_0
+      213: 3006543129663489866
+    second: Rug_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,9 +75,9 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Desk_mainTex_0
+      name: Rug_0
       rect:
         serializedVersion: 2
-        x: 1955
-        y: 74
-        width: 992
-        height: 538
+        x: 0
+        y: 0
+        width: 1327
+        height: 546
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1af53fe6eebfcefc0800000000000000
-      internalID: -3464117011872522335
+      spriteID: a47cb7d0c0369b920800000000000000
+      internalID: 3006543129663489866
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: faf99917db17f5548b4b01017d0aa461
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Desk_mainTex_0: -3464117011872522335
+      Rug_0: 3006543129663489866
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -12,7 +12,7 @@ VAR read_notes = false
 
 VAR window_clean = false
 
-VAR magnifier_get = false
+VAR magnifier_get = true
 
 VAR shovel_get = false
 
@@ -31,3 +31,5 @@ VAR door_unlocked = false
 VAR fruit_get = false
 
 VAR time_get = false
+
+VAR sock_get = false

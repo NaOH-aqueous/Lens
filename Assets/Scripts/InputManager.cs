@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     private InputAction SubmitAction;
     private InputAction CancelAction;
     private InputAction InventoryAction;
+    private InputAction NavigationAction;
 
     private bool InteractPressed;
     private bool SubmitPressed;
@@ -37,6 +38,7 @@ public class InputManager : MonoBehaviour
         SubmitAction = InputSystem.actions.FindAction("Submit");
         CancelAction = InputSystem.actions.FindAction("Cancel");
         InventoryAction = InputSystem.actions.FindAction("Inventory");
+        NavigationAction = InputSystem.actions.FindAction("Navigate");
 
         if (interactAction != null)
             interactAction.performed += OnInteract;
@@ -213,5 +215,10 @@ public class InputManager : MonoBehaviour
     public void RegisterCancelPressed()
     {
         CancelPressed = false;
+    }
+    
+    public Vector2 GetNavigation()
+    {
+        return NavigationAction.ReadValue<Vector2>();
     }
 }

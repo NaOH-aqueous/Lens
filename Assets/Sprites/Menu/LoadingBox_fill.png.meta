@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9b80d5402d88f0141a06cd7897656216
+guid: afe156b56a5caa841a65314fb463e313
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -713069459429128277
-    second: Desk_withoutplanter_0
+      213: 3553013174111323088
+    second: LoadingBox_fill_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,9 +75,9 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Desk_withoutplanter_0
+      name: LoadingBox_fill_0
       rect:
         serializedVersion: 2
-        x: 1955
-        y: 74
-        width: 992
-        height: 538
+        x: 24
+        y: 16
+        width: 154
+        height: 161
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 17, y: 16, z: 18, w: 20}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ba70c8aca1baa16f0800000000000000
-      internalID: -713069459429128277
+      spriteID: 0d3403d38a6de4130800000000000000
+      internalID: 3553013174111323088
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 83fa1878681e03d4498e1a4ec68de002
+    spriteID: 617f04c79d9318a4abd02341f3f50702
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Desk_withoutplanter_0: -713069459429128277
+      LoadingBox_fill_0: 3553013174111323088
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
