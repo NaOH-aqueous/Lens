@@ -168,6 +168,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         if (!isIntroPlayed)
         {
+            _aud.Stop();
             StartCoroutine(IntroSceneCoroutine());
         }
 ;    }
@@ -248,7 +249,6 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         bg.SetActive(true);
         yield return null;
         GameManager.instance.PushState(GameStateType.ItemDisplay);
-        _aud.Stop();
 
         title.SetActive(true);
         TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 1, 1.5f);

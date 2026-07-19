@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 45568a2957d7135498d95a736c6e2574
+guid: da4b4ccb3a046624b9bd9eb1e66185d3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8929538395949037086
-    second: Pixie_Lineup_0000_0
+      213: 6853764140397778441
+    second: Forest_draft_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Pixie_Lineup_0000_0
+      name: Forest_draft_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1617
-        height: 1242
+        width: 3274
+        height: 1926
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e16f0c24cd71ceb70800000000000000
-      internalID: 8929538395949037086
+      spriteID: 90658b24c267d1f50800000000000000
+      internalID: 6853764140397778441
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Pixie_Lineup_0000_0: 8929538395949037086
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

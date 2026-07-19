@@ -87,11 +87,6 @@ public class DialogueManager : MonoBehaviour
             Debug.Log("Animator component cannot be found in dialogue manager");
             return;
         }
-        if (_audio == null)
-        {
-            Debug.Log("Audio source cannot be found in dialogue manager");
-            return;
-        }
 
         //initialize the dialogue panel
         dialoguePanel.SetActive(false);
