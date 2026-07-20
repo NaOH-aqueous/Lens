@@ -27,13 +27,15 @@ public class InventoryManager : MonoBehaviour
 
     private void Awake()
     {
-        //make it a singleton gameobject
-        if (Instance != null && Instance != this)
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
         {
             Destroy(gameObject);
-            return;
         }
-        Instance = this;
     }
 
     void Start()

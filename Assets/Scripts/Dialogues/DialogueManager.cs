@@ -509,10 +509,8 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
     }
 
-    // New event handler for submit — replaces polling usage
     private void OnSubmitPerformed()
     {
-        // mirror previous polling guards
         if (!isDialoguePlaying)
             return;
 

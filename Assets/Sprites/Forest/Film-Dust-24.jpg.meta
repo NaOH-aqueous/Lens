@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: da4b4ccb3a046624b9bd9eb1e66185d3
+guid: cdd4e59f0b51df24ab4b70c7779cabc6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6853764140397778441
-    second: Forest_draft_0
+      213: 9007595670493222368
+    second: Film-Dust-24_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Forest_draft_0
+      name: Film-Dust-24_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 3274
-        height: 1926
+        width: 3264
+        height: 2448
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 90658b24c267d1f50800000000000000
-      internalID: 6853764140397778441
+      spriteID: 0e5581cb988610d70800000000000000
+      internalID: 9007595670493222368
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Forest_draft_0: 6853764140397778441
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
