@@ -15,4 +15,4 @@ MonoBehaviour:
   item_Name: strange fruit
   item_Sprite: {fileID: 6422085674583116018, guid: e70b4e56a4ba8f14eb1d39ef906c43a8, type: 3}
   item_Icon: {fileID: 9210313281974541703, guid: 555bafa50d0db734d8958f81ac0c5597, type: 3}
-  item_Dialogue: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: 1e70c883945bcc147a77ebf4500d154c, type: 3}

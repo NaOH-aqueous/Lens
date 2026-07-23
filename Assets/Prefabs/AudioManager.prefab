@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2452159264579285736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6660318779133801798}
+  - component: {fileID: 6176612881540644316}
+  - component: {fileID: 7111812211410119315}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6660318779133801798
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452159264579285736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 928.4074, y: 434.2764, z: 4.922217}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6176612881540644316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452159264579285736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8cdab757d115f74699d9bef27b83c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  triggerSounds:
+  - triggerSound: {fileID: 8300000, guid: dd5efd177cba4114b9a27db8ffa044a9, type: 3}
+    triggerSoundName: grab
+  - triggerSound: {fileID: 8300000, guid: ba9265a05e1b03b4aaba766113969955, type: 3}
+    triggerSoundName: shiny2
+  - triggerSound: {fileID: 8300000, guid: f6b25e53e77eaba4f9600f042b6026f0, type: 3}
+    triggerSoundName: lens_normal
+  - triggerSound: {fileID: 8300000, guid: 949d3f0b9ee9cfb428c983c24a224878, type: 3}
+    triggerSoundName: curtain_pull
+  - triggerSound: {fileID: 8300000, guid: 8431e282d6912a240bb91b9fd6e75d27, type: 3}
+    triggerSoundName: monster_normal
+  - triggerSound: {fileID: 8300000, guid: be983f02cc5c43b4696de82d96dab8c9, type: 3}
+    triggerSoundName: lens_speechless
+  - triggerSound: {fileID: 8300000, guid: b558a162fc9800944ab15f647493c354, type: 3}
+    triggerSoundName: monster_serious
+  - triggerSound: {fileID: 8300000, guid: a77b30490ab83a84ba32f2bb7ac72736, type: 3}
+    triggerSoundName: monster_speechless
+  - triggerSound: {fileID: 8300000, guid: af7d79da579ebe54c9e673cc051665fb, type: 3}
+    triggerSoundName: door_lock
+  - triggerSound: {fileID: 8300000, guid: 1eda23ce9808bc24db1522b3c10a7fa5, type: 3}
+    triggerSoundName: writing2
+  - triggerSound: {fileID: 8300000, guid: 1b50aa8cb2820ee4ea9671c26557f942, type: 3}
+    triggerSoundName: switch_off
+  - triggerSound: {fileID: 8300000, guid: fb5119173df4b7b4ab9a980eb876ba9d, type: 3}
+    triggerSoundName: shiny
+  - triggerSound: {fileID: 8300000, guid: b2a653b17fa687149901c9b46c5e0bcc, type: 3}
+    triggerSoundName: fairyTone
+  - triggerSound: {fileID: 8300000, guid: 5e976768ea70e1f40b6a8a3f66d5bfb9, type: 3}
+    triggerSoundName: lens_happy
+  - triggerSound: {fileID: 8300000, guid: 3bd3325f167a48d458b4bc0f53068a92, type: 3}
+    triggerSoundName: alarm
+--- !u!82 &7111812211410119315
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2452159264579285736}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 2819643688137786525, guid: bd38262d42291b24b9d08ae86a5f6e05, type: 2}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

@@ -61,9 +61,6 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject buttonGroup;
 
-    [Header("Sound FX")]
-    [SerializeField] private AudioClip endSFX;
-
     private void Awake()
     {
         //make it a singleton gameobject
@@ -90,17 +87,23 @@ public class DialogueManager : MonoBehaviour
             Debug.Log("Animator component cannot be found in dialogue manager");
             return;
         }
-        if (_audio == null)
-        {
-            Debug.Log("Audio source cannot be found in dialogue manager");
-            return;
-        }
 
         //initialize the dialogue panel
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
         nameLabel.enabled = false;
+
+
+    }
+
+    private void OnDestroy()
+    {
+        // unsubscribe if object is destroyed
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+        }
     }
 
     private void Update()
@@ -114,14 +117,6 @@ public class DialogueManager : MonoBehaviour
         if (cutscenePlaying)
         {
             return;
-        }
-
-        // contiue story upon user input if there's no choices in current line
-        if (_inkstory.currentChoices.Count == 0 &&
-            !animPlaying &&
-           (InputManager.Instance.IsSubmitPressed()))
-        {
-            ContinueStory();
         }
 
         // continue to next line directly if there's no content in current line
@@ -152,8 +147,7 @@ public class DialogueManager : MonoBehaviour
             nameLabel.enabled = false;
             speakerLabel.text = "";
         }
-    }
-
+    }   
     private string[] ParseTags(string tag) //return the parsed tags
     {
         // parse the tag
@@ -236,6 +230,17 @@ public class DialogueManager : MonoBehaviour
 
         OnDialogueStatusChanged?.Invoke(true);
 
+        // subscribe to submit event so we stop polling
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.SubmitPerformed -= OnSubmitPerformed; // defensive unsubscribe
+            InputManager.Instance.SubmitPerformed += OnSubmitPerformed;
+        }
+        else
+        {
+            Debug.LogWarning("DialogueManager: InputManager instance missing when entering dialogue mode.");
+        }
+
         ContinueStory();
         _anim.SetTrigger("dialogueStart");
     }
@@ -245,7 +250,6 @@ public class DialogueManager : MonoBehaviour
     {
         _anim.SetTrigger("dialogueEnd");
         animPlaying = true;
-        _audio.PlayOneShot(endSFX);
 
         while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
             yield return null;
@@ -253,6 +257,12 @@ public class DialogueManager : MonoBehaviour
         animPlaying = false;
         isDialoguePlaying = false;
         OnDialogueStatusChanged?.Invoke(false);
+
+        // unsubscribe from submit event
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+        }
 
         dialogueVariables.StopListening(_inkstory);
         dialoguePanel.SetActive(false);
@@ -340,7 +350,9 @@ public class DialogueManager : MonoBehaviour
             Destroy(choice);
         }
 
-        InputManager.Instance.RegisterSubmitPressed();
+        // Clear any legacy polling flag if other code relies on it - kept for compatibility but not required for event-based flow.
+        // InputManager.Instance.RegisterSubmitPressed(); // removed: event-based API replaces polling
+
         isChoicesDiaplayed = false;
 
         if (_inkstory.canContinue)
@@ -491,10 +503,27 @@ public class DialogueManager : MonoBehaviour
     {
         InputRouter.Instance.PushLayer(InputLayer.Cutscene);
         _anim.SetTrigger("dialogueEnd");
-        _audio.PlayOneShot(endSFX);
 
         while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
             yield return null;
         dialoguePanel.SetActive(false);
+    }
+
+    private void OnSubmitPerformed()
+    {
+        if (!isDialoguePlaying)
+            return;
+
+        if (cutscenePlaying)
+            return;
+
+        if (_inkstory == null)
+            return;
+
+        // Only continue when there are no choices and no animation playing
+        if (_inkstory.currentChoices.Count == 0 && !animPlaying)
+        {
+            ContinueStory();
+        }
     }
 }

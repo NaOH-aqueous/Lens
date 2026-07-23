@@ -15,4 +15,4 @@ MonoBehaviour:
   item_Name: paper towel
   item_Sprite: {fileID: -7257243884398364093, guid: 51a8dd9eb1724364498bcb1608ac6ed4, type: 3}
   item_Icon: {fileID: -7391254067920757069, guid: 3152156a127c9534eb6636a05f8ec7fc, type: 3}
-  item_Dialogue: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: 44bb8affc7398c64c82b1299b34eb018, type: 3}

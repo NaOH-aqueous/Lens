@@ -15,4 +15,4 @@ MonoBehaviour:
   item_Name: origami flower
   item_Sprite: {fileID: 6952223629535545503, guid: c13f9281b9a66a6459be6672ad4f9c97, type: 3}
   item_Icon: {fileID: -4711852725951287997, guid: 6944e157ad57f7c46949dc765e9a75d2, type: 3}
-  item_Dialogue: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: 8eacdf56d54add141a3fd6d0f9b5634b, type: 3}

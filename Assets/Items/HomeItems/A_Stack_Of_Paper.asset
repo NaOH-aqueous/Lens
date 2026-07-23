@@ -15,4 +15,4 @@ MonoBehaviour:
   item_Name: stack of paper
   item_Sprite: {fileID: 3599802279926542137, guid: 000eeccfcc9d9d948bcc3873c4e5d35b, type: 3}
   item_Icon: {fileID: 2933255521355797230, guid: 4069b6938715aa14fbd0de107f22ffa0, type: 3}
-  item_Dialogue: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: f96598efa5865c9469680d101ff17842, type: 3}

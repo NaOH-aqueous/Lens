@@ -1,0 +1,1 @@
+It's a clean paper towel, useful when you want to clean up your room, or blow your nose.

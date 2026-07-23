@@ -108,10 +108,7 @@ public class PortraitManager : MonoBehaviour
     {
         if (!playing)
         {
-            foreach (var p in portraits.Values)
-            {
-                p.Hide();
-            }
+            HideAllPortraits();
         }
     }
 

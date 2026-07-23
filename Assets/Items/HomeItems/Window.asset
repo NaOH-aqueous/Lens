@@ -15,3 +15,4 @@ MonoBehaviour:
   item_Name: Window
   item_Sprite: {fileID: -1595736872862477925, guid: 6ed5e0d852aca4c4abb47cb6885523be, type: 3}
   item_Icon: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: d6a89cdd1fe5b124db2c07c554821519, type: 3}

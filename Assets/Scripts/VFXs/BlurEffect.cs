@@ -9,10 +9,10 @@ public class BlurEffect : MonoBehaviour
     private Animator _anim;
 
 
-    private void Start()
+    private void Awake()
     {
-        blurVFX = GetComponent<Volume>();
-        _anim = GetComponent<Animator>();
+        blurVFX = gameObject.GetComponent<Volume>();
+        _anim = gameObject.GetComponent<Animator>();
     }
 
     public IEnumerator IntroTransition()

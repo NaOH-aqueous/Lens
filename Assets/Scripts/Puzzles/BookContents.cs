@@ -23,9 +23,11 @@ public class BookContents : MonoBehaviour
     [SerializeField] private List<GameObject> stickers;
     [SerializeField] private TextAsset diaryBlank;
     [SerializeField] private TextAsset diaryFilled;
+    [SerializeField] private TextAsset origamiTutorial;
 
     private GameObject lastActiveSticker;
     private bool hasWritten = false;
+    private bool submitSubscribed;
 
     private void OnValidate()
     {
@@ -46,6 +48,21 @@ public class BookContents : MonoBehaviour
         InitStickers();
     }
 
+    private void OnEnable()
+    {
+        SubscribeSubmit();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeSubmit();
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeSubmit();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -57,13 +74,41 @@ public class BookContents : MonoBehaviour
             PreviousPage();
         }
 
-        if (InputManager.Instance.IsSubmitPressed())
-        {
-            if (!DialogueManager.Instance.CheckDialoguePlaying())
-            {
-                Investigate();
-            }
-        }
+        // submit handling moved to event handler (SubscribeSubmit)
+    }
+
+    private void SubscribeSubmit()
+    {
+        if (submitSubscribed)
+            return;
+
+        if (InputManager.Instance == null)
+            return;
+
+        // Defensive unsubscribe then subscribe to avoid duplicates
+        InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+        InputManager.Instance.SubmitPerformed += OnSubmitPerformed;
+        submitSubscribed = true;
+    }
+
+    private void UnsubscribeSubmit()
+    {
+        if (!submitSubscribed)
+            return;
+
+        if (InputManager.Instance != null)
+            InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+
+        submitSubscribed = false;
+    }
+
+    private void OnSubmitPerformed()
+    {
+        // preserve original guard: only investigate when no dialogue playing
+        if (DialogueManager.Instance != null && DialogueManager.Instance.CheckDialoguePlaying())
+            return;
+
+        Investigate();
     }
 
     private void SetupContent()
@@ -119,8 +164,6 @@ public class BookContents : MonoBehaviour
             return;
         } 
 
-
-
         if (leftSide.pageToDisplay >= leftSide.textInfo.pageCount - 1)
         {
             //if the current page of left side is the last page,
@@ -149,8 +192,11 @@ public class BookContents : MonoBehaviour
             sticker.SetActive(false);
         }
 
-        stickers[0].SetActive(true);
-        lastActiveSticker = stickers[0];
+        if (stickers.Count > 0)
+        {
+            stickers[0].SetActive(true);
+            lastActiveSticker = stickers[0];
+        }
     }
 
     private void SetStickers()
@@ -160,8 +206,11 @@ public class BookContents : MonoBehaviour
             lastActiveSticker.SetActive(false);
         }
         int currentSticker = rightSide.pageToDisplay / 2 - 1;
-        stickers[currentSticker].SetActive(true);
-        lastActiveSticker = stickers[currentSticker];
+        if (currentSticker >= 0 && currentSticker < stickers.Count)
+        {
+            stickers[currentSticker].SetActive(true);
+            lastActiveSticker = stickers[currentSticker];
+        }
     }
 
     public void WriteNewDiary()
@@ -176,17 +225,25 @@ public class BookContents : MonoBehaviour
 
     private void Investigate()
     {
-        if(leftSide.pageToDisplay != 9)
+        if(leftSide.pageToDisplay != 9 && leftSide.pageToDisplay != 7)
         {
             return;
         }
-        if (!hasWritten)
+
+        if(leftSide.pageToDisplay == 9)
         {
-            DialogueManager.Instance.NewStory(diaryBlank);
+            if (!hasWritten)
+            {
+                DialogueManager.Instance.NewStory(diaryBlank);
+            }
+            else
+            {
+                DialogueManager.Instance.NewStory(diaryFilled);
+            }
         }
         else
         {
-            DialogueManager.Instance.NewStory(diaryFilled);
+            DialogueManager.Instance.NewStory(origamiTutorial);
         }
     }
 

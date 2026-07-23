@@ -1,0 +1,1 @@
+This is the sock you left forgotten under the bed. Luckily, it has been kept by the mister lived under the bed.

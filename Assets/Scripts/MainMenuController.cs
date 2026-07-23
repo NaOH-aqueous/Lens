@@ -1,6 +1,7 @@
 using MaskTransitions;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class MainMenuController : MonoBehaviour
     [Header("Menu Screens")]
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private GameObject mainMenu;
+    [SerializeField] private Button StartButton;
 
     [Header("Slider")]
     [SerializeField] private Slider loadingSlider;
@@ -41,7 +43,15 @@ public class MainMenuController : MonoBehaviour
 
     public void Start()
     {
-        InputSystem.EnableDevice(Mouse.current);
+        if (Mouse.current != null)
+        {
+            InputSystem.DisableDevice(Mouse.current);
+        }
+
+        //delete this line if build for web
+        Cursor.lockState = CursorLockMode.Locked;
+
+        EventSystem.current.SetSelectedGameObject(StartButton.gameObject);
     }
 
     private IEnumerator LoadSceneAsync(string sceneName)

@@ -21,7 +21,7 @@ public class FocusPuzzle : MonoBehaviour
     [SerializeField] private float requiredHold = 1f; // seconds required for success
     [SerializeField] private TextAsset puzzleDialogue;
     private AudioSource _aud;
-    private Animator _anim;
+    [SerializeField] private GameObject tip;
 
     private float minAlpha = 0f;
     private float maxAlpha = 1f; 
@@ -47,17 +47,7 @@ public class FocusPuzzle : MonoBehaviour
         _color2 = focusImage.color;
         marker.gameObject.SetActive(false);
         _aud = GetComponent<AudioSource>();
-        _anim = GetComponentInChildren<Animator>();
-        _anim.gameObject.SetActive(false);
-    }
-
-    private void OnEnable()
-    {
-        if (DialogueManager.Instance != null)
-        {
-            DialogueManager.Instance.OnDialogueStatusChanged += HandleIntroDialogueFinished;
-        }
-
+        tip.SetActive(false);
     }
 
 
@@ -170,20 +160,10 @@ public class FocusPuzzle : MonoBehaviour
         OnPuzzleCompleted?.Invoke();
     }
     
-    IEnumerator SetButtonActive() //intro animation
+    public void SetButtonActive() //intro animation
     {
-        yield return null;
-        _anim.gameObject.SetActive(true);
-        _anim.SetTrigger("enterPuzzle");
-    }
-
-    private void HandleIntroDialogueFinished(bool isPlaying)
-    {
-        if (isPlaying)
-            return;
-
-        StartCoroutine(SetButtonActive());
-        DialogueManager.Instance.OnDialogueStatusChanged -= HandleIntroDialogueFinished;
+        tip.SetActive(true);
+        tip.GetComponent<Animator>().SetTrigger("enterPuzzle");
     }
 
 }

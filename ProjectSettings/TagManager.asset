@@ -18,7 +18,7 @@ TagManager:
   - Furniture
   - Player
   - Item
-  - 
+  - GlobalVFX
   - 
   - 
   - 
@@ -53,6 +53,9 @@ TagManager:
     locked: 0
   - name: VFX
     uniqueID: 3043769355
+    locked: 0
+  - name: Foreground
+    uniqueID: 4273557091
     locked: 0
   - name: Indications
     uniqueID: 732560375

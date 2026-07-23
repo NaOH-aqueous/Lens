@@ -15,3 +15,4 @@ MonoBehaviour:
   item_Name: shovel
   item_Sprite: {fileID: 57591053551863209, guid: 3a2d0eac2fa5ed74fb265ec60995760d, type: 3}
   item_Icon: {fileID: 2139625300609570699, guid: d20198b563f515548ba7205e7b57026a, type: 3}
+  item_Dialogue: {fileID: 4900000, guid: 64904dfd564de2442bf2024c5ee8230a, type: 3}

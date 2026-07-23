@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class DialogueTrigger : MonoBehaviour
 {
@@ -10,9 +11,6 @@ public class DialogueTrigger : MonoBehaviour
     private bool playerInRange = false;
     private float lastDialogueTime = -1f;
     [SerializeField] private float interactionCooldown = 0.2f;
-
-    [Header("Audios")]
-    [SerializeField] private List<TriggerSounds> triggerSounds = new List<TriggerSounds>();
     
     private void Start()
     {
@@ -24,28 +22,6 @@ public class DialogueTrigger : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-
-        if (GameManager.instance.CurrentState != GameStateType.Playing)
-        {
-            return;
-        }
-
-        if (!playerInRange)
-        {
-            //return directly if player is not around
-            return;
-        }
-
-        if (!DialogueManager.Instance.CheckDialoguePlaying())
-        {
-            if (InputManager.Instance.IsInteractPressed())
-            {
-                StartDialogue();
-            }
-        }
-    }
 
     //start the dialogue attached to this trigger upon user input
     private void StartDialogue()
@@ -63,11 +39,32 @@ public class DialogueTrigger : MonoBehaviour
 
         if (player.CheckInteract(layerName))
         {
-            InputManager.Instance.RegisterSubmitPressed();
             lastDialogueTime = Time.time;
-            DialogueManager.Instance.NewStory(inkAsset);
-            Debug.Log("Current story has been set to " + inkAsset.name);
+
+            // Defer creation of the story one frame to avoid race with DialogueManager's Update-based
+            // autocontinue. This preserves autocontinue handling of empty/tag-only output.
+            StartCoroutine(DelayedStartDialogue());
         }
+    }
+
+    private IEnumerator DelayedStartDialogue()
+    {
+        yield return null; // wait one frame
+
+        if (DialogueManager.Instance == null)
+        {
+            Debug.LogWarning("DialogueTrigger: DialogueManager instance is null when starting delayed dialogue.");
+            yield break;
+        }
+
+        if (inkAsset == null)
+        {
+            Debug.LogWarning("DialogueTrigger: inkAsset is null.");
+            yield break;
+        }
+
+        DialogueManager.Instance.NewStory(inkAsset);
+        Debug.Log("Current story has been set to " + inkAsset.name);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -75,10 +72,20 @@ public class DialogueTrigger : MonoBehaviour
         //set the indication and bool true if player is nearby
         if (other.CompareTag("Player"))
         {
-            //Debug.Log("player is nearby");
             playerInRange = true;
             indication.SetActive(true);
-            InputManager.Instance.RegisterInteractPressed();
+
+            // Subscribe to interact event when player enters range
+            if (InputManager.Instance != null)
+            {
+                // defensive unsubscribe to avoid duplicate subscriptions
+                InputManager.Instance.InteractPerformed -= OnInteractPerformed;
+                InputManager.Instance.InteractPerformed += OnInteractPerformed;
+            }
+            else
+            {
+                Debug.LogWarning("DialogueTrigger: InputManager instance not found when subscribing to InteractPerformed.");
+            }
         }
     }
 
@@ -89,7 +96,38 @@ public class DialogueTrigger : MonoBehaviour
         {
             playerInRange = false;
             indication.SetActive(false);
+
+            // Unsubscribe from interact event when player leaves range
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.InteractPerformed -= OnInteractPerformed;
+            }
         }
 
+    }
+
+    private void OnDestroy()
+    {
+        // Ensure no dangling subscription
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.InteractPerformed -= OnInteractPerformed;
+        }
+    }
+
+    // Event handler for input (replaces polling)
+    private void OnInteractPerformed()
+    {
+        // Mirror previous guards used in Update
+        if (GameManager.instance == null || GameManager.instance.CurrentState != GameStateType.Playing)
+            return;
+
+        if (!playerInRange)
+            return;
+
+        if (DialogueManager.Instance != null && DialogueManager.Instance.CheckDialoguePlaying())
+            return;
+
+        StartDialogue();
     }
 }
