@@ -45,5 +45,5 @@ MonoBehaviour:
   m_ShaderVariantRegistry:
     m_OptionalShaders: []
     m_Asset: {fileID: -998283752104411550}
-    m_ErrorOnUnregisteredVariant: 0
+    m_ErrorOnUnregisteredVariant: 1
     m_UnregisteredVariants: []

@@ -10,28 +10,23 @@ public class LampLightingController : MonoBehaviour
 
     private Light2D lamp_Light;
     private SpriteRenderer lamp_renderer;
-    private bool _isLampOn;
 
     private void Start()
     {
         lamp_renderer = GetComponent<SpriteRenderer>();
         lamp_Light = GetComponentInChildren<Light2D>();
 
-        lampOn();
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+        }
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        bool lamp_On = ((Ink.Runtime.BoolValue)DialogueManager.Instance.
-            GetVariableState("lamp_switch")).value;
-
-        if (lamp_On && !_isLampOn)
+        if (DialogueManager.Instance != null)
         {
-            lampOn();
-        }
-        else if (!lamp_On && _isLampOn)
-        {
-            lampOff();
+            DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
         }
     }
 
@@ -40,7 +35,6 @@ public class LampLightingController : MonoBehaviour
         lamp_renderer.material = lamp_Emission;
         lamp_renderer.sprite = lamp_Lighten;
         lamp_Light.enabled = true;
-        _isLampOn = true;
     }
 
     private void lampOff()
@@ -48,6 +42,19 @@ public class LampLightingController : MonoBehaviour
         lamp_renderer.material = lamp_Normal;
         lamp_renderer.sprite = lamp_Darken;
         lamp_Light.enabled = false;
-        _isLampOn = false;
+    }
+
+    private void HandleVariableChanged(string name, Ink.Runtime.Object value)
+    {
+        if (name != "lamp_switch")
+            return;
+
+        if (value is Ink.Runtime.BoolValue boolVal)
+        {
+            if (boolVal.value)
+                lampOn();
+            else
+                lampOff();
+        }
     }
 }

@@ -1,0 +1,1 @@
+This is a plain-to-sight magnifying lens. It looks exactly like the one you would see on your grandma's table.

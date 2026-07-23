@@ -1,80 +1,48 @@
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class SetSprites : MonoBehaviour
 {
     public string characterName;
 
-    [SerializeField] private Sprite spriteNormal;
-    [SerializeField] private Sprite spriteNervous;
-    [SerializeField] private Sprite spriteHappy;
-    [SerializeField] private Sprite spriteSad;
-    [SerializeField] private Sprite spriteThinking;
-    [SerializeField] private Sprite spriteAngry;
+    private Image _image;
+    private Animator _anim;
 
-    [SerializeField] private Image spriteImage;
+    private void Awake()
+    {
+        _image = GetComponent<Image>();
+        _anim = GetComponent<Animator>();
 
-    private SpriteRenderer spriteRenderer;
-    private string _speakerName;
-
+        Hide();
+    }
     private void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        PortraitManager.Instance.Register(characterName, this);
+    }
+    public void PlayExpression(string expression)
+    {
+        _image.enabled = true;
+        _anim.enabled = true;
+
+        switch (expression)
+        {
+            case "normal":
+                _anim.SetTrigger("normal");
+                break;
+
+            case "happy":
+                _anim.SetTrigger("happy");
+                break;
+
+            case "nervous":
+                _anim.SetTrigger("nervous");
+                break;
+        }
     }
 
-    private void Update()
+    public void Hide()
     {
-        _speakerName = DialogueManager.Instance.GetSpeakerTag();
-        ChangeSprite();
-    }
-
-    private void ChangeSprite()
-    {
-        if (string.IsNullOrEmpty(_speakerName))
-        {
-            Debug.Log("the name of speaker has not been assigned");
-            return;
-        }
-
-        if(_speakerName == characterName)
-        {
-            string currrentSpriteTag = DialogueManager.Instance.GetExpressionTag();
-
-            switch (currrentSpriteTag)
-            {
-                case "normal":
-                    setPortrait(spriteNormal);
-                    break;
-                case "nervous":
-                    setPortrait(spriteNervous);
-                    break;
-                case "happy":
-                    setPortrait(spriteHappy);
-                    break;
-                case "sad":
-                    setPortrait(spriteSad);
-                    break;
-                case "thinking":
-                    setPortrait(spriteThinking);
-                    break;
-                case "angry":
-                    setPortrait(spriteAngry);
-                    break;
-            }
-        }
-        //spriteRenderer.sprite = sprite;
-    }
-
-    private void setPortrait(Sprite sprite)
-    {
-        if(spriteRenderer.sprite == sprite)
-        {
-            return;
-        }
-        if(sprite != null && sprite != spriteRenderer.sprite)
-        {
-            spriteRenderer.sprite = sprite;
-        }
+        _image.enabled = false;
+        _anim.enabled = false;
     }
 }

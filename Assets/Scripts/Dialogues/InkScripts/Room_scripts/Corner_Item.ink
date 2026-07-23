@@ -1,0 +1,1 @@
+There's only some glitterings and dust. Nothing's more.

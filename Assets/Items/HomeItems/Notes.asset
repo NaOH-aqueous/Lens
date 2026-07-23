@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0da4df8c9756de4d9243005e45077b3, type: 3}
+  m_Name: Notes
+  m_EditorClassIdentifier: 
+  item_Name: Notes
+  item_Sprite: {fileID: -3598916374439202735, guid: 423083bb47cbbeb49a32dd6396f5bb7d, type: 3}
+  item_Icon: {fileID: -3598916374439202735, guid: 06ebf31dd6877854dbe06774600c47ce, type: 3}
+  item_Dialogue: {fileID: 4900000, guid: c3f712b1e3f624545b580091a1046061, type: 3}

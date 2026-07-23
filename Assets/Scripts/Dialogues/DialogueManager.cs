@@ -2,9 +2,7 @@ using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,7 +18,7 @@ public class DialogueManager : MonoBehaviour
 
     public event System.Action<string, Ink.Runtime.Object> OnVariableChanged;
     public event System.Action<string> OnCutsceneTriggered;
-    public event System.Action<string> OnPortraitTagChanged;
+    public event System.Action<string, string> OnPortraitTagChanged;
 
 
     //private ink integrating variables
@@ -56,6 +54,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI textToDisplay;
     [SerializeField] private GameObject indication;
+    [SerializeField] private Image nameLabel;
     [SerializeField] private TextMeshProUGUI speakerLabel;
 
     [Header("Choices UI")]
@@ -101,7 +100,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         textToDisplay.text = string.Empty;
         indication.SetActive(false);
-
+        nameLabel.enabled = false;
     }
 
     private void Update()
@@ -145,10 +144,12 @@ public class DialogueManager : MonoBehaviour
         //empty string
         if (speakerLabel != null && !string.IsNullOrEmpty(GetSpeakerTag()))
         {
+            nameLabel.enabled = true;
             speakerLabel.text = GetSpeakerTag();
         }
         else if (string.IsNullOrEmpty(GetSpeakerTag()))
         {
+            nameLabel.enabled = false;
             speakerLabel.text = "";
         }
     }
@@ -177,7 +178,7 @@ public class DialogueManager : MonoBehaviour
         return "";
     }
 
-    public string GetExpressionTag() //get tag of the expression in current line
+    public string GetExpressionTag() //get tag of the speaker in current line
     {
         foreach (string tag in tags)
         {
@@ -232,6 +233,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         textToDisplay.enabled = true;
         isDialoguePlaying = true;
+
         OnDialogueStatusChanged?.Invoke(true);
 
         ContinueStory();
@@ -354,8 +356,8 @@ public class DialogueManager : MonoBehaviour
 
         string currentItemTag = string.Empty;
         string currentSpeakerTag = string.Empty;
-        string currentPortraitTag = string.Empty;
         string currentCutsceneTag = string.Empty;
+        string currentPortraitTag = string.Empty;
 
         foreach (string tag in tags)
         {
@@ -379,6 +381,9 @@ public class DialogueManager : MonoBehaviour
                     break;
             }
         }
+
+        OnPortraitTagChanged?.Invoke(currentSpeakerTag, currentPortraitTag);
+
         //only notify when the tag changed
         if (currentItemTag != lastItemTag)
         {
@@ -386,17 +391,12 @@ public class DialogueManager : MonoBehaviour
             OnItemTagChanged?.Invoke(currentItemTag);
         }
 
-        if (currentPortraitTag != lastPortraitTag)
-        {
-            lastPortraitTag = currentPortraitTag;
-            OnPortraitTagChanged?.Invoke(currentPortraitTag);
-        }
-
         if(currentCutsceneTag != lastCutSceneTag)
         {
             lastCutSceneTag = currentCutsceneTag;
             OnCutsceneTriggered?.Invoke(currentCutsceneTag);
         }
+
     }
 
     public bool CheckDialoguePlaying() //Check if current dialogue is playing
@@ -428,16 +428,18 @@ public class DialogueManager : MonoBehaviour
 
     public void SetBoolVariable(string variable, bool value)
     {
-        if(variable == null || string.IsNullOrEmpty(variable))
+        var inkValue = new Ink.Runtime.BoolValue(value);
+
+        dialogueVariables.variables[variable] = inkValue;
+
+        if (_inkstory != null)
         {
-            return;
+            _inkstory.variablesState.SetGlobal(variable, inkValue);
         }
 
-        _inkstory.variablesState[variable] = value;
-
-        Debug.Log("the variable" + variable + "has been set to" + value);
+        RaiseVariableChaned(variable,inkValue);
     }
-    
+
     public void BindExternalFunctions()
     {
         IDialogueFunctionBinder[] binders =
@@ -459,16 +461,35 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(PauseDialogueCoroutine());
     }
 
+    public void PauseWithoutAnim()
+    {
+        InputRouter.Instance.PushLayer(InputLayer.Cutscene);
+        cutscenePlaying = true;
+    }
+
+    public void ResumeWithoutAnim(bool autoPlay)
+    {
+        InputRouter.Instance.PopLayer(InputLayer.Cutscene);
+        cutscenePlaying = false;
+
+        if (autoPlay)
+        {
+            ContinueStory();
+        }
+    }
+
     public void ResumeDialogue()
     {
         dialoguePanel.SetActive(true);
         _anim.SetTrigger("dialogueStart");
 
         cutscenePlaying = false;
+        InputRouter.Instance.PopLayer(InputLayer.Cutscene);
     }
 
     private IEnumerator PauseDialogueCoroutine()
     {
+        InputRouter.Instance.PushLayer(InputLayer.Cutscene);
         _anim.SetTrigger("dialogueEnd");
         _audio.PlayOneShot(endSFX);
 

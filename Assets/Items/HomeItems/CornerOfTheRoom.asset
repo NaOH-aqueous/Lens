@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0da4df8c9756de4d9243005e45077b3, type: 3}
+  m_Name: CornerOfTheRoom
+  m_EditorClassIdentifier: 
+  item_Name: corner of the room
+  item_Sprite: {fileID: -4710839731607381225, guid: 0177f9bacfbf1fa438b3493d4f5f1279, type: 3}
+  item_Icon: {fileID: 0}
+  item_Dialogue: {fileID: 4900000, guid: 4f110ac92dd4cae4594f21ad39f4e56a, type: 3}

@@ -26,18 +26,20 @@ public class CurtainLightingController : MonoBehaviour
     [SerializeField] private GameObject floor_Light;
     [SerializeField] private ParticleSystem dust;
 
-    private bool lightingPerformed = false;
-
     private void Start()
     {
         Init();
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
+        }
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        if (!lightingPerformed)
+        if (DialogueManager.Instance != null)
         {
-            CurtainOpened();
+            DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
         }
     }
 
@@ -57,22 +59,25 @@ public class CurtainLightingController : MonoBehaviour
     //change the sprites, materials & lighting after opening the curtain
     private void CurtainOpened()
     {
-        bool curtain_open = ((Ink.Runtime.BoolValue)DialogueManager.Instance.
-            GetVariableState("curtain_open")).value;
+        windowRenderer.sprite = window_Open;
+        windowRenderer.material = window_Emission;
+        mirrorRenderer.material = mirror_Brighten;
+        bedRenderer.sprite = bed_brighten;
+        dust.Play();
 
-        if (curtain_open)
+        //enable the lighting
+        curtain_light.enabled = true;
+        floor_Light.SetActive(true);
+    }
+
+    private void HandleVariableChanged(string name, Ink.Runtime.Object value)
+    {
+        if (name != "curtain_open")
+            return;
+
+        if (value is Ink.Runtime.BoolValue boolVal && boolVal.value)
         {
-            windowRenderer.sprite = window_Open;
-            windowRenderer.material = window_Emission;
-            mirrorRenderer.material = mirror_Brighten;
-            bedRenderer.sprite = bed_brighten;
-            dust.Play();
-
-            //enable the lighting
-            curtain_light.enabled = true;
-            floor_Light.SetActive(true);
-
-            lightingPerformed = true;
+            CurtainOpened();
         }
     }
 }

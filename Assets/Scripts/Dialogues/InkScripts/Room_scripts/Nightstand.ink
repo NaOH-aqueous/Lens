@@ -1,7 +1,13 @@
 // Nightstand Dialogue
 INCLUDE Globals.ink
 //the switch is on
+{ - door_unlocked:
+-> clock
 
+- else:
+-> main
+}
+=== main ===
 This is your nightstand.
 ->question
 === question ===
@@ -54,7 +60,7 @@ The light is on.
 = switch_off
 Turn on?
 + [Yes]
-You turned on the switch. #audio:switch_on
+You turned on the switch. #audio:shiny
 ~ lamp_switch = true
 -> Tback
 + [No]
@@ -97,7 +103,7 @@ There lies several blank copy paper. -> before
 + [Back] -> Drawer
 
 = look_closer
-You look closer and saw one unused paper towel. #item:PaperTowel
+You look closer and saw one unused paper towel. #item:paper towel
 * [Take it away]
 ~ have_paper = true
 You took it away. #item:clearDisplay
@@ -106,38 +112,19 @@ You took it away. #item:clearDisplay
 = take_the_paper_but_never_inspect_top_drawer
 * {not top_drawer} [Inspect top drawer?] -> top_drawer
 + {top_drawer && bottom_drawer}[Back] -> Drawer
-//--------------------Leave & END -------------------
-/*
-=== Leave ===
-* { not On_the_table.alarm || not On_the_table.lamp} [Continue inspecting on the table]
--> On_the_table
-* /*{ not On_the_table.lamp}*/ //[Leave] 
-//You walked away.
-//->END
-//* {On_the_table.alarm && On_the_table.lamp } -> on_the_table_conclude
-//*-> END
-
-//=== on_the_table_conclude ===
-//  You have finished the inspection on the table.
-//  {not Drawer: ->drawer_not_check} 
-//  * [Leave] -> END
-  
-//  = drawer_not_check
-//  Inspect the drawer?
-//  * [Yes]-> Drawer
-//  * [No] 
-//  You walked away.
-//  -> END
-
-//--------------------Leave2 & END -------------------
-//=== leave2 ===
-//* {Drawer.top_drawer && Drawer.bottom_drawer } -> drawer_conclude
-//- You walked away.
-//-> END
-//=== drawer_conclude ===
-//You have finished the inspection of drawer.
-//-> END
-//--------------------Table_back -------------------
 === Tback ===
 // always a back
 + [Back] ->On_the_table
+
+=== clock ===
+{ - not time_get:
+Take TIME with you?
+* [Yes]
+~ time_get = true
+TIME has joined your team! #audio:shiny2 #item:time
+Time's up! Lets go! #speaker:Time #audio:alarm
+-> END
+- else: 
+There's no time to waste! LET'S GO! #speaker:Time #audio:alarm
+-> END
+}

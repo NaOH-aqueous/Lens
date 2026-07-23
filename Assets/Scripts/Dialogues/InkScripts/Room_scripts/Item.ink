@@ -2,6 +2,7 @@
 INCLUDE Globals.ink
 EXTERNAL UseItem()
 EXTERNAL CanUseItem()
+EXTERNAL InspectItem()
 
 ->invent
 
@@ -11,11 +12,13 @@ What are you going to do with it?
  + [Use]
  {CanUseItem():
     ~ UseItem()
-    You used the item. ->END
+    ->END
  - else: 
  You can't use it now. ->back
  }
- + [Inspect]->END
+ + [Inspect]
+ ~ InspectItem()
+    ->END
  + [Back] -> END
  
  ===back===

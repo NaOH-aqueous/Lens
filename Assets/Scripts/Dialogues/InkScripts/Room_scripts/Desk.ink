@@ -3,6 +3,7 @@
 INCLUDE Globals.ink
 EXTERNAL ReadDiary()
 EXTERNAL WriteDiary()
+EXTERNAL InspectPlanter()
 
 This is your desk. 
 A diary, pencil, and a planter can be seen here. You spend most of time here when you're not in bed.
@@ -22,13 +23,16 @@ Where do you want to inspect?
 = diary 
 Read the diary?
 + [Yes]
+{not get_pages:
 ~ read_diary = true
-You read the diary. 
     ~ ReadDiary()
 -> END
+- else: 
+There are currently only blank pages in this diary.
+}
 
 + [No]
-Nothing catches your interest at the moment.
+Maybe not now. #speaker:Lens #portrait:normal
 -> back
 
 //---------------------------------
@@ -36,14 +40,15 @@ Nothing catches your interest at the moment.
 Write something?
 {read_notes && read_diary:
 
-+ [Yes] You seem to be interested in writing something at the start of today.<> #audio:writing2
++ [Yes] You seem to be interested in writing something at the start of today. #audio:writing2
     ~ WriteDiary()
--> END
+-> diary
 + [No] You are not in the mood right now. ->back
 
 - else:
 
-+ [Yes] Maybe not now. ->back
++ [Yes] Maybe not now.<> #speaker:Lens #portrait:normal
+->back
 + [No]  You are not in the mood right now. ->back
 }
 
@@ -60,7 +65,12 @@ You seems to be interested in writing something at the start of today. -> back
  -> back*/
 //---------------------------------
 = planter
-Nothing resides in this planter right now, expect some bone-dry and malnutritional soil. -> back
+Nothing resides in this planter right now, expect some lifeless and malnutritional soil. #item:planter
+* [Inspect]<>
+  ~ InspectPlanter()
+  ->END
+* [Back] -> back
 
 === back ===
-+ [Back] ->Inspect
++ [Back] <> #item:clearDisplay
+->Inspect

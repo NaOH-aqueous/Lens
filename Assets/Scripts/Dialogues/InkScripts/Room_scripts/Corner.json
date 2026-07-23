@@ -1,0 +1,1 @@
+﻿{"inkVersion":21,"root":[["^This is a dark corner of the room.","\n","ev","str","^Inspect","/str","/ev",{"*":"0.c-0","flg":20},"ev","str","^Leave","/str","/ev",{"*":"0.c-1","flg":20},{"c-0":["\n","ev",{"x()":"InspectCorner"},"pop","/ev","\n","end",{"->":"0.g-0"},{"#f":5}],"c-1":["\n","end",{"->":"0.g-0"},{"#f":5}],"g-0":["done",{"#f":5}]}],"done",{"#f":1}],"listDefs":{}}

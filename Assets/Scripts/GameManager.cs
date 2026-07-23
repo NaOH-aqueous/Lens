@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum GameStateType
@@ -14,6 +14,7 @@ public enum GameStateType
     Inventory,
     ItemDisplay,
     Puzzle,
+    Lens,
     Cutscene
 }
 
@@ -27,7 +28,11 @@ public class GameManager : MonoBehaviour
     public GameObject dialogueUI;
     public GameObject cgUI;
     public GameObject puzzleUI;
+    public GameObject lensUI;
 
+    [Header("Scene Names")]
+    public string mainMenuSceneName = "MainMenu";
+    public string gameSceneName = "Home";
 
     private Stack<GameStateType> stateStack = new Stack<GameStateType>();
     public GameStateType CurrentState =>
@@ -43,6 +48,7 @@ public class GameManager : MonoBehaviour
     private CanvasGroup puzzleCanvasGroup;
     private Button pauseButton;
     private PuzzleController puzzleController;
+    private LensController lensController;
 
     private bool isTransitioning;
 
@@ -68,6 +74,7 @@ public class GameManager : MonoBehaviour
         cgCanvasGroup = cgUI.GetComponent<CanvasGroup>();
         puzzleCanvasGroup = puzzleUI.GetComponent<CanvasGroup>();
         puzzleController = puzzleUI.GetComponent<PuzzleController>();
+        lensController = lensUI.GetComponent<LensController>();
 
         pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
 
@@ -78,13 +85,13 @@ public class GameManager : MonoBehaviour
         {
             m_dialogueManager.OnDialogueStatusChanged += HandleDialogueStateChanged;
         }
+
     }
 
 
     private void OnEnable()
     {
         OnGameStateChanged += ApplyState;
-
     }
 
     private void OnDisable()
@@ -151,7 +158,8 @@ public class GameManager : MonoBehaviour
         }
         else if (state == GameStateType.Inventory ||
                  state == GameStateType.ItemDisplay ||
-                 state == GameStateType.Puzzle)
+                 state == GameStateType.Puzzle||
+                 state == GameStateType.Cutscene)
         {
             isTransitioning = true;
             yield return StartCoroutine(blurVFX.OutroTransition());
@@ -187,6 +195,10 @@ public class GameManager : MonoBehaviour
                 AudioListener.pause = false;
                 Time.timeScale = 0f;
                 break;
+            case GameStateType.Lens:
+                AudioListener.pause = false;
+                Time.timeScale = 0f;
+                break;
             case GameStateType.Cutscene:
                 Time.timeScale = 0f;
                 break;
@@ -201,21 +213,21 @@ public class GameManager : MonoBehaviour
     }
 
     private void RefreshUIInteractivity()
-{
-    bool dialoguePlaying = m_dialogueManager != null &&
+    {
+        bool dialoguePlaying = m_dialogueManager != null &&
                            m_dialogueManager.CheckDialoguePlaying();
 
-    inventoryCanvasGroup.interactable =
-        CurrentState == GameStateType.Inventory && !dialoguePlaying;
+        inventoryCanvasGroup.interactable =
+            CurrentState == GameStateType.Inventory && !dialoguePlaying;
 
-    cgCanvasGroup.interactable =
-        CurrentState == GameStateType.ItemDisplay && !dialoguePlaying;
+        cgCanvasGroup.interactable =
+            CurrentState == GameStateType.ItemDisplay && !dialoguePlaying;
 
-    puzzleCanvasGroup.interactable =
-        CurrentState == GameStateType.Puzzle && !dialoguePlaying;
+        puzzleCanvasGroup.interactable =
+            CurrentState == GameStateType.Puzzle && !dialoguePlaying;
 
-    dialogueCanvasGroup.interactable = dialoguePlaying;
-}
+        dialogueCanvasGroup.interactable = dialoguePlaying;
+    }
 
     private void HideAllMenu()
     {
@@ -252,6 +264,10 @@ public class GameManager : MonoBehaviour
             case GameStateType.Puzzle:
                 puzzleController.ExitAllPuzzle();
                 break;
+
+            case GameStateType.Lens:
+                lensController.DisableLens();
+                break;
         }
     }
 
@@ -275,6 +291,30 @@ public class GameManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(pauseButton.gameObject);
     }
 
+    public void StartGame()
+    {
+        SceneManager.LoadScene(gameSceneName);
+    }
+
+    public void ReturnToMain()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.CloseInventory();
+        }
+
+        if (blurVFX != null)
+        {
+            blurVFX.enabled = false;
+        }
+
+        stateStack.Clear();
+        PushState(GameStateType.MainMenu);
+
+        // Load main menu scene
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+
     public void QuitGame()
     {
 
@@ -284,5 +324,4 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
-
 }

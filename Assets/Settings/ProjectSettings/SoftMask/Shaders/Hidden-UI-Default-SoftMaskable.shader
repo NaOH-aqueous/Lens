@@ -61,7 +61,7 @@ Shader "Hidden/UI/Default (SoftMaskable)"
             #pragma shader_feature _ SOFTMASK_EDITOR
             #pragma shader_feature_local_fragment _ SOFTMASKABLE
             #if SOFTMASKABLE
-            #include "Packages/com.coffee.softmask-for-ugui/Shaders/SoftMask.cginc"
+            #include "Assets/Settings/ProjectSettings/SoftMask/Shaders/SoftMask.cginc"
             #endif
             // ==== SOFTMASKABLE END ====
 

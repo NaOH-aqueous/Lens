@@ -1,19 +1,23 @@
 INCLUDE Globals.ink
 //Window Dialogue
-
+{not planter_get:
 {
 - not curtain_open:
 ->main
 - else:
 -> open_curtain
 }
+- else:
+-> withplanter
+}
+
 
 ===main===
 The window is covered by the curtain, isolating the room from the outside world.
 
  * [Pull the curtain open]
  ~ curtain_open = true
-   The curtain has been pulled open. #audio:curtain_pull #speaker:Lens
+   The curtain has been pulled open. #audio:curtain_pull #speaker:Lens #portrait:normal #audio:lens_normal
     ->open_curtain
  * [Leave] ->END
  
@@ -31,7 +35,13 @@ The window is covered by the curtain, isolating the room from the outside world.
  }
 // * [Inspect] -> inspect
  * [Leave] ->END
-
+ 
+ === withplanter ===
+It's extraordinarily bright down here. I'm sure the sunshine could help it to thrive. #speaker:Lens
+* [Get some sunlight]
+While holding the planter, you take a step closer to the window, exposing the planter under the sunlight.
+    #cutscene:plantGrow
+-> END
 /*=== inspect ===
 { window_clean: 
 You cleaned up the window for a better view of the outdoor scene.

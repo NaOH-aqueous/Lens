@@ -64,7 +64,7 @@ public class InventoryManager : MonoBehaviour
 
     void Update()
     {
-        if (InputManager.Instance.isInventoryPressed() && !isTransitioning)
+        if (InputManager.Instance.IsInventoryPressed() && !isTransitioning)
         {
             StartCoroutine(ToggleInventory());
         } 
@@ -170,32 +170,31 @@ public class InventoryManager : MonoBehaviour
     public void UseItem(Item item)
     {
         if (item == null)
-        {
             return;
-        }
-        if (GetItem(item))
+
+        for (int i = 0; i < itemSlot.Length; i++)
         {
-            for(int i = 0; i < itemSlot.Length; i++)
+            if (itemSlot[i].item == item)
             {
-                if (itemSlot[0].item == item)
-                {
-                    Debug.Log("used item: " + item.item_Name);
-                    itemSlot[i].ClearSlot();
-                    itemNames.Remove(item.item_Name);
+                Debug.Log(
+                    "used item: "
+                    + item.item_Name
+                );
+
+                itemSlot[i].ClearSlot();
+
+                itemNames.Remove(
+                    item.item_Name
+                );
+
+                if (currentItem == item)
                     currentItem = null;
-                }
+
+                return;
             }
         }
     }
 
-    private bool GetItem(Item item)
-    {
-        if (itemNames.Contains(item.item_Name))
-        {
-            return true;
-        }
-        return false;
-    }
 
     public Item GetItemByName(string itemName)
     {
