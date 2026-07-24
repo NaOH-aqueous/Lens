@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: cdd4e59f0b51df24ab4b70c7779cabc6
+guid: ebca86e3495bf6941af865127ee85978
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9007595670493222368
-    second: Film-Dust-24_0
+      213: 2771820875193749726
+    second: vecteezy_cute-kawaii-abstract-symbol-sticker-doodle_48053441_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Film-Dust-24_0
+      name: vecteezy_cute-kawaii-abstract-symbol-sticker-doodle_48053441_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 3264
-        height: 2448
+        width: 8979
+        height: 4925
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0e5581cb988610d70800000000000000
-      internalID: 9007595670493222368
+      spriteID: ed09fe6766c777620800000000000000
+      internalID: 2771820875193749726
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Film-Dust-24_0: 9007595670493222368
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
