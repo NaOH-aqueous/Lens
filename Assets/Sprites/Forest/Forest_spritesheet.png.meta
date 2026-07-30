@@ -164,7 +164,7 @@ TextureImporter:
         width: 1100
         height: 1432
       alignment: 9
-      pivot: {x: 0.49590608, y: 0.2924328}
+      pivot: {x: 0.49590608, y: 0.28928784}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -181,12 +181,12 @@ TextureImporter:
       name: Forest_spritesheet_3
       rect:
         serializedVersion: 2
-        x: 314
-        y: 493
+        x: 311
+        y: 496
         width: 318
         height: 213
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.4704442, y: 0.24785517}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -203,12 +203,12 @@ TextureImporter:
       name: Forest_spritesheet_5
       rect:
         serializedVersion: 2
-        x: 351
+        x: 349
         y: 79
         width: 202
         height: 250
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.53622556, y: 0.2834012}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []

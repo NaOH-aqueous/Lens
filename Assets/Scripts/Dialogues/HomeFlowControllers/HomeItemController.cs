@@ -4,11 +4,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
-public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
+public class HomeItemController : FlowController, IDialogueFunctionBinder
 {
     [Header("CG&Puzzle")]
     [SerializeField] private CGItem cgPlayer;
@@ -38,6 +39,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     [SerializeField] private SpriteRenderer nightstandRenderer;
     [SerializeField] private Sprite nightstand_normal;
     [SerializeField] private Sprite nightstand_withoutAlarm;
+    [SerializeField] private SpawnPoint spawnPos;
 
 
     [Header("Puzzles")]
@@ -102,6 +104,8 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
     private List<IItemUseRule> rules = new List<IItemUseRule>();
     private AudioSource _aud;
     public bool isIntroPlayed = false;
+    public bool isChapterCleared = false;
+
     private bool isFruitFed = false;
 
     private bool isInspecting = false;
@@ -147,6 +151,14 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
     private void Start()
     {
+        base.SetNotReady();
+        Init();
+        InitHomeScene();
+        base.SetReady();
+    }
+
+    private void Init()
+    {
         _aud = GetComponent<AudioSource>();
 
         if (DialogueManager.Instance != null)
@@ -165,14 +177,35 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
             lens.OnLensTriggered += HandleLensTriggered;
             lens.OnItemTriggered += HandleItemTriggered;
         }
+    }
 
-        if (!isIntroPlayed)
+
+    private void InitHomeScene()
+    {
+
+        isChapterCleared = DialogueManager.Instance.GetBoolVariable("chapter_clear");
+
+        if (DialogueManager.Instance.GetBoolVariable("door_unlocked"))
+        {
+            OpenDoor();
+        }
+
+        if (!isIntroPlayed && !isChapterCleared)
         {
             _aud.Stop();
             StartCoroutine(IntroSceneCoroutine());
         }
-;    }
-
+        else if (isChapterCleared)
+        {
+            OpenDoor();
+            PlayerController player = GameObject.FindAnyObjectByType<PlayerController>();
+            if (spawnPos.spawnID == "home_door")
+            {
+                player.SetFacingDirection(spawnPos.facingDirection);
+                player.SetSpawnPos(spawnPos.GetComponent<Transform>().position);
+            }
+        }
+    }
 
     public bool CanUseItem()
     {
@@ -251,10 +284,14 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         GameManager.instance.PushState(GameStateType.ItemDisplay);
 
         title.SetActive(true);
-        TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 1, 1.5f);
-        yield return new WaitForSecondsRealtime(2f);
-        TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 0, 1.5f);
-        yield return new WaitForSecondsRealtime(2.5f);
+        if(title.GetComponent<CanvasGroup>() != null)
+        {
+            TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 1, 1.5f);
+            yield return new WaitForSecondsRealtime(2f);
+            TweenHelper.FadeCanvasGroup(title.GetComponent<CanvasGroup>(), 0, 1.5f);
+            yield return new WaitForSecondsRealtime(2.5f);
+        }
+
         title.SetActive(false);
         yield return null;
 
@@ -373,8 +410,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
                 case "door_unlocked":
                     if (boolVal)
                     {
-                        doorRenderer.sprite = door_opened;
-                        doorRenderer.material = door_emission;
+                        OpenDoor();
                     }
                     break;
                 case USE_TAG:
@@ -383,6 +419,12 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
             }
         }
+    }
+
+    private void OpenDoor()
+    {
+        doorRenderer.sprite = door_opened;
+        doorRenderer.material = door_emission;
     }
 
     public void SetWindowClean()
@@ -727,20 +769,30 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
         DialogueManager.Instance.NewStory(endSceneDialogue);
     }
 
-    private void EndDemo()
+    public void EndDemo()
     {
         StartCoroutine(EndDemoCoroutine());
     }
 
+
     private IEnumerator EndDemoCoroutine()
     {
+        isChapterCleared = true;
         yield return null;
-        yield return new WaitForSecondsRealtime(0.5f);
-        bg.SetActive(true);
+        yield return new WaitForSecondsRealtime(1f);
 
-        yield return new WaitForSecondsRealtime(0.5f);
-        DialogueManager.Instance.NewStory(endDemoDialogue);
+        SceneTransitionManager.Instance.LoadScene("Forest_A");
     }
+
+    //private IEnumerator EndDemoCoroutine()
+    //{
+    //    yield return null;
+    //    yield return new WaitForSecondsRealtime(0.5f);
+    //    bg.SetActive(true);
+
+    //    yield return new WaitForSecondsRealtime(0.5f);
+    //    DialogueManager.Instance.NewStory(endDemoDialogue);
+    //}
 
     private void ReadLetter()
     {
@@ -829,6 +881,7 @@ public class HomeItemController : MonoBehaviour, IDialogueFunctionBinder
 
         story.BindExternalFunction(
            "ReadLetter", () => ReadLetter());
+
         story.BindExternalFunction(
             "FoldPaper", () => FoldPaper());
     }

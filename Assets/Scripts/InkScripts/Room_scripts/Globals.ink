@@ -33,3 +33,5 @@ VAR fruit_get = false
 VAR time_get = false
 
 VAR sock_get = false
+
+VAR chapter_clear = false

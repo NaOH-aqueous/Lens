@@ -57,18 +57,54 @@ public class PortraitManager : MonoBehaviour
     {
         yield return null;
 
+        if (DialogueManager.Instance == null)
+            yield break;
+
         string speaker = DialogueManager.Instance.GetSpeakerTag();
         string portrait = DialogueManager.Instance.GetExpressionTag();
 
         ApplyPortrait(speaker, portrait);
     }
 
-
     public void Register(string characterName, SetSprites sprite)
     {
-        if (!portraits.ContainsKey(characterName))
+        if (string.IsNullOrEmpty(characterName) || sprite == null)
+            return;
+
+        // If an entry exists but the referenced object was destroyed, replace it.
+        if (portraits.TryGetValue(characterName, out SetSprites existing))
         {
-            portraits.Add(characterName, sprite);
+            if (existing == null)
+            {
+                portraits[characterName] = sprite;
+                return;
+            }
+
+            // If the same sprite is already registered, nothing to do.
+            if (existing == sprite)
+                return;
+
+            // Otherwise new sprite for the same name - replace and log a warning.
+            portraits[characterName] = sprite;
+            Debug.LogWarning($"PortraitManager: Replaced existing portrait for '{characterName}'.");
+            return;
+        }
+
+        portraits.Add(characterName, sprite);
+    }
+
+    public void Unregister(string characterName, SetSprites sprite)
+    {
+        if (string.IsNullOrEmpty(characterName))
+            return;
+
+        if (portraits.TryGetValue(characterName, out SetSprites existing))
+        {
+            // Remove if matching instance or if existing has been destroyed.
+            if (existing == null || existing == sprite)
+            {
+                portraits.Remove(characterName);
+            }
         }
     }
 
@@ -80,7 +116,6 @@ public class PortraitManager : MonoBehaviour
         }
 
         ApplyPortrait(speaker, portraitTag);
-
     }
 
     private void ApplyPortrait(string speaker, string portraitTag)
@@ -94,7 +129,10 @@ public class PortraitManager : MonoBehaviour
         if (string.IsNullOrEmpty(speaker))
             return;
 
-        if (portraits.TryGetValue(speaker, out SetSprites sprite))
+        // Clean up any destroyed entries before lookup
+        CleanupDestroyedEntries();
+
+        if (portraits.TryGetValue(speaker, out SetSprites sprite) && sprite != null)
         {
             sprite.PlayExpression(portraitTag);
         }
@@ -114,9 +152,35 @@ public class PortraitManager : MonoBehaviour
 
     private void HideAllPortraits()
     {
-        foreach (var portrait in portraits.Values)
+        // Iterate over a copy of values to avoid modification during enumeration.
+        var keys = new List<string>(portraits.Keys);
+        foreach (var key in keys)
         {
-            portrait.Hide();
+            if (portraits.TryGetValue(key, out SetSprites portrait))
+            {
+                if (portrait != null)
+                {
+                    portrait.Hide();
+                }
+                else
+                {
+                    // remove destroyed entries
+                    portraits.Remove(key);
+                }
+            }
         }
+    }
+
+    private void CleanupDestroyedEntries()
+    {
+        var keysToRemove = new List<string>();
+        foreach (var kv in portraits)
+        {
+            if (kv.Value == null)
+                keysToRemove.Add(kv.Key);
+        }
+
+        foreach (var k in keysToRemove)
+            portraits.Remove(k);
     }
 }

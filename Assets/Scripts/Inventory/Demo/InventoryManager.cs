@@ -8,9 +8,10 @@ using UnityEngine.EventSystems;
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
+    public bool IsReady { get; private set; }
 
-    [SerializeField] private GameObject InventoryMenu;
-    [SerializeField] private ItemSlot[] itemSlot;
+    private GameObject InventoryMenu;
+    private readonly List<ItemSlot> itemSlot = new();
 
     private HashSet<string> itemNames = new HashSet<string>();
 
@@ -40,33 +41,44 @@ public class InventoryManager : MonoBehaviour
 
     void Start()
     {
-        _anim = InventoryMenu.gameObject.GetComponent<Animator>();
-        InventoryMenu.SetActive(false);
-        isInventoryOpen = false;
-
+        IsReady = false;
         //return when there's not itemslots assigned
-        if (itemSlot == null || itemSlot.Length == 0)
+        if (itemSlot == null || itemSlot.Count == 0)
         {
             Debug.LogWarning("No item slots assigned to InventoryManager.");
             return;
         }
 
-        for (int i = 0, len = itemSlot.Length; i < len; i++)
+        for (int i = 0, len = itemSlot.Count; i < len; i++)
         {
             if (i == 0)
             {
-                //make the first slot selected by default
+                // make the first slot selected by default
                 selectedSlot = itemSlot[0];
-            }
-            if (itemSlot[i] == null)
-            {
-                //if the itemslot is created but not assigned, send error to console
-                Debug.LogError("ItemSlot at index " + i + " is not assigned in the inspector.");
             }
         }
 
-        // ensure we subscribe to input events once Start runs and InputManager is available
+        InventoryMenu.SetActive(false);
+        isInventoryOpen = false;
+
         SubscribeInventory();
+    }
+
+    public void AssignUI(InventoryUI ui)
+    {
+        InventoryMenu = ui.inventoryMenu;
+        _anim = ui.animator;
+
+        itemSlot.Clear();
+        itemSlot.AddRange(ui.slots);
+
+        Debug.Log($"Manager slot count = {itemSlot.Count}");
+        if (itemSlot.Count > 0)
+            selectedSlot = itemSlot[0];
+
+        InventoryMenu.SetActive(false);
+        Debug.Log("inventory assign");
+        IsReady = true;
     }
 
     private void OnEnable()
@@ -119,7 +131,7 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
-            if (isTransitioning)
+        if (isTransitioning)
         {
             return;
         }
@@ -131,7 +143,7 @@ public class InventoryManager : MonoBehaviour
     {
         isInventoryOpen = !isInventoryOpen;
         isTransitioning = true;
-        
+
         if (isInventoryOpen)
         {
             GameManager.instance.PushState(GameStateType.Inventory);
@@ -172,14 +184,14 @@ public class InventoryManager : MonoBehaviour
     public IEnumerator SelectFirstSlotNextFrame()
     {
         yield return new WaitForEndOfFrame();
-        yield return null; 
+        yield return null;
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(selectedSlot.gameObject);
     }
 
     private void AddItem(Item new_Item)
     {
-        for (int i = 0; i < itemSlot.Length; i++)
+        for (int i = 0; i < itemSlot.Count; i++)
         {
             if (!itemSlot[i].IsFull)
             {
@@ -218,9 +230,9 @@ public class InventoryManager : MonoBehaviour
         isProcessingQueue = false;
     }
 
-    public void SetCurrentItem(Item item) 
-    { 
-        if(item == null)
+    public void SetCurrentItem(Item item)
+    {
+        if (item == null)
         {
             return;
         }
@@ -237,7 +249,7 @@ public class InventoryManager : MonoBehaviour
         if (item == null)
             return;
 
-        for (int i = 0; i < itemSlot.Length; i++)
+        for (int i = 0; i < itemSlot.Count; i++)
         {
             if (itemSlot[i].item == item)
             {
@@ -265,15 +277,34 @@ public class InventoryManager : MonoBehaviour
     {
         if (itemNames.Contains(itemName))
         {
-            for (int i = 0; i < itemSlot.Length; i++)
+            for (int i = 0; i < itemSlot.Count; i++)
             {
-                if (itemSlot[0].item.item_Name == itemName)
+                if (itemSlot[i].item != null && itemSlot[i].item.item_Name == itemName)
                 {
-                    return itemSlot[0].item;
+                    return itemSlot[i].item;
                 }
             }
         }
 
         return null;
+    }
+
+    public void RegisterSlot(ItemSlot slot)
+    {
+        if (!itemSlot.Contains(slot))
+        {
+            itemSlot.Add(slot);
+        }
+
+        if (selectedSlot == null)
+            selectedSlot = slot;
+    }
+
+    public void UnregisterSlot(ItemSlot slot)
+    {
+        itemSlot.Remove(slot);
+
+        if (selectedSlot == slot)
+            selectedSlot = itemSlot.Count > 0 ? itemSlot[0] : null;
     }
 }

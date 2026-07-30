@@ -92,9 +92,12 @@ public class CGItem : MonoBehaviour
     private IEnumerator ClearDisplayCoroutine()
     {
         // fade out using TweenHelper (DOTween) with default easing, unscaled time
-        cgCanvasGroup.alpha = 1f;
-        var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
-        yield return fadeOut.WaitForCompletion();
+        if(cgCanvasGroup != null)
+        {
+            cgCanvasGroup.alpha = 1f;
+            var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+            yield return fadeOut.WaitForCompletion();
+        }
 
         itemDisplayer.sprite = null;
         CGDisplayer.sprite = null;
@@ -170,9 +173,13 @@ public class CGItem : MonoBehaviour
     private IEnumerator ClearInspectCoroutine()
     {
         // fade out using TweenHelper (DOTween) with default easing, unscaled time
-        cgCanvasGroup.alpha = 1f;
-        var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
-        yield return fadeOut.WaitForCompletion();
+
+        if(cgCanvasGroup != null)
+        {
+            cgCanvasGroup.alpha = 1f;
+            var fadeOut = TweenHelper.FadeCanvasGroup(cgCanvasGroup, 0f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+            yield return fadeOut.WaitForCompletion();
+        }
 
         itemViewer.sprite = null;
         itemInspector.SetActive(false);
@@ -307,7 +314,10 @@ public class CGItem : MonoBehaviour
     {
          // fade in using TweenHelper (DOTween), don't block
          cgCanvasGroup.alpha = 0f;
-         TweenHelper.FadeCanvasGroup(cgCanvasGroup, 1f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+         if (cgCanvasGroup != null)
+        {
+            TweenHelper.FadeCanvasGroup(cgCanvasGroup, 1f, 0.25f, true, DG.Tweening.Ease.OutQuad);
+        }
 
          GameManager.instance.PushState(GameStateType.ItemDisplay);
 

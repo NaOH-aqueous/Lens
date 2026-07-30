@@ -5,12 +5,15 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     //public instance to be retrived from other scripts
     public static DialogueManager Instance { get; private set; }
+    public bool IsReady { get; private set; }
+    public bool SaveComplete { get; private set; }
 
     public event System.Action<string> OnItemTagChanged;
 
@@ -39,27 +42,23 @@ public class DialogueManager : MonoBehaviour
 
     //private audio and animation variables
     private Animator _anim;
-    private AudioSource _audio;
     private DialogueVariables dialogueVariables;
     private string lastItemTag = "";
     private string lastPortraitTag = "";
     private string lastPlayedTag = "";
     private string lastCutSceneTag = "";
 
-    // variable for the load_globals.ink JSON
-    [Header("Load Globals JSON")]
-    [SerializeField] private TextAsset loadGlobalsJSON;
-
     [Header("Dialogue UI")]
-    [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private TextMeshProUGUI textToDisplay;
-    [SerializeField] private GameObject indication;
-    [SerializeField] private Image nameLabel;
-    [SerializeField] private TextMeshProUGUI speakerLabel;
+     private GameObject dialoguePanel;
+     private TextMeshProUGUI textToDisplay;
+     private GameObject indication;
+     private Image nameLabel;
+     private TextMeshProUGUI speakerLabel;
+     private GameObject buttonGroup;
+     private DialogueUI ui;
 
     [Header("Choices UI")]
-    [SerializeField] private GameObject buttonPrefab;
-    [SerializeField] private GameObject buttonGroup;
+    private GameObject buttonPrefab;
 
     private void Awake()
     {
@@ -73,28 +72,63 @@ public class DialogueManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         EventSystem.current.SetSelectedGameObject(null);
-        dialogueVariables = new DialogueVariables(loadGlobalsJSON);
     }
 
     private void Start()
     {
-        //find animation and audio componenets in the attached object
-        _anim = GameObject.Find("DialoguePanel").GetComponent<Animator>();
-        _audio = GetComponent<AudioSource>();
-
-        if(_anim == null)
+        // If a DialogueUI already exists in this scene, use it.
+        DialogueUI existingUI = FindFirstObjectByType<DialogueUI>();
+        if (existingUI != null)
         {
-            Debug.Log("Animator component cannot be found in dialogue manager");
+            AssignUI(existingUI);
             return;
         }
+        else
+        {
+            Debug.Log("no Dialogue UI can be assigned!");
+        }
 
-        //initialize the dialogue panel
-        dialoguePanel.SetActive(false);
-        textToDisplay.text = string.Empty;
-        indication.SetActive(false);
-        nameLabel.enabled = false;
+        InitializeUI();
+    }
 
+    public void InitializeUI()
+    {
+        IsReady = false;
 
+        // Defensive initialization so Start only needs to run once and
+        // AssignUI can reinitialize on scene loads.
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(false);
+        }
+
+        if (textToDisplay != null)
+        {
+            textToDisplay.text = string.Empty;
+            textToDisplay.enabled = false;
+        }
+
+        if (indication != null)
+        {
+            indication.SetActive(false);
+        }
+
+        if (nameLabel != null)
+        {
+            nameLabel.enabled = false;
+        }
+
+        IsReady = true;
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnDestroy()
@@ -103,6 +137,17 @@ public class DialogueManager : MonoBehaviour
         if (InputManager.Instance != null)
         {
             InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
+        }
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        DialogueUI dialogueUI = FindFirstObjectByType<DialogueUI>();
+
+        if (dialogueUI != null)
+        {
+            AssignUI(dialogueUI);
         }
     }
 
@@ -128,24 +173,24 @@ public class DialogueManager : MonoBehaviour
         // set the indication active only when the story can be continue
         if (!_inkstory.canContinue)
         {
-            indication.SetActive(false);
+            if (indication != null) indication.SetActive(false);
         }
         else
         {
-            indication.SetActive(true);
+            if (indication != null) indication.SetActive(true);
         }
 
         // set the speaker label. if the speaker is empty, set the label to
         //empty string
         if (speakerLabel != null && !string.IsNullOrEmpty(GetSpeakerTag()))
         {
-            nameLabel.enabled = true;
+            if (nameLabel != null) nameLabel.enabled = true;
             speakerLabel.text = GetSpeakerTag();
         }
         else if (string.IsNullOrEmpty(GetSpeakerTag()))
         {
-            nameLabel.enabled = false;
-            speakerLabel.text = "";
+            if (nameLabel != null) nameLabel.enabled = false;
+            if (speakerLabel != null) speakerLabel.text = "";
         }
     }   
     private string[] ParseTags(string tag) //return the parsed tags
@@ -215,6 +260,9 @@ public class DialogueManager : MonoBehaviour
     public void NewStory(TextAsset story)
     {
         _inkstory = new Ink.Runtime.Story(story.text);
+
+        // Load previously saved story state for the current active scene (if any)
+
         BindExternalFunctions();
         dialogueVariables.StartListening(_inkstory);
 
@@ -224,8 +272,8 @@ public class DialogueManager : MonoBehaviour
     //enter dialogue
     private void EnterDialogueMode()
     {
-        dialoguePanel.SetActive(true);
-        textToDisplay.enabled = true;
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
+        if (textToDisplay != null) textToDisplay.enabled = true;
         isDialoguePlaying = true;
 
         OnDialogueStatusChanged?.Invoke(true);
@@ -242,17 +290,22 @@ public class DialogueManager : MonoBehaviour
         }
 
         ContinueStory();
-        _anim.SetTrigger("dialogueStart");
+
+        if (_anim != null)
+            _anim.SetTrigger("dialogueStart");
     }
 
     //exit dialogue mode
     private IEnumerator ExitDialogueMode()
     {
-        _anim.SetTrigger("dialogueEnd");
-        animPlaying = true;
-
-        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
-            yield return null;
+        Debug.Log($"ExitDialogueMode called. canContinue={_inkstory?.canContinue}");
+        // Use a safe helper that ensures the outro state is actually entered (or times out).
+        if (_anim != null)
+        {
+            // trigger the animator and wait for the outro to start/finish with a timeout
+            _anim.SetTrigger("dialogueEnd");
+            yield return WaitForOutroAnim();
+        }
 
         animPlaying = false;
         isDialoguePlaying = false;
@@ -265,8 +318,8 @@ public class DialogueManager : MonoBehaviour
         }
 
         dialogueVariables.StopListening(_inkstory);
-        dialoguePanel.SetActive(false);
-        textToDisplay.enabled = false;
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (textToDisplay != null) textToDisplay.enabled = false;
 
         if (GameManager.instance.CurrentState == GameStateType.Inventory)
         {
@@ -281,7 +334,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (_inkstory.canContinue)
         {
-            textToDisplay.text = _inkstory.Continue();
+            if (textToDisplay != null) textToDisplay.text = _inkstory.Continue();
             lastPlayedTag = "";
             GetTags();
 
@@ -349,9 +402,6 @@ public class DialogueManager : MonoBehaviour
         {
             Destroy(choice);
         }
-
-        // Clear any legacy polling flag if other code relies on it - kept for compatibility but not required for event-based flow.
-        // InputManager.Instance.RegisterSubmitPressed(); // removed: event-based API replaces polling
 
         isChoicesDiaplayed = false;
 
@@ -422,15 +472,18 @@ public class DialogueManager : MonoBehaviour
     }
 
     //get current variable as well as value
-    public Ink.Runtime.Object GetVariableState(string variableName)
+    public bool GetBoolVariable(string variableName)
     {
-        Ink.Runtime.Object variableValue = null;
-        dialogueVariables.variables.TryGetValue(variableName, out variableValue);
-        if (variableValue == null)
+        if (dialogueVariables.variables.TryGetValue(variableName, out Ink.Runtime.Object variableValue))
         {
-            Debug.LogWarning("Ink Variable was found to be null: " + variableName);
+            if (variableValue is Ink.Runtime.BoolValue boolValue)
+            {
+                return boolValue.value;
+            }
         }
-        return variableValue;
+
+        Debug.LogWarning("Ink Bool Variable was not found: " + variableName);
+        return false;
     }
 
     public void RaiseVariableChaned(string name, Ink.Runtime.Object value)
@@ -492,8 +545,9 @@ public class DialogueManager : MonoBehaviour
 
     public void ResumeDialogue()
     {
-        dialoguePanel.SetActive(true);
-        _anim.SetTrigger("dialogueStart");
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
+        if (_anim != null)
+            _anim.SetTrigger("dialogueStart");
 
         cutscenePlaying = false;
         InputRouter.Instance.PopLayer(InputLayer.Cutscene);
@@ -502,11 +556,13 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator PauseDialogueCoroutine()
     {
         InputRouter.Instance.PushLayer(InputLayer.Cutscene);
-        _anim.SetTrigger("dialogueEnd");
+        if (_anim != null)
+        {
+            _anim.SetTrigger("dialogueEnd");
+            yield return WaitForOutroAnim();
+        }
 
-        while (!_anim.GetCurrentAnimatorStateInfo(0).IsName("outroAnim"))
-            yield return null;
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
     }
 
     private void OnSubmitPerformed()
@@ -525,5 +581,85 @@ public class DialogueManager : MonoBehaviour
         {
             ContinueStory();
         }
+    }
+
+    public void AssignUI(DialogueUI newUI)
+    {
+        ui = newUI;
+
+        dialoguePanel = ui.dialoguePanel;
+        textToDisplay = ui.textToDisplay;
+        indication = ui.indication;
+        nameLabel = ui.nameLabel;
+        speakerLabel = ui.speakerLabel;
+        buttonGroup = ui.buttonGroup;
+        buttonPrefab = ui.buttonPrefab;
+
+        if (dialoguePanel != null)
+        {
+            _anim = dialoguePanel.GetComponent<Animator>();
+        }
+
+        InitializeUI();
+    }
+
+    private IEnumerator WaitForOutroAnim()
+    {
+        const int layer = 0;
+
+        animPlaying = true;
+
+        // Timeout to avoid hangs (seconds, unscaled so it's frame-rate independent).
+        float timeout = 2.0f;
+        float timer = 0f;
+
+        // Wait for the animator to actually enter the state (or timeout).
+        while (!_anim.GetCurrentAnimatorStateInfo(layer).IsName("outroAnim") && timer < timeout)
+        {
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (_anim.GetCurrentAnimatorStateInfo(layer).IsName("outroAnim"))
+        {
+            // Wait until the state completes or until timeout is reached.
+            while (_anim.GetCurrentAnimatorStateInfo(layer).IsName("outroAnim") &&
+                   _anim.GetCurrentAnimatorStateInfo(layer).normalizedTime < 1f &&
+                   timer < timeout)
+            {
+                timer += Time.unscaledDeltaTime;
+                yield return null;
+            }
+        }
+
+        animPlaying = false;
+    }
+
+    private void OnApplicationQuit()
+    {
+        dialogueVariables.SaveVariables();
+    }
+
+    public void SwitchGlobals(TextAsset newGlobalsJSON)
+    {
+        SaveComplete = false;
+        dialogueVariables?.SaveVariables();
+        dialogueVariables = new DialogueVariables(newGlobalsJSON);
+        SaveComplete = true;
+    }
+
+    public void CancelDialogueImmediately()
+    {
+        StopAllCoroutines();
+
+        isDialoguePlaying = false;
+        cutscenePlaying = false;
+        animPlaying = false;
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+
+        if (InputManager.Instance != null)
+            InputManager.Instance.SubmitPerformed -= OnSubmitPerformed;
     }
 }

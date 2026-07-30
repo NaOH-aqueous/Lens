@@ -26,30 +26,50 @@ public class SetSprites : MonoBehaviour
 
         Hide();
     }
+
     private void Start()
     {
-        PortraitManager.Instance.Register(characterName, this);
+        if (PortraitManager.Instance != null)
+        {
+            PortraitManager.Instance.Register(characterName, this);
+        }
     }
+
+    private void OnDestroy()
+    {
+        // Unregister from PortraitManager so the manager doesn't keep a destroyed reference.
+        if (PortraitManager.Instance != null)
+        {
+            PortraitManager.Instance.Unregister(characterName, this);
+        }
+    }
+
     public void PlayExpression(string expression)
     {
         // Ensure any hide tweens are cancelled and show the portrait
-        TweenHelper.FadeCanvasGroup(_canvasGroup, 1f, 0.25f, true, Ease.OutQuad);
+        if (_canvasGroup != null)
+        {
+            TweenHelper.FadeCanvasGroup(_canvasGroup, 1f, 0.25f, true, Ease.OutQuad);
+        }
 
-        _image.enabled = true;
-        _anim.enabled = true;
+        if (_image != null)
+            _image.enabled = true;
+
+        if (_anim != null)
+            _anim.enabled = true;
 
         switch (expression)
         {
             case "normal":
-                _anim.SetTrigger("normal");
+                _anim?.SetTrigger("normal");
                 break;
 
             case "happy":
-                _anim.SetTrigger("happy");
+                _anim?.SetTrigger("happy");
                 break;
 
             case "nervous":
-                _anim.SetTrigger("nervous");
+                _anim?.SetTrigger("nervous");
                 break;
         }
     }
@@ -57,19 +77,28 @@ public class SetSprites : MonoBehaviour
     public void Hide()
     {
         // Fade out and disable image/anim when complete
-        var t = TweenHelper.FadeCanvasGroup(_canvasGroup, 0f, 0.15f, true, Ease.OutQuad);
+        Tween t = null;
+        if (_canvasGroup != null)
+        {
+            t = TweenHelper.FadeCanvasGroup(_canvasGroup, 0f, 0.15f, true, Ease.OutQuad);
+        }
+
         if (t != null)
         {
             t.OnComplete(() =>
             {
-                _image.enabled = false;
-                _anim.enabled = false;
+                if (_image != null)
+                    _image.enabled = false;
+                if (_anim != null)
+                    _anim.enabled = false;
             });
         }
         else
         {
-            _image.enabled = false;
-            _anim.enabled = false;
+            if (_image != null)
+                _image.enabled = false;
+            if (_anim != null)
+                _anim.enabled = false;
         }
     }
 }

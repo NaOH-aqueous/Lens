@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3235034479290578053}
-  - component: {fileID: 9125042642010948645}
-  - component: {fileID: 3499267020538465048}
   m_Layer: 5
   m_Name: InDialogueSprites
   m_TagString: Untagged
@@ -38,30 +36,6 @@ RectTransform:
   m_AnchoredPosition: {x: -357.21, y: 20.320404}
   m_SizeDelta: {x: 654.18, y: 891.4021}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &9125042642010948645
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1273436693541235023}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 0
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!114 &3499267020538465048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1273436693541235023}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e71d172c48dcb4489615837a0517672, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6839104761953906079
 GameObject:
   m_ObjectHideFlags: 0
@@ -75,6 +49,7 @@ GameObject:
   - component: {fileID: 5859311337445002949}
   - component: {fileID: 4786050430823633630}
   - component: {fileID: 936582763831487603}
+  - component: {fileID: 2643235433991519777}
   m_Layer: 5
   m_Name: Lens
   m_TagString: Untagged
@@ -174,3 +149,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterName: Lens
+--- !u!225 &2643235433991519777
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6839104761953906079}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

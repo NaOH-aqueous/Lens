@@ -35,14 +35,11 @@ public class DialogueTrigger : MonoBehaviour
         }
 
         int layerIndex = gameObject.layer;
-        string layerName = LayerMask.LayerToName(gameObject.layer);
 
-        if (player.CheckInteract(layerName))
+        if (player.CheckInteract("Furniture")||
+           player.CheckInteract("NPC"))
         {
             lastDialogueTime = Time.time;
-
-            // Defer creation of the story one frame to avoid race with DialogueManager's Update-based
-            // autocontinue. This preserves autocontinue handling of empty/tag-only output.
             StartCoroutine(DelayedStartDialogue());
         }
     }

@@ -29,9 +29,13 @@ public class PlayerController : MonoBehaviour
     //GameManager
     private GameManager m_gameManager;
 
-    private void Start()
+    private void Awake()
     {
         Init();
+    }
+
+    private void Start()
+    {
         DialogueManager.Instance.OnDialogueStatusChanged += SetPlayerControl;
     }
     private void OnDisable()
@@ -167,4 +171,17 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
+    public void SetFacingDirection(Vector2 direction)
+    {
+        moveDirection = direction.normalized;
+
+        animator.SetFloat("MoveX", moveDirection.x);
+        animator.SetFloat("MoveY", moveDirection.y);
+        animator.SetFloat("Speed", 0);
+    }
+
+    public void SetSpawnPos(Vector2 pos)
+    {
+        playerRB.transform.position = pos;
+    }
 }

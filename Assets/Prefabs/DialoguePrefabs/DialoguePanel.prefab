@@ -486,6 +486,7 @@ GameObject:
   - component: {fileID: 1423945013536133710}
   - component: {fileID: 7525591463686517698}
   - component: {fileID: 5199074157262168497}
+  - component: {fileID: 5943349630538231008}
   m_Layer: 5
   m_Name: DialoguePanel
   m_TagString: Untagged
@@ -588,6 +589,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &5943349630538231008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5660456917907545131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ea42b97b5418a749bdf4c09e6e6b366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialoguePanel: {fileID: 5660456917907545131}
+  textToDisplay: {fileID: 6349205019234770935}
+  indication: {fileID: 3045752808758603288}
+  nameLabel: {fileID: 8466168230015193418}
+  speakerLabel: {fileID: 5134841403028872541}
+  buttonGroup: {fileID: 3676638000076150542}
+  buttonPrefab: {fileID: 6953370946080731875, guid: a39363f8a490e534296c4f50ce347edd, type: 3}
 --- !u!1 &6659612746481990099
 GameObject:
   m_ObjectHideFlags: 0

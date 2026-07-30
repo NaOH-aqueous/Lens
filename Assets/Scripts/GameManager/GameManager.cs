@@ -23,12 +23,12 @@ public class GameManager : MonoBehaviour
     public static GameManager instance { get; private set; }
     public System.Action<GameStateType> OnGameStateChanged;
 
-    public GameObject pauseMenuUI;
-    public GameObject inventoryUI;
-    public GameObject dialogueUI;
-    public GameObject cgUI;
-    public GameObject puzzleUI;
-    public GameObject lensUI;
+    private GameObject pauseMenuUI;
+    private GameObject inventoryUI;
+    private GameObject dialogueUI;
+    private GameObject cgUI;
+    private GameObject puzzleUI;
+    private GameObject lensUI;
 
     [Header("Scene Names")]
     public string mainMenuSceneName = "MainMenu";
@@ -70,16 +70,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        m_dialogueManager = DialogueManager.Instance;
 
-        inventoryCanvasGroup = inventoryUI.GetComponent<CanvasGroup>();
-        dialogueCanvasGroup = dialogueUI.GetComponent<CanvasGroup>();
-        cgCanvasGroup = cgUI.GetComponent<CanvasGroup>();
-        puzzleCanvasGroup = puzzleUI.GetComponent<CanvasGroup>();
-        puzzleController = puzzleUI.GetComponent<PuzzleController>();
-        lensController = lensUI.GetComponent<LensController>();
-
-        pauseButton = pauseMenuUI.GetComponentInChildren<Button>();
 
         PushState(GameStateType.Playing);
         blurVFX.enabled = false;
@@ -96,11 +87,13 @@ public class GameManager : MonoBehaviour
     {
         OnGameStateChanged += ApplyState;
         SubscribeCancel();
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         OnGameStateChanged -= ApplyState;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         if (m_dialogueManager != null)
         {
             m_dialogueManager.OnDialogueStatusChanged -= HandleDialogueStateChanged;
@@ -136,6 +129,60 @@ public class GameManager : MonoBehaviour
             InputManager.Instance.CancelPerformed -= OnCancelPerformed;
 
         cancelSubscribed = false;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeUI();
+    }
+
+    private void InitializeUI()
+    {
+        SceneUIReferences refs = FindFirstObjectByType<SceneUIReferences>();
+
+        if (refs != null)
+        {
+            pauseMenuUI = refs.pauseMenu;
+            inventoryUI = refs.inventoryUI;
+            dialogueUI = refs.dialogueUI;
+            cgUI = refs.cgUI;
+            puzzleUI = refs.puzzleUI;
+            lensUI = refs.lensUI;
+        }
+        else
+        {
+            Debug.Log("No UI refs in this scene!");
+        }
+
+        InitializeSceneReferences();
+    }
+
+    private void InitializeSceneReferences()
+    {
+        inventoryCanvasGroup =
+            inventoryUI != null ? inventoryUI.GetComponent<CanvasGroup>() : null;
+
+        dialogueCanvasGroup =
+            dialogueUI != null ? dialogueUI.GetComponent<CanvasGroup>() : null;
+
+        cgCanvasGroup =
+            cgUI != null ? cgUI.GetComponent<CanvasGroup>() : null;
+
+        puzzleCanvasGroup =
+            puzzleUI != null ? puzzleUI.GetComponent<CanvasGroup>() : null;
+
+        puzzleController =
+            puzzleUI != null ? puzzleUI.GetComponent<PuzzleController>() : null;
+
+        lensController =
+            lensUI != null ? lensUI.GetComponent<LensController>() : null;
+
+        pauseButton =
+            pauseMenuUI != null
+            ? pauseMenuUI.GetComponentInChildren<Button>()
+            : null;
+
+        m_dialogueManager = DialogueManager.Instance;
     }
 
     private void OnCancelPerformed()

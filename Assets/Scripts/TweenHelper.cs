@@ -7,21 +7,27 @@ public static class TweenHelper
     public static Tween FadeCanvasGroup(CanvasGroup canvas, float targetAlpha, float duration, bool unscaled = true, Ease ease = Ease.OutQuad)
     {
         if (canvas == null) return null;
+
         DOTween.Kill(canvas);
 
         var tween = DOTween.To(() => canvas.alpha, x => canvas.alpha = x, targetAlpha, duration)
             .SetEase(ease)
             .SetUpdate(unscaled)
-            .SetTarget(canvas);
+            .SetTarget(canvas)
+            .SetLink(canvas.gameObject, LinkBehaviour.KillOnDestroy);
 
         tween.OnStart(() =>
         {
+            if (!canvas) return;
+
             canvas.blocksRaycasts = true;
             canvas.interactable = false;
         });
 
         tween.OnComplete(() =>
         {
+            if (!canvas) return;
+
             canvas.blocksRaycasts = targetAlpha > 0f;
             canvas.interactable = targetAlpha > 0f;
         });

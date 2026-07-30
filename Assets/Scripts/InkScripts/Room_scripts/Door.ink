@@ -42,6 +42,7 @@ I've got to take time with me before stepping out. #speaker:Lens #portrait:nervo
 -> END
 === end_demo ===
 Go outside?
+    ~chapter_clear = true
     * [Sure]
     ~ EndDemo()
 -> END

@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class CurtainLightingController : MonoBehaviour
 {
@@ -28,11 +29,20 @@ public class CurtainLightingController : MonoBehaviour
 
     private void Start()
     {
-        Init();
+        if (DialogueManager.Instance.GetBoolVariable("curtain_open"))
+        {
+            CurtainOpened();
+        }
+        else
+        {
+            Init();
+        }
+
         if (DialogueManager.Instance != null)
         {
             DialogueManager.Instance.OnVariableChanged += HandleVariableChanged;
         }
+
     }
 
     private void OnDisable()
@@ -41,6 +51,7 @@ public class CurtainLightingController : MonoBehaviour
         {
             DialogueManager.Instance.OnVariableChanged -= HandleVariableChanged;
         }
+
     }
 
     private void Init() //initiate the sprites, lighting and materials
