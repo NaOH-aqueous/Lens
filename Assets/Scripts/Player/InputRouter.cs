@@ -45,6 +45,7 @@ public class InputRouter : MonoBehaviour
             return;
         }
         Instance = this;
+
     }
 
     public void PushLayer(InputLayer layer)

@@ -665,17 +665,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3826218792795548103, guid: b7b08febc30f11b47b8b8862498ff0fe, type: 3}
   m_PrefabInstance: {fileID: 121014877}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &121014880 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3655836766510724222, guid: b7b08febc30f11b47b8b8862498ff0fe, type: 3}
-  m_PrefabInstance: {fileID: 121014877}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcc16657f2a30f446a6d60a8938408c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!225 &121014884
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -935,6 +924,99 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0fa6622b1fe7f244b5005d1b5243c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &207835931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 207835933}
+  - component: {fileID: 207835932}
+  - component: {fileID: 207835934}
+  m_Layer: 0
+  m_Name: SceneTransitionB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!61 &207835932
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207835931}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.2502947, y: 0.96541977}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.5005894, y: 19.378712}
+  m_EdgeRadius: 0
+--- !u!4 &207835933
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207835931}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.74, y: -0.41927928, z: -0.12803937}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &207835934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207835931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba41960d911b4c443855aced01031e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad: Forest_A
+  exitPointName: ForestA_Entry
 --- !u!1 &211521001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,7 +1276,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9ea397c228a97e4791a6b49c9c75473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadGlobalsJSON: {fileID: 4900000, guid: b051f2b84ea84424f9f838a7ca7978a8, type: 3}
 --- !u!4 &338693445
 Transform:
   m_ObjectHideFlags: 0
@@ -2037,6 +2118,37 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5811457531008187086, guid: 593ddd49a1add534dac7b9ecab5d420e, type: 3}
   m_PrefabInstance: {fileID: 1209756703}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1309809369
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1309809370}
+  m_Layer: 0
+  m_Name: ForestB_Entry
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1309809370
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309809369}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1316476069
 GameObject:
   m_ObjectHideFlags: 0
@@ -2957,8 +3069,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3100088048733024995, guid: 14b01909eec05854da20624967171e1e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1729850984}
   m_SourcePrefab: {fileID: 100100000, guid: 14b01909eec05854da20624967171e1e, type: 3}
+--- !u!1 &1729850983 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3100088048733024995, guid: 14b01909eec05854da20624967171e1e, type: 3}
+  m_PrefabInstance: {fileID: 1729850982}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1729850984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1729850983}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0385dbfbeb8d0bc4193761c464753cf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeAnim: {fileID: 0}
+  fadeDuration: 0.5
 --- !u!1 &1775688926
 GameObject:
   m_ObjectHideFlags: 0
@@ -3586,9 +3720,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f64a34f557848674083640994a35f95a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InventoryMenu: {fileID: 121014879}
-  itemSlot:
-  - {fileID: 121014880}
 --- !u!4 &2013144710
 Transform:
   m_ObjectHideFlags: 0
@@ -3619,3 +3750,5 @@ SceneRoots:
   - {fileID: 1729850982}
   - {fileID: 2013144710}
   - {fileID: 338693445}
+  - {fileID: 207835933}
+  - {fileID: 1309809370}
