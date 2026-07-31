@@ -83,10 +83,6 @@ public class DialogueManager : MonoBehaviour
             AssignUI(existingUI);
             return;
         }
-        else
-        {
-            Debug.Log("no Dialogue UI can be assigned!");
-        }
 
         InitializeUI();
     }
